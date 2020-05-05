@@ -1,0 +1,7 @@
+tailgate:
+  jwt:
+    secret: 'secretforjsonwebtokenswow'
+
+spring:
+  flyway:
+    enabled: true

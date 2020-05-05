@@ -1,0 +1,12 @@
+tailgate:
+  jwt:
+    secret: 'secretforjsonwebtokenswow'
+
+spring:
+  flyway:
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5454/tailgate
+    username: postgres
+    password: password
+    driverClassName: org.postgresql.Driver

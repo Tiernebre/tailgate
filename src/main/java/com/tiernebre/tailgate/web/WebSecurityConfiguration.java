@@ -1,0 +1,31 @@
+package com.tiernebre.tailgate.web;
+
+import com.tiernebre.tailgate.authentication.JwtAuthorizationFilter;
+import com.tiernebre.tailgate.token.TokenProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+@EnableWebSecurity
+@RequiredArgsConstructor
+@Configuration
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private final TokenProvider tokenProvider;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .antMatcher("/**")
+                .authorizeRequests()
+                .antMatchers("/users", "/tokens")
+                .permitAll()
+                .anyRequest().fullyAuthenticated()
+                .and()
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenProvider))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+}

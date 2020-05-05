@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.5.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.tiernebre</groupId>
+	<artifactId>tailgate</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>tailgate</name>
+	<description>NCAA Dynasty Manager</description>
+
+	<properties>
+		<codegen-db.name>tailgate</codegen-db.name>
+		<codegen-db.url>jdbc:postgresql://localhost:${codegen-db.port}/${codegen-db.name}</codegen-db.url>
+		<codegen-db.username>codegenuser</codegen-db.username>
+		<codegen-db.password>GenerateJooqCode!</codegen-db.password>
+		<java.version>13</java.version>
+		<testcontainers.version>1.13.0</testcontainers.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.12</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.10.1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.33.0</version>
+
+				<configuration>
+					<images>
+						<image>
+							<alias>tailgate-code-generation-db</alias>
+							<name>postgres:11</name>
+							<run>
+								<env>
+									<POSTGRES_USER>${codegen-db.username}</POSTGRES_USER>
+									<POSTGRES_PASSWORD>${codegen-db.password}</POSTGRES_PASSWORD>
+									<POSTGRES_DB>${codegen-db.name}</POSTGRES_DB>
+								</env>
+								<ports>
+									<!-- The port is dynamically generated, and injected into the env variable specified on the left.-->
+									<port>codegen-db.port:5432</port>
+								</ports>
+								<wait>
+									<time>1250</time>
+								</wait>
+							</run>
+						</image>
+					</images>
+				</configuration>
+
+				<!-- Connect start/stop to pre- and
+                     post-integration-test phase, respectively if you want to start
+                     your docker containers during integration tests -->
+				<executions>
+					<execution>
+						<id>start</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<!-- "build" should be used to create the images with the
+                                 artifact -->
+							<goal>build</goal>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>6.3.0</version>
+
+				<!-- Note that we're executing the Flyway plugin in the "generate-sources" phase -->
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>migrate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- Note that we need to prefix the db/migration path with filesystem: to prevent Flyway
+                     from looking for our migration scripts only on the classpath -->
+				<configuration>
+					<url>${codegen-db.url}</url>
+					<user>${codegen-db.username}</user>
+					<password>${codegen-db.password}</password>
+					<locations>
+						<location>filesystem:src/main/resources/db/migration</location>
+					</locations>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>${jooq.version}</version>
+
+				<!-- The jOOQ code generation plugin is also executed in the generate-sources phase, prior to compilation -->
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- This is a minimal working configuration. See the manual's section about the code generator for more details -->
+				<configuration>
+					<jdbc>
+						<url>${codegen-db.url}</url>
+						<user>${codegen-db.username}</user>
+						<password>${codegen-db.password}</password>
+					</jdbc>
+					<generator>
+						<database>
+							<includes>.*</includes>
+							<inputSchema>public</inputSchema>
+							<forcedTypes>
+								<!-- Really unfortunate janky custom type mapping to support CITEXT. Should be cleaned up sooner than later -->
+								<forcedType>
+									<name>CLOB</name>
+									<expression>public.users.email</expression>
+									<types>CITEXT</types>
+								</forcedType>
+							</forcedTypes>
+						</database>
+						<target>
+							<packageName>com.tiernebre.tailgate.jooq</packageName>
+							<directory>target/generated-sources/jooq-postgres</directory>
+						</target>
+					</generator>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
