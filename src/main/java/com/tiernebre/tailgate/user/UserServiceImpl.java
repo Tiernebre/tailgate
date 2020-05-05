@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         validateThatEmailDoesNotExist(createUserRequest.getEmail());
         String encryptedPassword = passwordEncoder.encode(createUserRequest.getPassword());
         CreateUserRequest encryptedCreateUserRequest = createUserRequest.withPassword(encryptedPassword);
-        UserEntity entityToCreate = converter.convertFromCreateRequest(encryptedCreateUserRequest);
+        UserEntity entityToCreate = converter.convertFromCreateOrUpdateRequest(encryptedCreateUserRequest);
         UserEntity entityCreated = repository.saveOne(entityToCreate);
         return converter.convertFromEntity(entityCreated);
     }

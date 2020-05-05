@@ -46,7 +46,7 @@ public class UserServiceImplTests {
             String encryptedPassword = "abcd12345!WOW";
             when(passwordEncoder.encode(createUserRequest.getPassword())).thenReturn(encryptedPassword);
             CreateUserRequest encryptedUserRequest = createUserRequest.withPassword(encryptedPassword);
-            when(userConverter.convertFromCreateRequest(eq(encryptedUserRequest))).thenReturn(entityFromCreateUserRequest);
+            when(userConverter.convertFromCreateOrUpdateRequest(eq(encryptedUserRequest))).thenReturn(entityFromCreateUserRequest);
             UserEntity entitySaved = UserFactory.generateOneEntity();
             when(repository.saveOne(eq(entityFromCreateUserRequest))).thenReturn(entitySaved);
             UserDto expectedUserCreated = UserFactory.generateOneDto();

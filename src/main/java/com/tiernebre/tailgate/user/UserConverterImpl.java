@@ -4,12 +4,16 @@ import com.tiernebre.tailgate.converter.ConverterImpl;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserConverterImpl extends ConverterImpl<UserDto, UserEntity> implements UserConverter {
+public class UserConverterImpl extends ConverterImpl<UserDto, UserEntity, CreateUserRequest> implements UserConverter {
     public UserConverterImpl() {
-        super(UserConverterImpl::convertToEntity, UserConverterImpl::convertToDto);
+        super(
+                UserConverterImpl::convertToEntity,
+                UserConverterImpl::convertToDto,
+                UserConverterImpl::convertFromCreateRequest
+        );
     }
 
-    public UserEntity convertFromCreateRequest(CreateUserRequest createRequest) {
+    private static UserEntity convertFromCreateRequest(CreateUserRequest createRequest) {
         return UserEntity.builder()
                 .id(null)
                 .email(createRequest.getEmail())
