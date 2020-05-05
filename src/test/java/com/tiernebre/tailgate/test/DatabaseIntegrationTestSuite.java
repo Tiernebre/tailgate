@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @SpringBootTest
 public abstract class DatabaseIntegrationTestSuite {
     @ClassRule
-    private static final tailgatePostgresqlContainer tailgatePostgresqlContainer = tailgatePostgresqlContainer.getInstance();
+    private static final TailgatePostgresqlContainer tailgatePostgresqlContainer = TailgatePostgresqlContainer.getInstance();
 
     /**
      * Allows for injection of dynamically generated database configurations before Spring fully initializes.

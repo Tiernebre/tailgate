@@ -8,17 +8,17 @@ import org.testcontainers.containers.PostgreSQLContainer;
  * for all of the integration tests that are derived from this, only _one_ PostgreSQL
  * container is used, rather than several.
  */
-public class tailgatePostgresqlContainer extends PostgreSQLContainer<tailgatePostgresqlContainer> {
+public class TailgatePostgresqlContainer extends PostgreSQLContainer<TailgatePostgresqlContainer> {
     private static final String IMAGE_VERSION = "postgres:11.1";
-    private static tailgatePostgresqlContainer container;
+    private static TailgatePostgresqlContainer container;
 
-    private tailgatePostgresqlContainer() {
+    private TailgatePostgresqlContainer() {
         super(IMAGE_VERSION);
     }
 
-    public static tailgatePostgresqlContainer getInstance() {
+    public static TailgatePostgresqlContainer getInstance() {
         if (container == null) {
-            container = new tailgatePostgresqlContainer();
+            container = new TailgatePostgresqlContainer();
         }
         return container;
     }

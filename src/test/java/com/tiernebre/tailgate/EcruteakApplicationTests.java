@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class tailgateApplicationTests extends SpringIntegrationTestingSuite {
+class TailgateApplicationTests extends SpringIntegrationTestingSuite {
 
 	@Test
 	void contextLoads() {
