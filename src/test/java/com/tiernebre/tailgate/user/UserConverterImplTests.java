@@ -37,7 +37,7 @@ public class UserConverterImplTests {
         @DisplayName("converts a dto to an entity")
         @Test
         public void testConvertFromDtoProperlyMapsAnEntity() {
-            UserDTO userDTO = UserFactory.generateOneDto();
+            UserDto userDTO = UserFactory.generateOneDto();
             UserEntity userEntity = userConverter.convertFromDto(userDTO);
             assertAll(
                     () -> assertEquals(userDTO.getId(), userEntity.getId()),
@@ -53,7 +53,7 @@ public class UserConverterImplTests {
         @DisplayName("converts an entity to a dto")
         public void testConvertFromDtoProperlyMapsAnEntity() {
             UserEntity userEntity = UserFactory.generateOneEntity();
-            UserDTO userDTO = userConverter.convertFromEntity(userEntity);
+            UserDto userDTO = userConverter.convertFromEntity(userEntity);
             assertAll(
                     () -> assertEquals(userEntity.getId(), userDTO.getId()),
                     () -> assertEquals(userEntity.getEmail(), userDTO.getEmail())

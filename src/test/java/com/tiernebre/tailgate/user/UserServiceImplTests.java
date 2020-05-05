@@ -49,11 +49,11 @@ public class UserServiceImplTests {
             when(userConverter.convertFromCreateRequest(eq(encryptedUserRequest))).thenReturn(entityFromCreateUserRequest);
             UserEntity entitySaved = UserFactory.generateOneEntity();
             when(repository.saveOne(eq(entityFromCreateUserRequest))).thenReturn(entitySaved);
-            UserDTO expectedUserCreated = UserFactory.generateOneDto();
+            UserDto expectedUserCreated = UserFactory.generateOneDto();
             when(userConverter.convertFromEntity(eq(entitySaved))).thenReturn(expectedUserCreated);
             doNothing().when(userValidator).validate(eq(createUserRequest));
             when(repository.oneExistsByEmail(eq(createUserRequest.getEmail()))).thenReturn(false);
-            UserDTO gottenUserCreated = userService.createOne(createUserRequest);
+            UserDto gottenUserCreated = userService.createOne(createUserRequest);
             assertEquals(expectedUserCreated, gottenUserCreated);
         }
 
@@ -91,11 +91,11 @@ public class UserServiceImplTests {
             String email = UUID.randomUUID().toString() + "@test.com";
             String password = "testPassword12345!";
             UserEntity foundUserEntity = UserFactory.generateOneEntity();
-            UserDTO expectedUser = UserFactory.generateOneDto();
+            UserDto expectedUser = UserFactory.generateOneDto();
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.of(foundUserEntity));
             when(passwordEncoder.matches(eq(password), eq(foundUserEntity.getPassword()))).thenReturn(true);
             when(userConverter.convertFromEntity((foundUserEntity))).thenReturn(expectedUser);
-            UserDTO gottenUser = userService.findOneByEmailAndPassword(email, password).orElse(null);
+            UserDto gottenUser = userService.findOneByEmailAndPassword(email, password).orElse(null);
             assertNotNull(gottenUser);
             assertEquals(expectedUser, gottenUser);
         }
@@ -106,7 +106,7 @@ public class UserServiceImplTests {
             String email = UUID.randomUUID().toString() + "@test.com";
             String password = "testPassword12345!";
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.empty());
-            Optional<UserDTO> gottenUser = userService.findOneByEmailAndPassword(email, password);
+            Optional<UserDto> gottenUser = userService.findOneByEmailAndPassword(email, password);
             assertTrue(gottenUser.isEmpty());
         }
 
@@ -118,7 +118,7 @@ public class UserServiceImplTests {
             UserEntity foundUserEntity = UserFactory.generateOneEntity();
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.of(foundUserEntity));
             when(passwordEncoder.matches(eq(password), eq(foundUserEntity.getPassword()))).thenReturn(false);
-            Optional<UserDTO> gottenUser = userService.findOneByEmailAndPassword(email, password);
+            Optional<UserDto> gottenUser = userService.findOneByEmailAndPassword(email, password);
             assertTrue(gottenUser.isEmpty());
         }
 

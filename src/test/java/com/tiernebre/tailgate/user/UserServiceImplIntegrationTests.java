@@ -27,7 +27,7 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         @DisplayName("fully persists a user with correct information")
         public void testCreateOneFullyPersists() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            UserDTO createdUser = userService.createOne(createUserRequest);
+            UserDto createdUser = userService.createOne(createUserRequest);
             UsersRecord userFound = userRecordPool.findOneByIdAndEmail(createdUser.getId(), createdUser.getEmail());
             assertAll(
                 () -> assertNotEquals(createUserRequest.getPassword(), userFound.getPassword()),
@@ -43,8 +43,8 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         @DisplayName("fully retrieves a user by email and password that is legitimate")
         public void testCreateOneFullyPersists() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            UserDTO createdUser = userService.createOne(createUserRequest);
-            UserDTO foundUser = userService.findOneByEmailAndPassword(createUserRequest.getEmail(), createUserRequest.getPassword()).orElse(null);
+            UserDto createdUser = userService.createOne(createUserRequest);
+            UserDto foundUser = userService.findOneByEmailAndPassword(createUserRequest.getEmail(), createUserRequest.getPassword()).orElse(null);
             assertNotNull(foundUser);
             assertAll(
                     () -> assertEquals(createdUser.getId(), foundUser.getId()),
@@ -57,7 +57,7 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         public void testCreateOneEnforcesPasswordMatching() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
             userService.createOne(createUserRequest);
-            Optional<UserDTO> foundUser = userService.findOneByEmailAndPassword(createUserRequest.getEmail(), createUserRequest.getPassword() + UUID.randomUUID().toString());
+            Optional<UserDto> foundUser = userService.findOneByEmailAndPassword(createUserRequest.getEmail(), createUserRequest.getPassword() + UUID.randomUUID().toString());
             assertTrue(foundUser.isEmpty());
         }
     }

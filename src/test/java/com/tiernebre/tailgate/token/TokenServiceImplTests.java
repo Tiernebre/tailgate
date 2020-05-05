@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.token;
 
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ public class TokenServiceImplTests {
         @Test
         @DisplayName("returns the generated token if entirely successful")
         void returnsTheGeneratedTokenIfSuccessful() throws GenerateTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
-            UserDTO user = UserFactory.generateOneDto();
+            UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateTokenRequest createTokenRequest = CreateTokenRequest.builder()
                     .email(user.getEmail())
@@ -57,7 +57,7 @@ public class TokenServiceImplTests {
         @Test
         @DisplayName("throws UserNotFoundForTokenException if the user could not be found from the request")
         void throwsUserNotFoundForTokenExceptionIfUserCouldNotBeFound() throws InvalidCreateTokenRequestException {
-            UserDTO user = UserFactory.generateOneDto();
+            UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateTokenRequest createTokenRequest = CreateTokenRequest.builder()
                     .email(user.getEmail())

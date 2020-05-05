@@ -5,7 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.tailgate.token.GenerateTokenException;
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ public class JwtTokenProviderTests {
         @Test
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
-            UserDTO userDTO = UserFactory.generateOneDto();
+            UserDto userDTO = UserFactory.generateOneDto();
             String generatedToken = jwtTokenService.generateOne(userDTO);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer("tailgate")
@@ -51,7 +51,7 @@ public class JwtTokenProviderTests {
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
                     null
             );
-            UserDTO userDTO = UserFactory.generateOneDto();
+            UserDto userDTO = UserFactory.generateOneDto();
             assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
         }
     }
@@ -62,13 +62,13 @@ public class JwtTokenProviderTests {
         @Test
         @DisplayName("returns the decoded User if the JWT token provided is valid")
         void returnsTheDecodedUserForValidJWT() {
-            UserDTO expectedUser = UserFactory.generateOneDto();
+            UserDto expectedUser = UserFactory.generateOneDto();
             String testToken = JWT.create()
                     .withIssuer("tailgate")
                     .withSubject(expectedUser.getId().toString())
                     .withClaim("email", expectedUser.getEmail())
                     .sign(ALGORITHM);
-            UserDTO foundUser = jwtTokenService.validateOne(testToken);
+            UserDto foundUser = jwtTokenService.validateOne(testToken);
             assertEquals(expectedUser, foundUser);
         }
     }

@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDTO createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException {
+    public UserDto createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException {
         Objects.requireNonNull(createUserRequest, REQUIRED_CREATE_USER_REQUEST_MESSAGE);
 
         validator.validate(createUserRequest);
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> findOneByEmailAndPassword(String email, String password) {
+    public Optional<UserDto> findOneByEmailAndPassword(String email, String password) {
         Objects.requireNonNull(email, REQUIRED_EMAIL_MESSAGE);
         Objects.requireNonNull(password, REQUIRED_PASSWORD_MESSAGE);
 

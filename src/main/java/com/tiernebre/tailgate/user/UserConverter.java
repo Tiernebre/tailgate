@@ -5,7 +5,7 @@ import com.tiernebre.tailgate.converter.Converter;
 /**
  * Provides conversion operations between the User data types.
  */
-public interface UserConverter extends Converter<UserDTO, UserEntity> {
+public interface UserConverter extends Converter<UserDto, UserEntity> {
     /**
      * Converts a create request into an entity.
      *

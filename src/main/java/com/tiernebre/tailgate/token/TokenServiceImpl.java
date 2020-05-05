@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.token;
 
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String createOne(CreateTokenRequest createTokenRequest) throws UserNotFoundForTokenException, GenerateTokenException, InvalidCreateTokenRequestException {
         validator.validate(createTokenRequest);
-        UserDTO foundUser = userService
+        UserDto foundUser = userService
                 .findOneByEmailAndPassword(
                         createTokenRequest.getEmail(),
                         createTokenRequest.getPassword()

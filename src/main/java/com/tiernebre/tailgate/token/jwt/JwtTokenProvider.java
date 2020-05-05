@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.tailgate.token.GenerateTokenException;
 import com.tiernebre.tailgate.token.TokenProvider;
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class JwtTokenProvider implements TokenProvider {
     private final Algorithm jwtAlgorithm;
 
     @Override
-    public String generateOne(UserDTO user) throws GenerateTokenException {
+    public String generateOne(UserDto user) throws GenerateTokenException {
         try {
             return JWT.create()
                     .withIssuer(ISSUER)
@@ -35,7 +35,7 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public UserDTO validateOne(String token) {
+    public UserDto validateOne(String token) {
         JWTVerifier verifier = JWT.require(jwtAlgorithm)
                 .withIssuer(ISSUER)
                 .build();
@@ -43,8 +43,8 @@ public class JwtTokenProvider implements TokenProvider {
         return mapDecodedJWTToUser(decodedJWT);
     }
 
-    private UserDTO mapDecodedJWTToUser(DecodedJWT decodedJWT) {
-        return UserDTO.builder()
+    private UserDto mapDecodedJWTToUser(DecodedJWT decodedJWT) {
+        return UserDto.builder()
                 .id(Long.parseLong(decodedJWT.getSubject()))
                 .email(decodedJWT.getClaim(EMAIL_CLAIM).asString())
                 .build();
