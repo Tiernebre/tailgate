@@ -20,7 +20,7 @@
 		<codegen-db.username>codegenuser</codegen-db.username>
 		<codegen-db.password>GenerateJooqCode!</codegen-db.password>
 		<java.version>14</java.version>
-		<testcontainers.version>1.13.0</testcontainers.version>
+		<testcontainers.version>1.14.1</testcontainers.version>
 	</properties>
 
 	<dependencies>
@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>3.10.1</version>
+			<version>3.10.2</version>
 		</dependency>
 	</dependencies>
 
@@ -176,7 +176,7 @@
 			<plugin>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
-				<version>6.3.0</version>
+				<version>6.4.1</version>
 
 				<!-- Note that we're executing the Flyway plugin in the "generate-sources" phase -->
 				<executions>
