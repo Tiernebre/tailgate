@@ -12,7 +12,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateAccessTokenRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException {
         return SessionDto.builder()
-                .accessToken(accessTokenService.createOne(createSessionRequest))
+                .accessToken(accessTokenService.createOneForUser(createSessionRequest))
                 .build();
     }
 }

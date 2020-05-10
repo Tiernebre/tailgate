@@ -31,7 +31,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         public void returnsWithCreatedStatus() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createSessionRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createOneForUser(eq(createSessionRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
@@ -45,7 +45,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         public void returnsWithTheToken() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createSessionRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createOneForUser(eq(createSessionRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))

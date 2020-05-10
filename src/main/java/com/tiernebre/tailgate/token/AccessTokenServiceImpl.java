@@ -17,7 +17,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     private final SessionValidator validator;
 
     @Override
-    public String createOne(CreateSessionRequest createSessionRequest) throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
+    public String createOneForUser(CreateSessionRequest createSessionRequest) throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
         validator.validate(createSessionRequest);
         UserDto foundUser = userService
                 .findOneByEmailAndPassword(

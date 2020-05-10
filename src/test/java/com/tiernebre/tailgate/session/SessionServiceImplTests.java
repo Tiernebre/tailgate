@@ -31,7 +31,7 @@ public class SessionServiceImplTests {
         public void createOneReturnsDto() throws InvalidCreateAccessTokenRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createSessionRequest))).thenReturn(expectedAccessToken);
+            when(accessTokenService.createOneForUser(eq(createSessionRequest))).thenReturn(expectedAccessToken);
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .build();

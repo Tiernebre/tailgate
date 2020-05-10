@@ -8,5 +8,5 @@ public interface AccessTokenService {
      * @param createSessionRequest The details about the requester of the authentication (typically account information).
      * @return The token representation for an authorized session.
      */
-    String createOne(CreateSessionRequest createSessionRequest) throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException;
+    String createOneForUser(CreateSessionRequest createSessionRequest) throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException;
 }
