@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ConverterImpl<T, U, V> implements Converter<T, U, V> {
+public abstract class ConverterImpl<T, U, V> implements Converter<T, U, V> {
     private final Function<T, U> fromDto;
     private final Function<U, T> fromEntity;
     private final Function<V, U> fromCreateOrUpdateRequest;
