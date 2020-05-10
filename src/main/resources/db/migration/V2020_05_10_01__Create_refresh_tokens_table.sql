@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id BIGSERIAL PRIMARY KEY,
   token TEXT UNIQUE NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT now()
 );
