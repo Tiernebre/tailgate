@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.authentication;
 
 import com.tiernebre.tailgate.token.TokenProvider;
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,7 +50,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(String token) {
-        UserDTO user = tokenProvider.validateOne(token.replace(TOKEN_PREFIX, ""));
+        UserDto user = tokenProvider.validateOne(token.replace(TOKEN_PREFIX, ""));
         return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
     }
 }

@@ -6,9 +6,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.tailgate.token.GenerateTokenException;
 import com.tiernebre.tailgate.token.TokenProvider;
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.time.Clock;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Generates / Validates JSON Web Tokens.
@@ -16,37 +20,44 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider implements TokenProvider {
-    private static final String ISSUER = "tailgate";
-    private static final String EMAIL_CLAIM = "email";
+    static final String ISSUER = "tailgate";
+    static final String EMAIL_CLAIM = "email";
 
-    private final Algorithm jwtAlgorithm;
+    private final Algorithm algorithm;
+    private final JwtTokenConfigurationProperties configurationProperties;
+    private final Clock clock;
 
     @Override
-    public String generateOne(UserDTO user) throws GenerateTokenException {
+    public String generateOne(UserDto user) throws GenerateTokenException {
         try {
             return JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
-                    .sign(jwtAlgorithm);
+                    .withExpiresAt(generateExpiresAt())
+                    .sign(algorithm);
         } catch (Exception exception){
             throw new GenerateTokenException(exception.getMessage());
         }
     }
 
     @Override
-    public UserDTO validateOne(String token) {
-        JWTVerifier verifier = JWT.require(jwtAlgorithm)
+    public UserDto validateOne(String token) {
+        JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(ISSUER)
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
         return mapDecodedJWTToUser(decodedJWT);
     }
 
-    private UserDTO mapDecodedJWTToUser(DecodedJWT decodedJWT) {
-        return UserDTO.builder()
+    private UserDto mapDecodedJWTToUser(DecodedJWT decodedJWT) {
+        return UserDto.builder()
                 .id(Long.parseLong(decodedJWT.getSubject()))
                 .email(decodedJWT.getClaim(EMAIL_CLAIM).asString())
                 .build();
+    }
+
+    private Date generateExpiresAt() {
+        return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getExpirationWindowInMinutes()));
     }
 }

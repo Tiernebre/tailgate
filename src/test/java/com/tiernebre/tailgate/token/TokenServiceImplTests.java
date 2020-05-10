@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.token;
 
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +11,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -40,7 +42,7 @@ public class TokenServiceImplTests {
         @Test
         @DisplayName("returns the generated token if entirely successful")
         void returnsTheGeneratedTokenIfSuccessful() throws GenerateTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
-            UserDTO user = UserFactory.generateOneDto();
+            UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateTokenRequest createTokenRequest = CreateTokenRequest.builder()
                     .email(user.getEmail())
@@ -57,7 +59,7 @@ public class TokenServiceImplTests {
         @Test
         @DisplayName("throws UserNotFoundForTokenException if the user could not be found from the request")
         void throwsUserNotFoundForTokenExceptionIfUserCouldNotBeFound() throws InvalidCreateTokenRequestException {
-            UserDTO user = UserFactory.generateOneDto();
+            UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateTokenRequest createTokenRequest = CreateTokenRequest.builder()
                     .email(user.getEmail())

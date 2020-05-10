@@ -16,13 +16,13 @@ public class UserConverterImplTests {
     private UserConverterImpl userConverter;
 
     @Nested
-    @DisplayName("convertFromCreateRequest")
+    @DisplayName("convertFromCreateOrUpdateRequest")
     public class ConvertFromCreateRequestTests {
         @Test
         @DisplayName("converts a create request to an entity")
         public void testConvertFromCreateRequestProperlyMapsAnEntity() {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            UserEntity userEntity = userConverter.convertFromCreateRequest(createUserRequest);
+            UserEntity userEntity = userConverter.convertFromCreateOrUpdateRequest(createUserRequest);
             assertAll(
                     () -> assertEquals(createUserRequest.getPassword(), userEntity.getPassword()),
                     () -> assertEquals(createUserRequest.getConfirmationPassword(), userEntity.getPassword()),
@@ -37,7 +37,7 @@ public class UserConverterImplTests {
         @DisplayName("converts a dto to an entity")
         @Test
         public void testConvertFromDtoProperlyMapsAnEntity() {
-            UserDTO userDTO = UserFactory.generateOneDto();
+            UserDto userDTO = UserFactory.generateOneDto();
             UserEntity userEntity = userConverter.convertFromDto(userDTO);
             assertAll(
                     () -> assertEquals(userDTO.getId(), userEntity.getId()),
@@ -53,7 +53,7 @@ public class UserConverterImplTests {
         @DisplayName("converts an entity to a dto")
         public void testConvertFromDtoProperlyMapsAnEntity() {
             UserEntity userEntity = UserFactory.generateOneEntity();
-            UserDTO userDTO = userConverter.convertFromEntity(userEntity);
+            UserDto userDTO = userConverter.convertFromEntity(userEntity);
             assertAll(
                     () -> assertEquals(userEntity.getId(), userDTO.getId()),
                     () -> assertEquals(userEntity.getEmail(), userDTO.getEmail())

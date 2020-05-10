@@ -9,7 +9,7 @@ public interface UserService {
      * @return The created user.
      * @throws InvalidUserException If the request to create a user is invalid.
      */
-    UserDTO createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException;
+    UserDto createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException;
 
     /**
      * Finds a user by a given email and password.
@@ -17,5 +17,5 @@ public interface UserService {
      * @param password The password of a user to find.
      * @return An optional containing the user if found, or an empty optional if no user was found.
      */
-    Optional<UserDTO> findOneByEmailAndPassword(String email, String password);
+    Optional<UserDto> findOneByEmailAndPassword(String email, String password);
 }

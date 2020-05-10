@@ -27,8 +27,8 @@ public class UserFactory {
                 .build();
     }
 
-    public static UserDTO generateOneDto() {
-        return UserDTO.builder()
+    public static UserDto generateOneDto() {
+        return UserDto.builder()
                 .id(1L)
                 .email(generateEmail())
                 .build();

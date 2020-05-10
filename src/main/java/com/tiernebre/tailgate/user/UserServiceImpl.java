@@ -21,20 +21,20 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDTO createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException {
+    public UserDto createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException {
         Objects.requireNonNull(createUserRequest, REQUIRED_CREATE_USER_REQUEST_MESSAGE);
 
         validator.validate(createUserRequest);
         validateThatEmailDoesNotExist(createUserRequest.getEmail());
         String encryptedPassword = passwordEncoder.encode(createUserRequest.getPassword());
         CreateUserRequest encryptedCreateUserRequest = createUserRequest.withPassword(encryptedPassword);
-        UserEntity entityToCreate = converter.convertFromCreateRequest(encryptedCreateUserRequest);
+        UserEntity entityToCreate = converter.convertFromCreateOrUpdateRequest(encryptedCreateUserRequest);
         UserEntity entityCreated = repository.saveOne(entityToCreate);
         return converter.convertFromEntity(entityCreated);
     }
 
     @Override
-    public Optional<UserDTO> findOneByEmailAndPassword(String email, String password) {
+    public Optional<UserDto> findOneByEmailAndPassword(String email, String password) {
         Objects.requireNonNull(email, REQUIRED_EMAIL_MESSAGE);
         Objects.requireNonNull(password, REQUIRED_PASSWORD_MESSAGE);
 

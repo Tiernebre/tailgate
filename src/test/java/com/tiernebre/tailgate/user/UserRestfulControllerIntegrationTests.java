@@ -39,7 +39,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
         @DisplayName("returns with the created user along with links in the response body")
         void testThatItReturnsWithCreatedUserIfSuccessful() throws Exception {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            UserDTO expectedUser = UserFactory.generateOneDto();
+            UserDto expectedUser = UserFactory.generateOneDto();
             when(userService.createOne(eq(createUserRequest))).thenReturn(expectedUser);
             mockMvc.perform(
                     post("/users")

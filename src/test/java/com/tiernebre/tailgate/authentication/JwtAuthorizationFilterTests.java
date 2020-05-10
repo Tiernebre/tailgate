@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.authentication;
 
 import com.tiernebre.tailgate.token.TokenProvider;
-import com.tiernebre.tailgate.user.UserDTO;
+import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,7 +66,7 @@ public class JwtAuthorizationFilterTests {
             FilterChain filterChain = mock(FilterChain.class);
             String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
             when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-            UserDTO authorizedUser = UserFactory.generateOneDto();
+            UserDto authorizedUser = UserFactory.generateOneDto();
             when(tokenProvider.validateOne(eq(token))).thenReturn(authorizedUser);
             jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
             assertEquals(authorizedUser, SecurityContextHolder.getContext().getAuthentication().getPrincipal());

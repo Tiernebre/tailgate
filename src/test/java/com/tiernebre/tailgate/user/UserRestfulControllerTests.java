@@ -26,9 +26,9 @@ public class UserRestfulControllerTests {
         @Test
         void testItReturnsTheCreatedUser() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            UserDTO expectedUser = UserFactory.generateOneDto();
+            UserDto expectedUser = UserFactory.generateOneDto();
             when(userService.createOne(eq(createUserRequest))).thenReturn(expectedUser);
-            UserDTO createdUser = userRestfulController.createUser(createUserRequest);
+            UserDto createdUser = userRestfulController.createUser(createUserRequest);
             assertEquals(expectedUser, createdUser);
         }
     }
