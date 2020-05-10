@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider implements TokenProvider {
-    private static final String ISSUER = "tailgate";
-    private static final String EMAIL_CLAIM = "email";
+    static final String ISSUER = "tailgate";
+    static final String EMAIL_CLAIM = "email";
 
     private final Algorithm jwtAlgorithm;
 

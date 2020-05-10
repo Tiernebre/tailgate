@@ -12,6 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
+import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.ISSUER;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JwtTokenProviderTests {
@@ -36,11 +38,11 @@ public class JwtTokenProviderTests {
             UserDto userDTO = UserFactory.generateOneDto();
             String generatedToken = jwtTokenService.generateOne(userDTO);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
-                    .withIssuer("tailgate")
+                    .withIssuer(ISSUER)
                     .build();
             DecodedJWT decodedJWT = jwtVerifier.verify(generatedToken);
             assertAll(
-                    () -> assertEquals("tailgate", decodedJWT.getIssuer()),
+                    () -> assertEquals(ISSUER, decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
                     () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim("email").asString())
             );
@@ -65,9 +67,9 @@ public class JwtTokenProviderTests {
         void returnsTheDecodedUserForValidJWT() {
             UserDto expectedUser = UserFactory.generateOneDto();
             String testToken = JWT.create()
-                    .withIssuer("tailgate")
+                    .withIssuer(ISSUER)
                     .withSubject(expectedUser.getId().toString())
-                    .withClaim("email", expectedUser.getEmail())
+                    .withClaim(EMAIL_CLAIM, expectedUser.getEmail())
                     .sign(ALGORITHM);
             UserDto foundUser = jwtTokenService.validateOne(testToken);
             assertEquals(expectedUser, foundUser);
