@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  token TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now()
+);
