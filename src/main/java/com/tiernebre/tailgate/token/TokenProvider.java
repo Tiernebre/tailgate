@@ -5,7 +5,8 @@ import com.tiernebre.tailgate.user.UserDto;
 public interface TokenProvider {
     /**
      * Generates an authentication token given information about a user.
-     * @return A token used for authentication
+     * @param user The user to generate an authentication token for.
+     * @return A token used for authentication.
      */
     String generateOne(UserDto user) throws GenerateTokenException;
 
