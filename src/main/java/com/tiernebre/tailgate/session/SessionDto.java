@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.session;
 
 import lombok.Builder;
 import lombok.Value;

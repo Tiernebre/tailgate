@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.token;
 
+import com.tiernebre.tailgate.session.SessionRestfulController;
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,5 +1,6 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.session;
 
+import com.tiernebre.tailgate.token.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
