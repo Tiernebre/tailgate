@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.session;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
