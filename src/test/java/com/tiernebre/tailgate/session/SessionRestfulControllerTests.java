@@ -1,7 +1,5 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.session.SessionDto;
-import com.tiernebre.tailgate.session.SessionRestfulController;
 import com.tiernebre.tailgate.token.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,7 +28,7 @@ public class SessionRestfulControllerTests {
     public class CreateOneTests {
         @Test
         @DisplayName("returns the created token")
-        void returnsTheCreatedToken () throws UserNotFoundForTokenException, GenerateTokenException, InvalidCreateTokenRequestException {
+        void returnsTheCreatedToken () throws UserNotFoundForTokenException, GenerateAccessTokenException, InvalidCreateTokenRequestException {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
             when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);

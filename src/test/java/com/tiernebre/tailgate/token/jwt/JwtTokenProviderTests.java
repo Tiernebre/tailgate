@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tiernebre.tailgate.token.GenerateTokenException;
+import com.tiernebre.tailgate.token.GenerateAccessTokenException;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ public class JwtTokenProviderTests {
 
         @Test
         @DisplayName("returns the generated JSON web token with the correct claims")
-        void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
+        void returnsTheGeneratedJSONWebToken() throws GenerateAccessTokenException {
             UserDto userDTO = UserFactory.generateOneDto();
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
@@ -79,14 +79,14 @@ public class JwtTokenProviderTests {
 
         @Test
         @DisplayName("throws a GenerateTokenException if the JWT token completely failed to sign")
-        void throwsGenerateTokenExceptionIfTokenCannotBeSigned() throws GenerateTokenException {
+        void throwsGenerateTokenExceptionIfTokenCannotBeSigned() throws GenerateAccessTokenException {
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
                     null,
                     jwtTokenConfigurationProperties,
                     fixedTestClock
             );
             UserDto userDTO = UserFactory.generateOneDto();
-            assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
+            assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
         }
     }
 

@@ -40,7 +40,7 @@ public class AccessTokenServiceImplTests {
     public class CreateOneTests {
         @Test
         @DisplayName("returns the generated token if entirely successful")
-        void returnsTheGeneratedTokenIfSuccessful() throws GenerateTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
+        void returnsTheGeneratedTokenIfSuccessful() throws GenerateAccessTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()

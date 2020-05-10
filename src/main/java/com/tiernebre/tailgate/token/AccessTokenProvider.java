@@ -8,7 +8,7 @@ public interface AccessTokenProvider {
      * @param user The user to generate an authentication token for.
      * @return An access token used for authentication to allow a user to perform authenticated only actions.
      */
-    String generateOne(UserDto user) throws GenerateTokenException;
+    String generateOne(UserDto user) throws GenerateAccessTokenException;
 
     /**
      * Validates if a given access token is legitimate.
