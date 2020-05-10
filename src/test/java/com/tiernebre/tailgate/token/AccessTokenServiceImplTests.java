@@ -22,7 +22,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TokenServiceImplTests {
+public class AccessTokenServiceImplTests {
     @Mock
     private UserService userService;
 
@@ -33,7 +33,7 @@ public class TokenServiceImplTests {
     private TokenValidator tokenValidator;
 
     @InjectMocks
-    private TokenServiceImpl tokenService;
+    private AccessTokenServiceImpl tokenService;
 
     @Nested
     @DisplayName("createOne")

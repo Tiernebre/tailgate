@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class TokenServiceImpl implements TokenService {
+public class AccessTokenServiceImpl implements AccessTokenService {
     private final static String NON_EXISTENT_USER_ERROR = "The request to create a token included information that did not match up with an existing user.";
 
     private final AccessTokenProvider provider;

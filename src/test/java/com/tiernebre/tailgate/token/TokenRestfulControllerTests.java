@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class TokenRestfulControllerTests {
     @Mock
-    private TokenService tokenService;
+    private AccessTokenService accessTokenService;
 
     @InjectMocks
     private TokenRestfulController tokenRestfulController;
@@ -30,7 +30,7 @@ public class TokenRestfulControllerTests {
         void returnsTheCreatedToken () throws UserNotFoundForTokenException, GenerateTokenException, InvalidCreateTokenRequestException {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             AccessTokenDTO gottenAccessTokenDTO = tokenRestfulController.createOne(createAccessTokenRequest);
             assertEquals(expectedToken, gottenAccessTokenDTO.getToken());
         }

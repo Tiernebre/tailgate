@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/tokens")
 public class TokenRestfulController {
-    private final TokenService service;
+    private final AccessTokenService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = TokenRestfulController.class)
 public class TokenRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
     @MockBean
-    private TokenService tokenService;
+    private AccessTokenService accessTokenService;
 
     @Nested
     @DisplayName("POST /tokens")
@@ -29,7 +29,7 @@ public class TokenRestfulControllerIntegrationTests extends WebControllerIntegra
         public void returnsWithCreatedStatus() throws Exception {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/tokens")
                             .content(objectMapper.writeValueAsString(createAccessTokenRequest))
@@ -43,7 +43,7 @@ public class TokenRestfulControllerIntegrationTests extends WebControllerIntegra
         public void returnsWithTheToken() throws Exception {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/tokens")
                             .content(objectMapper.writeValueAsString(createAccessTokenRequest))
