@@ -54,6 +54,7 @@ public class JwtTokenProviderTests {
         void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
             UserDto userDTO = UserFactory.generateOneDto();
             Clock fixedTestClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
+            // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             Date expectedExpiresAt = new Date(expectedMillisForExpiration);
             String generatedToken = jwtTokenService.generateOne(userDTO, fixedTestClock);
