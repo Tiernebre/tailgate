@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.token.InvalidCreateAccessTokenRequestException;
+import com.tiernebre.tailgate.token.InvalidCreateSessionRequestException;
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,10 @@ public class SessionValidatorImpl extends BaseValidator implements SessionValida
     }
 
     @Override
-    public void validate(CreateSessionRequest valueToValidate) throws InvalidCreateAccessTokenRequestException {
+    public void validate(CreateSessionRequest valueToValidate) throws InvalidCreateSessionRequestException {
         Set<String> errorsFound = validateCommon(valueToValidate);
         if (CollectionUtils.isNotEmpty(errorsFound)) {
-            throw new InvalidCreateAccessTokenRequestException(errorsFound);
+            throw new InvalidCreateSessionRequestException(errorsFound);
         }
     }
 }

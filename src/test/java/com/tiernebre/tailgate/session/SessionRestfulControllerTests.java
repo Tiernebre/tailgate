@@ -28,7 +28,7 @@ public class SessionRestfulControllerTests {
     public class CreateOneTests {
         @Test
         @DisplayName("returns the created token")
-        void returnsTheCreatedToken () throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
+        void returnsTheCreatedToken () throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
             SessionDto expectedSession = SessionDto.builder().accessToken(expectedToken).build();
