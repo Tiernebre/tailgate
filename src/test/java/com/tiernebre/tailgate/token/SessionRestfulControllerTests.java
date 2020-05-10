@@ -32,7 +32,7 @@ public class SessionRestfulControllerTests {
             String expectedToken = UUID.randomUUID().toString();
             when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             SessionDto gottenSessionDto = sessionRestfulController.createOne(createAccessTokenRequest);
-            assertEquals(expectedToken, gottenSessionDto.getToken());
+            assertEquals(expectedToken, gottenSessionDto.getAccessToken());
         }
     }
 }
