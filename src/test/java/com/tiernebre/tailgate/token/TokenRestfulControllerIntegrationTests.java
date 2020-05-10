@@ -29,7 +29,7 @@ public class TokenRestfulControllerIntegrationTests extends WebControllerIntegra
         public void returnsWithCreatedStatus() throws Exception {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/tokens")
                             .content(objectMapper.writeValueAsString(createAccessTokenRequest))
@@ -43,7 +43,7 @@ public class TokenRestfulControllerIntegrationTests extends WebControllerIntegra
         public void returnsWithTheToken() throws Exception {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/tokens")
                             .content(objectMapper.writeValueAsString(createAccessTokenRequest))

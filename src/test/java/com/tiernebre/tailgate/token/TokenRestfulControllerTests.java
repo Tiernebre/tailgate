@@ -30,7 +30,7 @@ public class TokenRestfulControllerTests {
         void returnsTheCreatedToken () throws UserNotFoundForTokenException, GenerateTokenException, InvalidCreateTokenRequestException {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             AccessTokenDTO gottenAccessTokenDTO = tokenRestfulController.createOne(createAccessTokenRequest);
             assertEquals(expectedToken, gottenAccessTokenDTO.getToken());
         }
