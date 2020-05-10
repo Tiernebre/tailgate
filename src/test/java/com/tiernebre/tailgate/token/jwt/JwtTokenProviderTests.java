@@ -40,6 +40,7 @@ public class JwtTokenProviderTests {
                     .build();
             DecodedJWT decodedJWT = jwtVerifier.verify(generatedToken);
             assertAll(
+                    () -> assertEquals("tailgate", decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
                     () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim("email").asString())
             );
