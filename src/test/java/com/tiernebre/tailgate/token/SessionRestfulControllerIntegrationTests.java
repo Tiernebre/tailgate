@@ -22,7 +22,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
     private AccessTokenService accessTokenService;
 
     @Nested
-    @DisplayName("POST /tokens")
+    @DisplayName("POST /sessions")
     public class PostTokensTests {
         @Test
         @DisplayName("returns with 201 CREATED status if successful")
@@ -31,7 +31,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
             String expectedToken = UUID.randomUUID().toString();
             when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
-                    post("/tokens")
+                    post("/sessions")
                             .content(objectMapper.writeValueAsString(createAccessTokenRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
@@ -45,12 +45,12 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
             String expectedToken = UUID.randomUUID().toString();
             when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
-                    post("/tokens")
+                    post("/sessions")
                             .content(objectMapper.writeValueAsString(createAccessTokenRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
-                    .andExpect(jsonPath("$.token").exists())
-                    .andExpect(jsonPath("$.token").value(expectedToken));
+                    .andExpect(jsonPath("$.accessToken").exists())
+                    .andExpect(jsonPath("$.accessToken").value(expectedToken));
         }
     }
 }
