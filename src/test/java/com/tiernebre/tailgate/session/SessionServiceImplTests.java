@@ -41,7 +41,7 @@ public class SessionServiceImplTests {
     class CreateOneTests {
         @Test
         @DisplayName("returns a properly mapped session DTO representation with the tokens")
-        public void createOneReturnsDto() throws InvalidCreateSessionRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException {
+        public void createOneReturnsDto() throws InvalidCreateSessionRequestException, UserNotFoundForSessionException, GenerateAccessTokenException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
@@ -68,7 +68,7 @@ public class SessionServiceImplTests {
                     .build();
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
             doNothing().when(sessionValidator).validate(createSessionRequest);
-            UserNotFoundForAccessTokenException thrown = assertThrows(UserNotFoundForAccessTokenException.class, () -> sessionService.createOne(createSessionRequest));
+            UserNotFoundForSessionException thrown = assertThrows(UserNotFoundForSessionException.class, () -> sessionService.createOne(createSessionRequest));
             assertEquals(NON_EXISTENT_USER_ERROR, thrown.getMessage());
         }
 

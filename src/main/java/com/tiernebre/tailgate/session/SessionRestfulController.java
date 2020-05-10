@@ -16,7 +16,7 @@ public class SessionRestfulController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionDto createOne(@RequestBody CreateSessionRequest createSessionRequest) throws GenerateAccessTokenException, UserNotFoundForAccessTokenException, InvalidCreateSessionRequestException {
+    public SessionDto createOne(@RequestBody CreateSessionRequest createSessionRequest) throws GenerateAccessTokenException, UserNotFoundForSessionException, InvalidCreateSessionRequestException {
         return service.createOne(createSessionRequest);
     }
 }

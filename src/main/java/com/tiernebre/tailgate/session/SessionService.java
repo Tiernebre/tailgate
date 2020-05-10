@@ -1,8 +1,7 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.token.GenerateAccessTokenException;
-import com.tiernebre.tailgate.token.InvalidCreateSessionRequestException;
-import com.tiernebre.tailgate.token.UserNotFoundForAccessTokenException;
+import com.tiernebre.tailgate.token.UserNotFoundForSessionException;
 
 public interface SessionService {
     /**
@@ -10,5 +9,5 @@ public interface SessionService {
      * @param createSessionRequest The request used to build the access token as a part of the overall session.
      * @return A session with an access token to allow the user to access the application.
      */
-    SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException;
+    SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForSessionException, GenerateAccessTokenException;
 }

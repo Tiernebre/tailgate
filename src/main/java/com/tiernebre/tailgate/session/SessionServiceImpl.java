@@ -16,7 +16,7 @@ public class SessionServiceImpl implements SessionService {
     private final UserService userService;
 
     @Override
-    public SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException {
+    public SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForSessionException, GenerateAccessTokenException {
         validator.validate(createSessionRequest);
         UserDto userToCreateSessionFor = userService
                 .findOneByEmailAndPassword(
@@ -24,7 +24,7 @@ public class SessionServiceImpl implements SessionService {
                         createSessionRequest.getPassword()
                 )
                 .orElseThrow(
-                        () -> new UserNotFoundForAccessTokenException(NON_EXISTENT_USER_ERROR)
+                        () -> new UserNotFoundForSessionException(NON_EXISTENT_USER_ERROR)
                 );
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(userToCreateSessionFor))

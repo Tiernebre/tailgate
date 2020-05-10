@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.exception.InvalidException;
 
