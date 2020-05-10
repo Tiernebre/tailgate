@@ -1,8 +1,9 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.session.CreateSessionRequest;
 import com.tiernebre.tailgate.session.SessionValidatorImpl;
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
+import com.tiernebre.tailgate.token.InvalidCreateAccessTokenRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
