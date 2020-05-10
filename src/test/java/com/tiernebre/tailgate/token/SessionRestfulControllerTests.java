@@ -15,12 +15,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TokenRestfulControllerTests {
+public class SessionRestfulControllerTests {
     @Mock
     private AccessTokenService accessTokenService;
 
     @InjectMocks
-    private TokenRestfulController tokenRestfulController;
+    private SessionRestfulController sessionRestfulController;
 
     @Nested
     @DisplayName("createOne")
@@ -31,7 +31,7 @@ public class TokenRestfulControllerTests {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
             when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
-            AccessTokenDTO gottenAccessTokenDTO = tokenRestfulController.createOne(createAccessTokenRequest);
+            AccessTokenDTO gottenAccessTokenDTO = sessionRestfulController.createOne(createAccessTokenRequest);
             assertEquals(expectedToken, gottenAccessTokenDTO.getToken());
         }
     }

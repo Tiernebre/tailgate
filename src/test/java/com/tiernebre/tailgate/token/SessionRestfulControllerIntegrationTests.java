@@ -16,8 +16,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = TokenRestfulController.class)
-public class TokenRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
+@WebMvcTest(controllers = SessionRestfulController.class)
+public class SessionRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
     @MockBean
     private AccessTokenService accessTokenService;
 

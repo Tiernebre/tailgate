@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tokens")
-public class TokenRestfulController {
+@RequestMapping("/sessions")
+public class SessionRestfulController {
     private final AccessTokenService service;
 
     @PostMapping
