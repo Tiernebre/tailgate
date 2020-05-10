@@ -1,9 +1,6 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.session.SessionRestfulController;
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
-import com.tiernebre.tailgate.token.AccessTokenService;
-import com.tiernebre.tailgate.token.CreateAccessTokenRequest;
 import com.tiernebre.tailgate.token.TokenFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = SessionRestfulController.class)
 public class SessionRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
     @MockBean
-    private AccessTokenService accessTokenService;
+    private SessionService sessionService;
 
     @Nested
     @DisplayName("POST /sessions")
@@ -31,12 +28,12 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @Test
         @DisplayName("returns with 201 CREATED status if successful")
         public void returnsWithCreatedStatus() throws Exception {
-            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder().accessToken(expectedToken).build());
             mockMvc.perform(
                     post("/sessions")
-                            .content(objectMapper.writeValueAsString(createAccessTokenRequest))
+                            .content(objectMapper.writeValueAsString(createSessionRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(status().isCreated());
@@ -45,12 +42,12 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @Test
         @DisplayName("returns with the token in the JSON response body")
         public void returnsWithTheToken() throws Exception {
-            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder().accessToken(expectedToken).build());
             mockMvc.perform(
                     post("/sessions")
-                            .content(objectMapper.writeValueAsString(createAccessTokenRequest))
+                            .content(objectMapper.writeValueAsString(createSessionRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(jsonPath("$.accessToken").exists())

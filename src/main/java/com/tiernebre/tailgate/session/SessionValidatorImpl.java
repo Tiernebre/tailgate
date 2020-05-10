@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -9,19 +9,19 @@ import javax.validation.Validator;
 import java.util.Set;
 
 @Component
-public class AccessTokenValidatorImpl extends BaseValidator implements AccessTokenValidator {
+public class SessionValidatorImpl extends BaseValidator implements SessionValidator {
     @Autowired
-    public AccessTokenValidatorImpl(
+    public SessionValidatorImpl(
             Validator validator
     ) {
         super(validator);
     }
 
     @Override
-    public void validate(CreateAccessTokenRequest valueToValidate) throws InvalidCreateAccessTokenRequestException {
+    public void validate(CreateSessionRequest valueToValidate) throws InvalidCreateSessionRequestException {
         Set<String> errorsFound = validateCommon(valueToValidate);
         if (CollectionUtils.isNotEmpty(errorsFound)) {
-            throw new InvalidCreateAccessTokenRequestException(errorsFound);
+            throw new InvalidCreateSessionRequestException(errorsFound);
         }
     }
 }

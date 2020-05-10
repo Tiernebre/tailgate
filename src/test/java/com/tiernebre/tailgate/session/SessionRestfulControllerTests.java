@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SessionRestfulControllerTests {
     @Mock
-    private AccessTokenService accessTokenService;
+    private SessionService sessionService;
 
     @InjectMocks
     private SessionRestfulController sessionRestfulController;
@@ -28,12 +28,13 @@ public class SessionRestfulControllerTests {
     public class CreateOneTests {
         @Test
         @DisplayName("returns the created token")
-        void returnsTheCreatedToken () throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
-            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
+        void returnsTheCreatedToken () throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
-            SessionDto gottenSessionDto = sessionRestfulController.createOne(createAccessTokenRequest);
-            assertEquals(expectedToken, gottenSessionDto.getAccessToken());
+            SessionDto expectedSession = SessionDto.builder().accessToken(expectedToken).build();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
+            SessionDto gottenSession = sessionRestfulController.createOne(createSessionRequest);
+            assertEquals(expectedSession, gottenSession);
         }
     }
 }
