@@ -8,6 +8,6 @@ public class InvalidCreateAccessTokenRequestException extends InvalidException {
     public InvalidCreateAccessTokenRequestException(
             Collection<String> errors
     ) {
-        super("The request to create a token contained invalid data.", errors);
+        super("The request to create an access token contained invalid data.", errors);
     }
 }

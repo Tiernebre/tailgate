@@ -39,7 +39,7 @@ public class AccessTokenServiceImplTests {
     @DisplayName("createOne")
     public class CreateOneTests {
         @Test
-        @DisplayName("returns the generated token if entirely successful")
+        @DisplayName("returns the generated access token if entirely successful")
         void returnsTheGeneratedTokenIfSuccessful() throws GenerateAccessTokenException, UserNotFoundForAccessTokenException, InvalidCreateAccessTokenRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
@@ -56,7 +56,7 @@ public class AccessTokenServiceImplTests {
         }
 
         @Test
-        @DisplayName("throws UserNotFoundForTokenException if the user could not be found from the request")
+        @DisplayName("throws UserNotFoundForAccessTokenException if the user could not be found from the request")
         void throwsUserNotFoundForTokenExceptionIfUserCouldNotBeFound() throws InvalidCreateAccessTokenRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
