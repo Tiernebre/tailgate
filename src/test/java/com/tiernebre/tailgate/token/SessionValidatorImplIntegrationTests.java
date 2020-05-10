@@ -14,9 +14,9 @@ import java.util.UUID;
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class AccessTokenValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
+public class SessionValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
     @Autowired
-    private AccessTokenValidatorImpl tokenValidator;
+    private SessionValidatorImpl tokenValidator;
 
     @Nested
     @DisplayName("validate")
