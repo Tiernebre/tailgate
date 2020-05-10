@@ -67,7 +67,7 @@ public class AccessTokenServiceImplTests {
             doNothing().when(accessTokenValidator).validate(eq(createAccessTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
             UserNotFoundForAccessTokenException thrown = assertThrows(UserNotFoundForAccessTokenException.class, () -> tokenService.createOne(createAccessTokenRequest));
-            assertEquals("The request to create a token included information that did not match up with an existing user.", thrown.getMessage());
+            assertEquals("The request to create an access token included information that did not match up with an existing user.", thrown.getMessage());
         }
     }
 }
