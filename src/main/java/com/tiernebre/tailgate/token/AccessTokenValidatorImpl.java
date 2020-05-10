@@ -18,7 +18,7 @@ public class AccessTokenValidatorImpl extends BaseValidator implements AccessTok
     }
 
     @Override
-    public void validate(CreateAccessTokenRequest valueToValidate) throws InvalidCreateAccessTokenRequestException {
+    public void validate(CreateSessionRequest valueToValidate) throws InvalidCreateAccessTokenRequestException {
         Set<String> errorsFound = validateCommon(valueToValidate);
         if (CollectionUtils.isNotEmpty(errorsFound)) {
             throw new InvalidCreateAccessTokenRequestException(errorsFound);

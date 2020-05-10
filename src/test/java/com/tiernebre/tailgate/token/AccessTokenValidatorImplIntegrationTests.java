@@ -23,13 +23,13 @@ public class AccessTokenValidatorImplIntegrationTests extends SpringIntegrationT
         @Test
         @DisplayName("validates that the email must not be null")
         void testNullEmail() {
-            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
+            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .email(null)
                     .password(UUID.randomUUID().toString())
                     .build();
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
-                    createAccessTokenRequest,
+                    createSessionRequest,
                     InvalidCreateAccessTokenRequestException.class,
                     "email must not be blank"
             );
@@ -38,13 +38,13 @@ public class AccessTokenValidatorImplIntegrationTests extends SpringIntegrationT
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
         void testBlankEmail(String email) {
-            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
+            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .email(email)
                     .password(UUID.randomUUID().toString())
                     .build();
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
-                    createAccessTokenRequest,
+                    createSessionRequest,
                     InvalidCreateAccessTokenRequestException.class,
                     "email must not be blank"
             );
@@ -53,13 +53,13 @@ public class AccessTokenValidatorImplIntegrationTests extends SpringIntegrationT
         @Test
         @DisplayName("validates that the password must not be null")
         void testNullPassword() {
-            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
+            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .password(null)
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
-                    createAccessTokenRequest,
+                    createSessionRequest,
                     InvalidCreateAccessTokenRequestException.class,
                     "password must not be blank"
             );
@@ -68,13 +68,13 @@ public class AccessTokenValidatorImplIntegrationTests extends SpringIntegrationT
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
         void testBlankPassword(String password) {
-            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
+            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .password(password)
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
-                    createAccessTokenRequest,
+                    createSessionRequest,
                     InvalidCreateAccessTokenRequestException.class,
                     "password must not be blank"
             );
@@ -83,11 +83,11 @@ public class AccessTokenValidatorImplIntegrationTests extends SpringIntegrationT
         @Test
         @DisplayName("lets through a completely valid request")
         void testValidRequest() {
-            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
+            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .password(UUID.randomUUID().toString())
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
-            assertDoesNotThrow(() -> tokenValidator.validate(createAccessTokenRequest));
+            assertDoesNotThrow(() -> tokenValidator.validate(createSessionRequest));
         }
     }
 }

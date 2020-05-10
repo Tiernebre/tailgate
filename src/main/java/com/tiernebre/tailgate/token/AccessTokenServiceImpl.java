@@ -15,12 +15,12 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     private final AccessTokenValidator validator;
 
     @Override
-    public String createOne(CreateAccessTokenRequest createAccessTokenRequest) throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
-        validator.validate(createAccessTokenRequest);
+    public String createOne(CreateSessionRequest createSessionRequest) throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
+        validator.validate(createSessionRequest);
         UserDto foundUser = userService
                 .findOneByEmailAndPassword(
-                        createAccessTokenRequest.getEmail(),
-                        createAccessTokenRequest.getPassword()
+                        createSessionRequest.getEmail(),
+                        createSessionRequest.getPassword()
                 )
                 .orElseThrow(
                         () -> new UserNotFoundForAccessTokenException(NON_EXISTENT_USER_ERROR)

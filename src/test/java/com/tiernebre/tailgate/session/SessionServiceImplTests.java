@@ -29,13 +29,13 @@ public class SessionServiceImplTests {
         @Test
         @DisplayName("returns a properly mapped session DTO representation with the tokens")
         public void createOneReturnsDto() throws InvalidCreateAccessTokenRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException {
-            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedAccessToken);
+            when(accessTokenService.createOne(eq(createSessionRequest))).thenReturn(expectedAccessToken);
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .build();
-            SessionDto createdSession = sessionService.createOne(createAccessTokenRequest);
+            SessionDto createdSession = sessionService.createOne(createSessionRequest);
             assertEquals(expectedSession, createdSession);
         }
     }

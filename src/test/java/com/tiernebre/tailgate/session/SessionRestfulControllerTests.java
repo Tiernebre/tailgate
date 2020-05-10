@@ -29,11 +29,11 @@ public class SessionRestfulControllerTests {
         @Test
         @DisplayName("returns the created token")
         void returnsTheCreatedToken () throws UserNotFoundForAccessTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {
-            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
             SessionDto expectedSession = SessionDto.builder().accessToken(expectedToken).build();
-            when(sessionService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedSession);
-            SessionDto gottenSession = sessionRestfulController.createOne(createAccessTokenRequest);
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
+            SessionDto gottenSession = sessionRestfulController.createOne(createSessionRequest);
             assertEquals(expectedSession, gottenSession);
         }
     }
