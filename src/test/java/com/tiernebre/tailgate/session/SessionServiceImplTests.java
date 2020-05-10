@@ -73,7 +73,7 @@ public class SessionServiceImplTests {
         }
 
         @Test
-        @DisplayName("throws validation error if the validator found an error")
+        @DisplayName("throws a validation error if the validator found an error")
         public void createOneThrowsValidationException() throws InvalidCreateSessionRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
