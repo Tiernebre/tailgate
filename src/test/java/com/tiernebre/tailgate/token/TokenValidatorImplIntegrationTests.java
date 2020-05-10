@@ -30,7 +30,7 @@ public class TokenValidatorImplIntegrationTests extends SpringIntegrationTesting
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
                     createAccessTokenRequest,
-                    InvalidCreateTokenRequestException.class,
+                    InvalidCreateAccessTokenRequestException.class,
                     "email must not be blank"
             );
         }
@@ -45,7 +45,7 @@ public class TokenValidatorImplIntegrationTests extends SpringIntegrationTesting
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
                     createAccessTokenRequest,
-                    InvalidCreateTokenRequestException.class,
+                    InvalidCreateAccessTokenRequestException.class,
                     "email must not be blank"
             );
         }
@@ -60,7 +60,7 @@ public class TokenValidatorImplIntegrationTests extends SpringIntegrationTesting
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
                     createAccessTokenRequest,
-                    InvalidCreateTokenRequestException.class,
+                    InvalidCreateAccessTokenRequestException.class,
                     "password must not be blank"
             );
         }
@@ -75,7 +75,7 @@ public class TokenValidatorImplIntegrationTests extends SpringIntegrationTesting
             assertThatValidationInvalidatedCorrectly(
                     tokenValidator,
                     createAccessTokenRequest,
-                    InvalidCreateTokenRequestException.class,
+                    InvalidCreateAccessTokenRequestException.class,
                     "password must not be blank"
             );
         }

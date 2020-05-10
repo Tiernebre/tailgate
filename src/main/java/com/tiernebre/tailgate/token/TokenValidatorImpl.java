@@ -18,10 +18,10 @@ public class TokenValidatorImpl extends BaseValidator implements TokenValidator 
     }
 
     @Override
-    public void validate(CreateAccessTokenRequest valueToValidate) throws InvalidCreateTokenRequestException {
+    public void validate(CreateAccessTokenRequest valueToValidate) throws InvalidCreateAccessTokenRequestException {
         Set<String> errorsFound = validateCommon(valueToValidate);
         if (CollectionUtils.isNotEmpty(errorsFound)) {
-            throw new InvalidCreateTokenRequestException(errorsFound);
+            throw new InvalidCreateAccessTokenRequestException(errorsFound);
         }
     }
 }
