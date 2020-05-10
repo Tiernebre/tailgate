@@ -40,7 +40,7 @@ public class AccessTokenServiceImplTests {
     public class CreateOneTests {
         @Test
         @DisplayName("returns the generated token if entirely successful")
-        void returnsTheGeneratedTokenIfSuccessful() throws GenerateAccessTokenException, UserNotFoundForTokenException, InvalidCreateAccessTokenRequestException {
+        void returnsTheGeneratedTokenIfSuccessful() throws GenerateAccessTokenException, UserNotFoundForAccessTokenException, InvalidCreateAccessTokenRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
             CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
@@ -66,7 +66,7 @@ public class AccessTokenServiceImplTests {
                     .build();
             doNothing().when(accessTokenValidator).validate(eq(createAccessTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
-            UserNotFoundForTokenException thrown = assertThrows(UserNotFoundForTokenException.class, () -> tokenService.createOne(createAccessTokenRequest));
+            UserNotFoundForAccessTokenException thrown = assertThrows(UserNotFoundForAccessTokenException.class, () -> tokenService.createOne(createAccessTokenRequest));
             assertEquals("The request to create a token included information that did not match up with an existing user.", thrown.getMessage());
         }
     }
