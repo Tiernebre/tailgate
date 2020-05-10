@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.ISSUER;
