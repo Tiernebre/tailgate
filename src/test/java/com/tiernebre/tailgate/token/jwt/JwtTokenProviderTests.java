@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
@@ -54,6 +55,7 @@ public class JwtTokenProviderTests {
             UserDto userDTO = UserFactory.generateOneDto();
             Clock fixedTestClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
+            Date expectedExpiresAt = new Date(expectedMillisForExpiration);
             String generatedToken = jwtTokenService.generateOne(userDTO, fixedTestClock);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
@@ -63,7 +65,7 @@ public class JwtTokenProviderTests {
                     () -> assertEquals(ISSUER, decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
                     () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim(EMAIL_CLAIM).asString()),
-                    () -> assertEquals(expectedMillisForExpiration, decodedJWT.getExpiresAt().toInstant().toEpochMilli())
+                    () -> assertEquals(expectedExpiresAt, decodedJWT.getExpiresAt())
             );
         }
 
