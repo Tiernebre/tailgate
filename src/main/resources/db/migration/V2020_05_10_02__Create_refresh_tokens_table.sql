@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS refresh_tokens (
-  id BIGSERIAL PRIMARY KEY,
-  token TEXT UNIQUE NOT NULL,
+  token TEXT PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
   created_at TIMESTAMP NOT NULL DEFAULT now()
 );
