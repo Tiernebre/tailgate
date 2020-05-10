@@ -13,12 +13,16 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SessionServiceImplTests {
     @Mock
     private AccessTokenService accessTokenService;
+
+    @Mock
+    private SessionValidator sessionValidator;
 
     @InjectMocks
     private SessionServiceImpl sessionService;
@@ -32,6 +36,7 @@ public class SessionServiceImplTests {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
             when(accessTokenService.createOneForUser(eq(createSessionRequest))).thenReturn(expectedAccessToken);
+            doNothing().when(sessionValidator).validate(eq(createSessionRequest));
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .build();

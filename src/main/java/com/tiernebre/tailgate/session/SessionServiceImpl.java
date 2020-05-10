@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
     private final AccessTokenService accessTokenService;
+    private final SessionValidator validator;
 
     @Override
     public SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateAccessTokenRequestException, UserNotFoundForAccessTokenException, GenerateAccessTokenException {
+        validator.validate(createSessionRequest);
         return SessionDto.builder()
                 .accessToken(accessTokenService.createOneForUser(createSessionRequest))
                 .build();
