@@ -32,32 +32,39 @@ public class JwtTokenProviderTests {
     private static final Algorithm ALGORITHM = Algorithm.HMAC256(TEST_SECRET);
     private static final int TEST_EXPIRATION_WINDOW_IN_MINUTES = 15;
 
-    private JwtTokenProvider jwtTokenService;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Mock
     private JwtTokenConfigurationProperties jwtTokenConfigurationProperties;
 
+    private Clock fixedTestClock;
+
     @BeforeEach
     public void setup() {
-        when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
-        jwtTokenService = new JwtTokenProvider(
+        fixedTestClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
+        jwtTokenProvider = new JwtTokenProvider(
                 ALGORITHM,
-                jwtTokenConfigurationProperties
+                jwtTokenConfigurationProperties,
+                Clock.fixed(Instant.now(), ZoneId.of("UTC"))
         );
     }
 
     @Nested
     @DisplayName("generateOne")
     public class GenerateOneTests {
+        @BeforeEach
+        public void setup() {
+            when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
+        }
+
         @Test
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
             UserDto userDTO = UserFactory.generateOneDto();
-            Clock fixedTestClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             Date expectedExpiresAt = new Date(expectedMillisForExpiration);
-            String generatedToken = jwtTokenService.generateOne(userDTO, fixedTestClock);
+            String generatedToken = jwtTokenProvider.generateOne(userDTO);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();
@@ -75,10 +82,11 @@ public class JwtTokenProviderTests {
         void throwsGenerateTokenExceptionIfTokenCannotBeSigned() throws GenerateTokenException {
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
                     null,
-                    jwtTokenConfigurationProperties
+                    jwtTokenConfigurationProperties,
+                    fixedTestClock
             );
             UserDto userDTO = UserFactory.generateOneDto();
-            assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO, Clock.systemUTC()));
+            assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
         }
     }
 
@@ -94,7 +102,7 @@ public class JwtTokenProviderTests {
                     .withSubject(expectedUser.getId().toString())
                     .withClaim(EMAIL_CLAIM, expectedUser.getEmail())
                     .sign(ALGORITHM);
-            UserDto foundUser = jwtTokenService.validateOne(testToken);
+            UserDto foundUser = jwtTokenProvider.validateOne(testToken);
             assertEquals(expectedUser, foundUser);
         }
     }

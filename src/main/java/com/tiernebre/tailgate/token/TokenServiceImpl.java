@@ -27,6 +27,6 @@ public class TokenServiceImpl implements TokenService {
                 .orElseThrow(
                         () -> new UserNotFoundForTokenException(NON_EXISTENT_USER_ERROR)
                 );
-        return provider.generateOne(foundUser, Clock.systemDefaultZone());
+        return provider.generateOne(foundUser);
     }
 }

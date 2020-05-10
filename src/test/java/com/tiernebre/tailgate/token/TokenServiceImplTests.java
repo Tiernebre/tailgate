@@ -51,7 +51,7 @@ public class TokenServiceImplTests {
             doNothing().when(tokenValidator).validate(eq(createTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenProvider.generateOne(eq(user), any(Clock.class))).thenReturn(expectedToken);
+            when(tokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
             String createdToken = tokenService.createOne(createTokenRequest);
             assertEquals(expectedToken, createdToken);
         }

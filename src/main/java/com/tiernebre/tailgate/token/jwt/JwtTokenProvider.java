@@ -25,15 +25,16 @@ public class JwtTokenProvider implements TokenProvider {
 
     private final Algorithm algorithm;
     private final JwtTokenConfigurationProperties configurationProperties;
+    private final Clock clock;
 
     @Override
-    public String generateOne(UserDto user, Clock clock) throws GenerateTokenException {
+    public String generateOne(UserDto user) throws GenerateTokenException {
         try {
             return JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
-                    .withExpiresAt(generateExpiresAt(clock))
+                    .withExpiresAt(generateExpiresAt())
                     .sign(algorithm);
         } catch (Exception exception){
             throw new GenerateTokenException(exception.getMessage());
@@ -56,7 +57,7 @@ public class JwtTokenProvider implements TokenProvider {
                 .build();
     }
 
-    private Date generateExpiresAt(Clock clock) {
+    private Date generateExpiresAt() {
         return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getExpirationWindowInMinutes()));
     }
 }
