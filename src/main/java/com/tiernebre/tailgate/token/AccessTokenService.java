@@ -1,5 +1,7 @@
 package com.tiernebre.tailgate.token;
 
+import com.tiernebre.tailgate.session.CreateSessionRequest;
+
 public interface AccessTokenService {
     /**
      * Creates an authentication access token from a given request.

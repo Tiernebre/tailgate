@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.token;
 
+import com.tiernebre.tailgate.session.CreateSessionRequest;
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

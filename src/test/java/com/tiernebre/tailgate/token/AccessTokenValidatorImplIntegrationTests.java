@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.token;
 
+import com.tiernebre.tailgate.session.CreateSessionRequest;
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

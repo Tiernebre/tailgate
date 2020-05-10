@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.token;
 
+import com.tiernebre.tailgate.session.CreateSessionRequest;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserService;
 import lombok.RequiredArgsConstructor;
