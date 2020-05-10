@@ -5,7 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.tailgate.token.GenerateTokenException;
-import com.tiernebre.tailgate.token.TokenProvider;
+import com.tiernebre.tailgate.token.AccessTokenProvider;
 import com.tiernebre.tailgate.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @RequiredArgsConstructor
-public class JwtTokenProvider implements TokenProvider {
+public class JwtTokenProvider implements AccessTokenProvider {
     static final String ISSUER = "tailgate";
     static final String EMAIL_CLAIM = "email";
 

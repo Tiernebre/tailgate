@@ -27,12 +27,12 @@ public class TokenRestfulControllerIntegrationTests extends WebControllerIntegra
         @Test
         @DisplayName("returns with 201 CREATED status if successful")
         public void returnsWithCreatedStatus() throws Exception {
-            CreateTokenRequest createTokenRequest = TokenFactory.generateOneCreateRequest();
+            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenService.createOne(eq(createTokenRequest))).thenReturn(expectedToken);
+            when(tokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/tokens")
-                            .content(objectMapper.writeValueAsString(createTokenRequest))
+                            .content(objectMapper.writeValueAsString(createAccessTokenRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(status().isCreated());
@@ -41,12 +41,12 @@ public class TokenRestfulControllerIntegrationTests extends WebControllerIntegra
         @Test
         @DisplayName("returns with the token in the JSON response body")
         public void returnsWithTheToken() throws Exception {
-            CreateTokenRequest createTokenRequest = TokenFactory.generateOneCreateRequest();
+            CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenService.createOne(eq(createTokenRequest))).thenReturn(expectedToken);
+            when(tokenService.createAccessToken(eq(createAccessTokenRequest))).thenReturn(expectedToken);
             mockMvc.perform(
                     post("/tokens")
-                            .content(objectMapper.writeValueAsString(createTokenRequest))
+                            .content(objectMapper.writeValueAsString(createAccessTokenRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(jsonPath("$.token").exists())

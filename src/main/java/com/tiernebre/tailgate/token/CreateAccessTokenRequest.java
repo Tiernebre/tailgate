@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Value
 @Builder
-public class CreateTokenRequest {
+public class CreateAccessTokenRequest {
     @NotBlank
     String email;
     @NotBlank

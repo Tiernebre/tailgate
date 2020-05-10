@@ -15,9 +15,9 @@ public class TokenRestfulController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TokenDTO createOne(@RequestBody CreateTokenRequest createTokenRequest) throws GenerateTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
-        return TokenDTO.builder()
-                .token(service.createOne(createTokenRequest))
+    public AccessTokenDTO createOne(@RequestBody CreateAccessTokenRequest createAccessTokenRequest) throws GenerateTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
+        return AccessTokenDTO.builder()
+                .token(service.createAccessToken(createAccessTokenRequest))
                 .build();
     }
 }
