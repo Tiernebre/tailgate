@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/sessions")
 public class SessionRestfulController {
-    private final AccessTokenService service;
+    private final SessionService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionDto createOne(@RequestBody CreateAccessTokenRequest createAccessTokenRequest) throws GenerateAccessTokenException, UserNotFoundForAccessTokenException, InvalidCreateAccessTokenRequestException {
-        return SessionDto.builder()
-                .accessToken(service.createOne(createAccessTokenRequest))
-                .build();
+        return service.createOne(createAccessTokenRequest);
     }
 }
