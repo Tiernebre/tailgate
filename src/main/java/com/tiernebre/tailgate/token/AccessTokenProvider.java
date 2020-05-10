@@ -2,8 +2,6 @@ package com.tiernebre.tailgate.token;
 
 import com.tiernebre.tailgate.user.UserDto;
 
-import java.time.Clock;
-
 public interface AccessTokenProvider {
     /**
      * Generates an access token given information about a user.
