@@ -1,7 +1,6 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
-import com.tiernebre.tailgate.token.AccessTokenService;
 import com.tiernebre.tailgate.token.TokenFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = SessionRestfulController.class)
 public class SessionRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
     @MockBean
-    private AccessTokenService accessTokenService;
+    private SessionService sessionService;
 
     @Nested
     @DisplayName("POST /sessions")
@@ -31,7 +30,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         public void returnsWithCreatedStatus() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOneForUser(eq(createSessionRequest))).thenReturn(expectedToken);
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder().accessToken(expectedToken).build());
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
@@ -45,7 +44,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         public void returnsWithTheToken() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
-            when(accessTokenService.createOneForUser(eq(createSessionRequest))).thenReturn(expectedToken);
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder().accessToken(expectedToken).build());
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
