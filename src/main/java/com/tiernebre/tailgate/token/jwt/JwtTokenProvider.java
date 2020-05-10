@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Generates / Validates JSON Web Tokens.
@@ -22,18 +23,18 @@ public class JwtTokenProvider implements TokenProvider {
     static final String ISSUER = "tailgate";
     static final String EMAIL_CLAIM = "email";
 
-    private final Algorithm jwtAlgorithm;
+    private final Algorithm algorithm;
+    private final JwtTokenConfigurationProperties configurationProperties;
 
     @Override
     public String generateOne(UserDto user, Clock clock) throws GenerateTokenException {
-        Long expirationTime = clock.millis() + 1;
         try {
             return JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
-                    .withExpiresAt(new Date(expirationTime))
-                    .sign(jwtAlgorithm);
+                    .withExpiresAt(generateExpiresAt(clock))
+                    .sign(algorithm);
         } catch (Exception exception){
             throw new GenerateTokenException(exception.getMessage());
         }
@@ -41,7 +42,7 @@ public class JwtTokenProvider implements TokenProvider {
 
     @Override
     public UserDto validateOne(String token) {
-        JWTVerifier verifier = JWT.require(jwtAlgorithm)
+        JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(ISSUER)
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
@@ -53,5 +54,9 @@ public class JwtTokenProvider implements TokenProvider {
                 .id(Long.parseLong(decodedJWT.getSubject()))
                 .email(decodedJWT.getClaim(EMAIL_CLAIM).asString())
                 .build();
+    }
+
+    private Date generateExpiresAt(Clock clock) {
+        return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getExpirationWindowInMinutes()));
     }
 }

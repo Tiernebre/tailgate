@@ -11,25 +11,37 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.concurrent.TimeUnit;
 
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.ISSUER;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class JwtTokenProviderTests {
     private static final String TEST_SECRET = "secret!";
     private static final Algorithm ALGORITHM = Algorithm.HMAC256(TEST_SECRET);
+    private static final int TEST_EXPIRATION_WINDOW_IN_MINUTES = 15;
 
     private JwtTokenProvider jwtTokenService;
 
+    @Mock
+    private JwtTokenConfigurationProperties jwtTokenConfigurationProperties;
+
     @BeforeEach
     public void setup() {
+        when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
         jwtTokenService = new JwtTokenProvider(
-                ALGORITHM
+                ALGORITHM,
+                jwtTokenConfigurationProperties
         );
     }
 
@@ -41,7 +53,7 @@ public class JwtTokenProviderTests {
         void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
             UserDto userDTO = UserFactory.generateOneDto();
             Clock fixedTestClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
-            long expectedMillisForExpiration = (fixedTestClock.millis() +  1) / 1000 * 1000;
+            long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             String generatedToken = jwtTokenService.generateOne(userDTO, fixedTestClock);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
@@ -50,7 +62,7 @@ public class JwtTokenProviderTests {
             assertAll(
                     () -> assertEquals(ISSUER, decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
-                    () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim("email").asString()),
+                    () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim(EMAIL_CLAIM).asString()),
                     () -> assertEquals(expectedMillisForExpiration, decodedJWT.getExpiresAt().toInstant().toEpochMilli())
             );
         }
@@ -59,7 +71,8 @@ public class JwtTokenProviderTests {
         @DisplayName("throws a GenerateTokenException if the JWT token completely failed to sign")
         void throwsGenerateTokenExceptionIfTokenCannotBeSigned() throws GenerateTokenException {
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
-                    null
+                    null,
+                    jwtTokenConfigurationProperties
             );
             UserDto userDTO = UserFactory.generateOneDto();
             assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO, Clock.systemUTC()));
