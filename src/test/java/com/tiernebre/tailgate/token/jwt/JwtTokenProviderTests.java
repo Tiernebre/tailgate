@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.ISSUER;
@@ -38,7 +41,9 @@ public class JwtTokenProviderTests {
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
             UserDto userDTO = UserFactory.generateOneDto();
-            String generatedToken = jwtTokenService.generateOne(userDTO, Clock.systemUTC());
+            Clock fixedTestClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
+            long expectedMillisForExpiration = (fixedTestClock.millis() +  1) / 1000 * 1000;
+            String generatedToken = jwtTokenService.generateOne(userDTO, fixedTestClock);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();
@@ -46,7 +51,8 @@ public class JwtTokenProviderTests {
             assertAll(
                     () -> assertEquals(ISSUER, decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
-                    () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim("email").asString())
+                    () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim("email").asString()),
+                    () -> assertEquals(expectedMillisForExpiration, decodedJWT.getExpiresAt().toInstant().toEpochMilli())
             );
         }
 

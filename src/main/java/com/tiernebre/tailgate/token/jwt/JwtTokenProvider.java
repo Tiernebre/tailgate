@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
+import java.util.Date;
 
 /**
  * Generates / Validates JSON Web Tokens.
@@ -25,11 +26,13 @@ public class JwtTokenProvider implements TokenProvider {
 
     @Override
     public String generateOne(UserDto user, Clock clock) throws GenerateTokenException {
+        Long expirationTime = clock.millis() + 1;
         try {
             return JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
+                    .withExpiresAt(new Date(expirationTime))
                     .sign(jwtAlgorithm);
         } catch (Exception exception){
             throw new GenerateTokenException(exception.getMessage());
