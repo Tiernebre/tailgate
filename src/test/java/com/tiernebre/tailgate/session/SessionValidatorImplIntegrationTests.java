@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class SessionValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
     @Autowired
-    private SessionValidatorImpl tokenValidator;
+    private SessionValidatorImpl sessionValidator;
 
     @Nested
     @DisplayName("validate")
@@ -28,7 +28,7 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
                     .password(UUID.randomUUID().toString())
                     .build();
             assertThatValidationInvalidatedCorrectly(
-                    tokenValidator,
+                    sessionValidator,
                     createSessionRequest,
                     InvalidCreateSessionRequestException.class,
                     "email must not be blank"
@@ -43,7 +43,7 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
                     .password(UUID.randomUUID().toString())
                     .build();
             assertThatValidationInvalidatedCorrectly(
-                    tokenValidator,
+                    sessionValidator,
                     createSessionRequest,
                     InvalidCreateSessionRequestException.class,
                     "email must not be blank"
@@ -58,7 +58,7 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
             assertThatValidationInvalidatedCorrectly(
-                    tokenValidator,
+                    sessionValidator,
                     createSessionRequest,
                     InvalidCreateSessionRequestException.class,
                     "password must not be blank"
@@ -73,7 +73,7 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
             assertThatValidationInvalidatedCorrectly(
-                    tokenValidator,
+                    sessionValidator,
                     createSessionRequest,
                     InvalidCreateSessionRequestException.class,
                     "password must not be blank"
@@ -87,7 +87,7 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
                     .password(UUID.randomUUID().toString())
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
-            assertDoesNotThrow(() -> tokenValidator.validate(createSessionRequest));
+            assertDoesNotThrow(() -> sessionValidator.validate(createSessionRequest));
         }
     }
 }
