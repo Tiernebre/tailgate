@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.authentication;
 
-import com.tiernebre.tailgate.token.TokenProvider;
+import com.tiernebre.tailgate.token.AccessTokenProvider;
 import com.tiernebre.tailgate.user.UserDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String TOKEN_HEADER = "Authorization";
 
-    private final TokenProvider tokenProvider;
+    private final AccessTokenProvider tokenProvider;
 
     @Autowired
     public JwtAuthorizationFilter(
             AuthenticationManager authenticationManager,
-            TokenProvider tokenProvider
+            AccessTokenProvider tokenProvider
     ) {
         super(authenticationManager);
         this.tokenProvider = tokenProvider;

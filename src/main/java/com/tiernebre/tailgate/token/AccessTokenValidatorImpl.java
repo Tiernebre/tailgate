@@ -9,19 +9,19 @@ import javax.validation.Validator;
 import java.util.Set;
 
 @Component
-public class TokenValidatorImpl extends BaseValidator implements TokenValidator {
+public class AccessTokenValidatorImpl extends BaseValidator implements AccessTokenValidator {
     @Autowired
-    public TokenValidatorImpl(
+    public AccessTokenValidatorImpl(
             Validator validator
     ) {
         super(validator);
     }
 
     @Override
-    public void validate(CreateTokenRequest valueToValidate) throws InvalidCreateTokenRequestException {
+    public void validate(CreateAccessTokenRequest valueToValidate) throws InvalidCreateAccessTokenRequestException {
         Set<String> errorsFound = validateCommon(valueToValidate);
         if (CollectionUtils.isNotEmpty(errorsFound)) {
-            throw new InvalidCreateTokenRequestException(errorsFound);
+            throw new InvalidCreateAccessTokenRequestException(errorsFound);
         }
     }
 }

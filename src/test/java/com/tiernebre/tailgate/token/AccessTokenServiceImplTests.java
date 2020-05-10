@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,52 +22,52 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TokenServiceImplTests {
+public class AccessTokenServiceImplTests {
     @Mock
     private UserService userService;
 
     @Mock
-    private TokenProvider tokenProvider;
+    private AccessTokenProvider tokenProvider;
 
     @Mock
-    private TokenValidator tokenValidator;
+    private AccessTokenValidator accessTokenValidator;
 
     @InjectMocks
-    private TokenServiceImpl tokenService;
+    private AccessTokenServiceImpl tokenService;
 
     @Nested
     @DisplayName("createOne")
     public class CreateOneTests {
         @Test
-        @DisplayName("returns the generated token if entirely successful")
-        void returnsTheGeneratedTokenIfSuccessful() throws GenerateTokenException, UserNotFoundForTokenException, InvalidCreateTokenRequestException {
+        @DisplayName("returns the generated access token if entirely successful")
+        void returnsTheGeneratedTokenIfSuccessful() throws GenerateAccessTokenException, UserNotFoundForAccessTokenException, InvalidCreateAccessTokenRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
-            CreateTokenRequest createTokenRequest = CreateTokenRequest.builder()
+            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
                     .email(user.getEmail())
                     .password(password)
                     .build();
-            doNothing().when(tokenValidator).validate(eq(createTokenRequest));
+            doNothing().when(accessTokenValidator).validate(eq(createAccessTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             String expectedToken = UUID.randomUUID().toString();
             when(tokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
-            String createdToken = tokenService.createOne(createTokenRequest);
+            String createdToken = tokenService.createOne(createAccessTokenRequest);
             assertEquals(expectedToken, createdToken);
         }
 
         @Test
-        @DisplayName("throws UserNotFoundForTokenException if the user could not be found from the request")
-        void throwsUserNotFoundForTokenExceptionIfUserCouldNotBeFound() throws InvalidCreateTokenRequestException {
+        @DisplayName("throws UserNotFoundForAccessTokenException if the user could not be found from the request")
+        void throwsUserNotFoundForTokenExceptionIfUserCouldNotBeFound() throws InvalidCreateAccessTokenRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
-            CreateTokenRequest createTokenRequest = CreateTokenRequest.builder()
+            CreateAccessTokenRequest createAccessTokenRequest = CreateAccessTokenRequest.builder()
                     .email(user.getEmail())
                     .password(password)
                     .build();
-            doNothing().when(tokenValidator).validate(eq(createTokenRequest));
+            doNothing().when(accessTokenValidator).validate(eq(createAccessTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
-            UserNotFoundForTokenException thrown = assertThrows(UserNotFoundForTokenException.class, () -> tokenService.createOne(createTokenRequest));
-            assertEquals("The request to create a token included information that did not match up with an existing user.", thrown.getMessage());
+            UserNotFoundForAccessTokenException thrown = assertThrows(UserNotFoundForAccessTokenException.class, () -> tokenService.createOne(createAccessTokenRequest));
+            assertEquals("The request to create an access token included information that did not match up with an existing user.", thrown.getMessage());
         }
     }
 }

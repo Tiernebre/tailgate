@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.authentication;
 
-import com.tiernebre.tailgate.token.TokenProvider;
+import com.tiernebre.tailgate.token.AccessTokenProvider;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ public class JwtAuthorizationFilterTests {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private TokenProvider tokenProvider;
+    private AccessTokenProvider tokenProvider;
 
     @InjectMocks
     private JwtAuthorizationFilter jwtAuthorizationFilter;
