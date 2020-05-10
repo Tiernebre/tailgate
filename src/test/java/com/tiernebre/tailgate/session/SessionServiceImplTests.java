@@ -58,7 +58,7 @@ public class SessionServiceImplTests {
         }
 
         @Test
-        @DisplayName("throws UserNotFoundForAccessTokenException if the user could not be found from the request")
+        @DisplayName("throws not found error if the user could not be found from the request")
         public void createOneThrowsNotFoundException() throws InvalidCreateSessionRequestException {
             UserDto user = UserFactory.generateOneDto();
             String password = UUID.randomUUID().toString();
