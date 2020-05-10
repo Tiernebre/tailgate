@@ -5,6 +5,8 @@ import com.tiernebre.tailgate.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+
 @RequiredArgsConstructor
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -25,6 +27,6 @@ public class TokenServiceImpl implements TokenService {
                 .orElseThrow(
                         () -> new UserNotFoundForTokenException(NON_EXISTENT_USER_ERROR)
                 );
-        return provider.generateOne(foundUser);
+        return provider.generateOne(foundUser, Clock.systemDefaultZone());
     }
 }

@@ -12,6 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
 import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.ISSUER;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +38,7 @@ public class JwtTokenProviderTests {
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateTokenException {
             UserDto userDTO = UserFactory.generateOneDto();
-            String generatedToken = jwtTokenService.generateOne(userDTO);
+            String generatedToken = jwtTokenService.generateOne(userDTO, Clock.systemUTC());
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();
@@ -55,7 +57,7 @@ public class JwtTokenProviderTests {
                     null
             );
             UserDto userDTO = UserFactory.generateOneDto();
-            assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
+            assertThrows(GenerateTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO, Clock.systemUTC()));
         }
     }
 

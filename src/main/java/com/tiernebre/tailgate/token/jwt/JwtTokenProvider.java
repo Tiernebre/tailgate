@@ -10,6 +10,8 @@ import com.tiernebre.tailgate.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
+
 /**
  * Generates / Validates JSON Web Tokens.
  */
@@ -22,7 +24,7 @@ public class JwtTokenProvider implements TokenProvider {
     private final Algorithm jwtAlgorithm;
 
     @Override
-    public String generateOne(UserDto user) throws GenerateTokenException {
+    public String generateOne(UserDto user, Clock clock) throws GenerateTokenException {
         try {
             return JWT.create()
                     .withIssuer(ISSUER)

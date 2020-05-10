@@ -11,11 +11,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -49,7 +51,7 @@ public class TokenServiceImplTests {
             doNothing().when(tokenValidator).validate(eq(createTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             String expectedToken = UUID.randomUUID().toString();
-            when(tokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            when(tokenProvider.generateOne(eq(user), any(Clock.class))).thenReturn(expectedToken);
             String createdToken = tokenService.createOne(createTokenRequest);
             assertEquals(expectedToken, createdToken);
         }
