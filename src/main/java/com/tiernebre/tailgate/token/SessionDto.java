@@ -5,6 +5,6 @@ import lombok.Value;
 
 @Value
 @Builder
-public class AccessTokenDTO {
+public class SessionDto {
     String token;
 }

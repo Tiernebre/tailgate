@@ -31,8 +31,8 @@ public class SessionRestfulControllerTests {
             CreateAccessTokenRequest createAccessTokenRequest = TokenFactory.generateOneCreateRequest();
             String expectedToken = UUID.randomUUID().toString();
             when(accessTokenService.createOne(eq(createAccessTokenRequest))).thenReturn(expectedToken);
-            AccessTokenDTO gottenAccessTokenDTO = sessionRestfulController.createOne(createAccessTokenRequest);
-            assertEquals(expectedToken, gottenAccessTokenDTO.getToken());
+            SessionDto gottenSessionDto = sessionRestfulController.createOne(createAccessTokenRequest);
+            assertEquals(expectedToken, gottenSessionDto.getToken());
         }
     }
 }
