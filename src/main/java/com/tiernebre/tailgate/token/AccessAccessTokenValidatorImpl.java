@@ -9,9 +9,9 @@ import javax.validation.Validator;
 import java.util.Set;
 
 @Component
-public class TokenValidatorImpl extends BaseValidator implements TokenValidator {
+public class AccessAccessTokenValidatorImpl extends BaseValidator implements AccessTokenValidator {
     @Autowired
-    public TokenValidatorImpl(
+    public AccessAccessTokenValidatorImpl(
             Validator validator
     ) {
         super(validator);

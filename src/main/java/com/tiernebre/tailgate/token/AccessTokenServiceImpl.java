@@ -12,7 +12,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
     private final AccessTokenProvider provider;
     private final UserService userService;
-    private final TokenValidator validator;
+    private final AccessTokenValidator validator;
 
     @Override
     public String createOne(CreateAccessTokenRequest createAccessTokenRequest) throws UserNotFoundForTokenException, GenerateAccessTokenException, InvalidCreateAccessTokenRequestException {

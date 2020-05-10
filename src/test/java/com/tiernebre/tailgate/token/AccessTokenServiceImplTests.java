@@ -30,7 +30,7 @@ public class AccessTokenServiceImplTests {
     private AccessTokenProvider tokenProvider;
 
     @Mock
-    private TokenValidator tokenValidator;
+    private AccessTokenValidator accessTokenValidator;
 
     @InjectMocks
     private AccessTokenServiceImpl tokenService;
@@ -47,7 +47,7 @@ public class AccessTokenServiceImplTests {
                     .email(user.getEmail())
                     .password(password)
                     .build();
-            doNothing().when(tokenValidator).validate(eq(createAccessTokenRequest));
+            doNothing().when(accessTokenValidator).validate(eq(createAccessTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             String expectedToken = UUID.randomUUID().toString();
             when(tokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
@@ -64,7 +64,7 @@ public class AccessTokenServiceImplTests {
                     .email(user.getEmail())
                     .password(password)
                     .build();
-            doNothing().when(tokenValidator).validate(eq(createAccessTokenRequest));
+            doNothing().when(accessTokenValidator).validate(eq(createAccessTokenRequest));
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
             UserNotFoundForTokenException thrown = assertThrows(UserNotFoundForTokenException.class, () -> tokenService.createOne(createAccessTokenRequest));
             assertEquals("The request to create a token included information that did not match up with an existing user.", thrown.getMessage());
