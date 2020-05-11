@@ -1,7 +1,10 @@
 package com.tiernebre.tailgate.token;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
+@Repository
 public class RefreshTokenJooqRepository implements RefreshTokenRepository {
     @Override
     public RefreshTokenEntity saveOne(RefreshTokenEntity entity) {
