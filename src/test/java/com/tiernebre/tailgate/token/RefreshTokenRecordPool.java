@@ -31,4 +31,8 @@ public class RefreshTokenRecordPool {
                 .fetchOne();
         return refreshTokensRecord.into(RefreshTokensRecord.class);
     }
+
+    public RefreshTokensRecord getOneById(String id) {
+        return dslContext.selectFrom(REFRESH_TOKENS).where(REFRESH_TOKENS.TOKEN.eq(id)).fetchOne();
+    }
 }
