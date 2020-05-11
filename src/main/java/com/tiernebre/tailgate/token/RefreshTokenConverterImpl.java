@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 public class RefreshTokenConverterImpl implements RefreshTokenConverter {
     @Override
     public RefreshTokenDto convertToDto(RefreshTokenEntity refreshTokenEntity) {
-        return null;
+        return RefreshTokenDto.builder()
+                .token(refreshTokenEntity.getToken())
+                .userId(refreshTokenEntity.getUserId())
+                .build();
     }
 }
