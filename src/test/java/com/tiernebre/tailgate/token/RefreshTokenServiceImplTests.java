@@ -10,7 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +35,18 @@ public class RefreshTokenServiceImplTests {
             when(refreshTokenRepository.createOneForUser(eq(userDto))).thenReturn(expectedRefreshToken);
             String createdToken = refreshTokenService.createOneForUser(userDto);
             assertEquals(expectedRefreshToken.getToken(), createdToken);
+        }
+    }
+
+    @Nested
+    class FindOneByIdTests {
+        @Test
+        @DisplayName("returns the found refresh token")
+        public void returnsTheCreatedRefreshToken() {
+            RefreshTokenEntity expectedRefreshToken = RefreshTokenFactory.generateOneEntity();
+            when(refreshTokenRepository.findOneById(expectedRefreshToken.getToken())).thenReturn(Optional.of(expectedRefreshToken));
+            Optional<RefreshTokenDto> foundRefreshToken = refreshTokenService.findOneById(expectedRefreshToken.getToken());
+            assertTrue(foundRefreshToken.isPresent());
         }
     }
 }

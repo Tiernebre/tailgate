@@ -17,7 +17,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Optional<RefreshTokenDto> getOneById(String token) {
+    public Optional<RefreshTokenDto> findOneById(String token) {
         return Optional.empty();
     }
 }
