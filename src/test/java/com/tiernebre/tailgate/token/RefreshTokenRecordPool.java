@@ -8,8 +8,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static com.tiernebre.tailgate.jooq.Tables.REFRESH_TOKENS;
 
 /**
