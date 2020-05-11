@@ -22,6 +22,9 @@ public class RefreshTokenServiceImplTests {
     @Mock
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Mock
+    private RefreshTokenConverter refreshTokenConverter;
+
     @InjectMocks
     private RefreshTokenServiceImpl refreshTokenService;
 
@@ -45,8 +48,11 @@ public class RefreshTokenServiceImplTests {
         public void returnsTheCreatedRefreshToken() {
             RefreshTokenEntity expectedRefreshToken = RefreshTokenFactory.generateOneEntity();
             when(refreshTokenRepository.findOneById(expectedRefreshToken.getToken())).thenReturn(Optional.of(expectedRefreshToken));
+            RefreshTokenDto expectedDto = RefreshTokenFactory.generateOneDto();
+            when(refreshTokenConverter.convertToDto(eq(expectedRefreshToken))).thenReturn(expectedDto);
             Optional<RefreshTokenDto> foundRefreshToken = refreshTokenService.findOneById(expectedRefreshToken.getToken());
             assertTrue(foundRefreshToken.isPresent());
+            assertEquals(expectedDto, foundRefreshToken.get());
         }
     }
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository repository;
+    private final RefreshTokenConverter converter;
 
     @Override
     public String createOneForUser(UserDto user) {
@@ -17,7 +18,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Optional<RefreshTokenDto> findOneById(String token) {
-        return Optional.empty();
+    public Optional<RefreshTokenDto> findOneById(String id) {
+        return repository.findOneById(id)
+                .map(converter::convertToDto);
     }
 }

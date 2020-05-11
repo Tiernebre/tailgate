@@ -12,4 +12,11 @@ public class RefreshTokenFactory {
                 .createdAt(Instant.now())
                 .build();
     }
+
+    public static RefreshTokenDto generateOneDto() {
+        return RefreshTokenDto.builder()
+                .token(UUID.randomUUID().toString())
+                .userId(new Random().nextLong())
+                .build();
+    }
 }
