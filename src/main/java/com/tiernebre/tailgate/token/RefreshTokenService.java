@@ -17,5 +17,5 @@ public interface RefreshTokenService {
      * @param token The token to look-up.
      * @return An optional containing the refresh token. Empty if it was not found, or was expired.
      */
-    Optional<RefreshTokenDto> getOne(String token);
+    Optional<RefreshTokenDto> getOneById(String token);
 }
