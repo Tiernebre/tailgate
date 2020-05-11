@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
     @Autowired
@@ -28,6 +28,13 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             Optional<RefreshTokenEntity> foundRefreshToken = refreshTokenRepository.findOneById(existingRefreshToken.getToken());
             assertTrue(foundRefreshToken.isPresent());
             assertEquals(existingRefreshToken.getToken(), foundRefreshToken.get().getToken());
+        }
+
+        @Test
+        @DisplayName("returns an empty optional if an id is used that does not exist")
+        public void returnsAnEmptyOptionalForANonExistentRefreshToken() {
+            Optional<RefreshTokenEntity> foundRefreshToken = refreshTokenRepository.findOneById(UUID.randomUUID().toString());
+            assertFalse(foundRefreshToken.isPresent());
         }
     }
 }
