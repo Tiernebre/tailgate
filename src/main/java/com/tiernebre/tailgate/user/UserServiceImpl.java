@@ -46,7 +46,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken) {
-        return Optional.empty();
+        return repository.findOneWithNonExpiredRefreshToken(refreshToken)
+                .map(converter::convertFromEntity);
     }
 
     private void validateThatEmailDoesNotExist(String email) throws UserAlreadyExistsException {
