@@ -3,14 +3,18 @@ package com.tiernebre.tailgate.user;
 import com.tiernebre.tailgate.jooq.tables.records.RefreshTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.tailgate.token.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.RefreshTokenRecordPool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +27,9 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
     @Autowired
     private RefreshTokenRecordPool refreshTokenRecordPool;
+
+    @Autowired
+    private RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
 
     @Nested
     @DisplayName("saveOne")
@@ -175,6 +182,12 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         @Test
         @DisplayName("returns an empty optional for a refresh token that is past the expiration window")
         void returnsAnEmptyOptionalForAnExpiredRefreshToken() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            RefreshTokensRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
+            long expirationWindowInMilliseconds = TimeUnit.MINUTES.toMillis(refreshTokenConfigurationProperties.getExpirationWindowInMinutes());
+            Instant expiredInstant = Instant.now().minusMillis(expirationWindowInMilliseconds + 1);
+            refreshToken.setCreatedAt(Timestamp.from(expiredInstant));
+            refreshToken.store();
             Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(UUID.randomUUID().toString());
             assertFalse(foundUser.isPresent());
         }
