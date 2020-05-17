@@ -16,8 +16,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.tiernebre.tailgate.session.SessionServiceImpl.INVALID_REFRESH_SESSION_REQUEST_ERROR;
-import static com.tiernebre.tailgate.session.SessionServiceImpl.NON_EXISTENT_USER_FOR_CREATE_ERROR;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -115,7 +114,14 @@ public class SessionServiceImplTests {
             String refreshToken = UUID.randomUUID().toString();
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
             InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
-            assertEquals(INVALID_REFRESH_SESSION_REQUEST_ERROR, thrownException.getMessage());
+            assertEquals(INVALID_REFRESH_TOKEN_ERROR, thrownException.getMessage());
+        }
+
+        @Test
+        @DisplayName("throws an invalid refresh request exception if refresh token is null")
+        public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsNull() {
+            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(null));
+            assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
         }
     }
 }

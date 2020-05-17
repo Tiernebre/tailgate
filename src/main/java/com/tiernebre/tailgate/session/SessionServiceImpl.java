@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
     final static String NON_EXISTENT_USER_FOR_CREATE_ERROR = "The request to create a session included information that did not match up with an existing user.";
-    final static String INVALID_REFRESH_SESSION_REQUEST_ERROR = "The request to refresh a session included information that was invalid.";
+    final static String INVALID_REFRESH_TOKEN_REQUEST_ERROR = "The request to refresh a session had a null or blank refresh token. Please use a non-null and non-blank refresh token.";
+    final static String INVALID_REFRESH_TOKEN_ERROR = "The request to refresh a session had either an invalid or expired refresh token.";
 
     private final AccessTokenProvider accessTokenProvider;
     private final SessionValidator validator;
@@ -34,9 +35,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+        if (refreshToken == null) {
+            throw new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_REQUEST_ERROR);
+        }
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(refreshToken)
-                .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_SESSION_REQUEST_ERROR));
+                .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(userToCreateRefreshedSessionFor))
                 .build();
