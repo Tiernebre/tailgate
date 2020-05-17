@@ -119,5 +119,15 @@ public class SessionServiceImplTests {
             InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
             assertEquals(INVALID_REFRESH_TOKEN_ERROR, thrownException.getMessage());
         }
+
+        @Test
+        @DisplayName("throws an invalid refresh request exception if the refresh token is invalid")
+        public void throwsAnInvalidRefreshRequestExceptionIfTheRefreshTokenIsInvalid() throws InvalidRefreshSessionRequestException {
+            String refreshToken = UUID.randomUUID().toString();
+            InvalidRefreshSessionRequestException expectedException = new InvalidRefreshSessionRequestException("Expected Test Error");
+            doThrow(expectedException).when(sessionValidator).validateRefreshToken(eq(refreshToken));
+            InvalidRefreshSessionRequestException thrownException = assertThrows(expectedException.getClass(), () -> sessionService.refreshOne(refreshToken));
+            assertEquals(expectedException, thrownException);
+        }
     }
 }
