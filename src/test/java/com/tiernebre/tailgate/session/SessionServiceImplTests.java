@@ -56,9 +56,14 @@ public class SessionServiceImplTests {
                     .build();
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             doNothing().when(sessionValidator).validate(createSessionRequest);
-            String expectedToken = UUID.randomUUID().toString();
-            SessionDto expectedSession = SessionDto.builder().accessToken(expectedToken).build();
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            String expectedAccessToken = UUID.randomUUID().toString();
+            String expectedRefreshToken = UUID.randomUUID().toString();
+            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
+            SessionDto expectedSession = SessionDto.builder()
+                    .accessToken(expectedAccessToken)
+                    .refreshToken(expectedRefreshToken)
+                    .build();
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.createOne(createSessionRequest);
             assertEquals(expectedSession, createdSession);
         }
@@ -103,8 +108,11 @@ public class SessionServiceImplTests {
             String refreshToken = UUID.randomUUID().toString();
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(user));
             String expectedToken = UUID.randomUUID().toString();
+            String expectedRefreshToken = UUID.randomUUID().toString();
+            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedToken)
+                    .refreshToken(expectedRefreshToken)
                     .build();
             when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
             SessionDto createdSession = sessionService.refreshOne(refreshToken);

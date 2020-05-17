@@ -2,6 +2,7 @@ package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.token.AccessTokenProvider;
 import com.tiernebre.tailgate.token.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.RefreshTokenService;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class SessionServiceImpl implements SessionService {
     private final AccessTokenProvider accessTokenProvider;
     private final SessionValidator validator;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForSessionException, GenerateAccessTokenException {
@@ -43,6 +45,7 @@ public class SessionServiceImpl implements SessionService {
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(user))
+                .refreshToken(refreshTokenService.createOneForUser(user))
                 .build();
     }
 }
