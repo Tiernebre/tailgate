@@ -10,8 +10,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -186,7 +187,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             RefreshTokensRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
             long expirationWindowInMilliseconds = TimeUnit.MINUTES.toMillis(refreshTokenConfigurationProperties.getExpirationWindowInMinutes());
             Instant expiredInstant = Instant.now().minusMillis(expirationWindowInMilliseconds + 1);
-            refreshToken.setCreatedAt(Timestamp.from(expiredInstant));
+            refreshToken.setCreatedAt(LocalDateTime.ofInstant(expiredInstant, ZoneId.of("UTC")));
             refreshToken.store();
             Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(UUID.randomUUID().toString());
             assertFalse(foundUser.isPresent());

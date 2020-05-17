@@ -4,9 +4,9 @@ import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.token.RefreshTokenConfigurationProperties;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -82,7 +82,7 @@ public class UserJooqRepository implements UserRepository {
                 .join(REFRESH_TOKENS)
                 .on(USERS.ID.eq(REFRESH_TOKENS.USER_ID))
                 .where(REFRESH_TOKENS.TOKEN.eq(refreshToken))
-                .and(REFRESH_TOKENS.CREATED_AT.add(refreshTokenExpireWindowInMilliseconds).greaterThan(DSL.currentTimestamp()))
+                .and(REFRESH_TOKENS.CREATED_AT.add(refreshTokenExpireWindowInMilliseconds).greaterThan(LocalDateTime.now()))
                 .fetchOptionalInto(UserEntity.class);
     }
 }
