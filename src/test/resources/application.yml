@@ -1,6 +1,8 @@
 tailgate:
   jwt:
     secret: 'secretforjsonwebtokenswow'
+  refresh-token:
+    expiration-window-in-minutes: 1
 
 spring:
   flyway:

@@ -24,9 +24,13 @@ public class RefreshTokenRecordPool {
     private final DSLContext dslContext;
 
     public RefreshTokensRecord createAndSaveOne() {
-        UsersRecord createdUser = userRecordPool.createAndSaveOne();
+        UsersRecord user = userRecordPool.createAndSaveOne();
+        return createAndSaveOneForUser(user);
+    }
+
+    public RefreshTokensRecord createAndSaveOneForUser(UsersRecord user) {
         Record refreshTokensRecord = dslContext.insertInto(REFRESH_TOKENS, REFRESH_TOKENS.USER_ID)
-                .values(createdUser.getId())
+                .values(user.getId())
                 .returningResult(REFRESH_TOKENS.asterisk())
                 .fetchOne();
         return refreshTokensRecord.into(RefreshTokensRecord.class);

@@ -1,20 +1,23 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
+import com.tiernebre.tailgate.token.RefreshTokenConfigurationProperties;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import static com.tiernebre.tailgate.jooq.Tables.REFRESH_TOKENS;
 import static com.tiernebre.tailgate.jooq.Tables.USERS;
 
 @Repository
 @RequiredArgsConstructor
 public class UserJooqRepository implements UserRepository {
-    @Autowired
     private final DSLContext dslContext;
+    private final RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
 
     @Override
     public UserEntity saveOne(UserEntity entity) {
@@ -69,5 +72,17 @@ public class UserJooqRepository implements UserRepository {
                     dslContext.selectFrom(USERS)
                     .where(USERS.EMAIL.eq(email))
                 );
+    }
+
+    @Override
+    public Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken) {
+        long refreshTokenExpireWindowInMilliseconds = TimeUnit.MINUTES.toMillis(refreshTokenConfigurationProperties.getExpirationWindowInMinutes());
+        return dslContext.select(USERS.asterisk())
+                .from(USERS)
+                .join(REFRESH_TOKENS)
+                .on(USERS.ID.eq(REFRESH_TOKENS.USER_ID))
+                .where(REFRESH_TOKENS.TOKEN.eq(refreshToken))
+                .and(REFRESH_TOKENS.CREATED_AT.add(refreshTokenExpireWindowInMilliseconds).greaterThan(DSL.currentTimestamp()))
+                .fetchOptionalInto(UserEntity.class);
     }
 }
