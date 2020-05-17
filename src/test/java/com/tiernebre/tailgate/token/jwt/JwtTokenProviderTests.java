@@ -54,7 +54,7 @@ public class JwtTokenProviderTests {
     public class GenerateOneTests {
         @BeforeEach
         public void setup() {
-            when(jwtTokenConfigurationProperties.getAccessTokenExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
+            when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
         }
 
         @Test

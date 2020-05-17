@@ -58,6 +58,6 @@ public class JwtTokenProvider implements AccessTokenProvider {
     }
 
     private Date generateExpiresAt() {
-        return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getAccessTokenExpirationWindowInMinutes()));
+        return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getExpirationWindowInMinutes()));
     }
 }
