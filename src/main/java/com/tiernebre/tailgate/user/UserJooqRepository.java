@@ -3,16 +3,21 @@ package com.tiernebre.tailgate.user;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import static com.tiernebre.tailgate.jooq.Tables.REFRESH_TOKENS;
 import static com.tiernebre.tailgate.jooq.Tables.USERS;
 
 @Repository
 @RequiredArgsConstructor
 public class UserJooqRepository implements UserRepository {
+    private static final long REFRESH_TOKEN_EXPIRE_WINDOW_IN_MILLISECONDS = TimeUnit.MINUTES.toMillis(30);
+
     @Autowired
     private final DSLContext dslContext;
 
@@ -73,6 +78,12 @@ public class UserJooqRepository implements UserRepository {
 
     @Override
     public Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken) {
-        return Optional.empty();
+        return dslContext.select(USERS.asterisk())
+                .from(USERS)
+                .join(REFRESH_TOKENS)
+                .on(USERS.ID.eq(REFRESH_TOKENS.USER_ID))
+                .where(REFRESH_TOKENS.TOKEN.eq(refreshToken))
+                .and(REFRESH_TOKENS.CREATED_AT.add(REFRESH_TOKEN_EXPIRE_WINDOW_IN_MILLISECONDS).greaterThan(DSL.currentTimestamp()))
+                .fetchOptionalInto(UserEntity.class);
     }
 }

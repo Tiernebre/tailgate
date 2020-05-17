@@ -1,0 +1,1 @@
+CREATE INDEX refresh_tokens_created_at_idx ON refresh_tokens (created_at);
