@@ -1,7 +1,9 @@
 package com.tiernebre.tailgate.user;
 
+import com.tiernebre.tailgate.jooq.tables.records.RefreshTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.tailgate.token.RefreshTokenRecordPool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,9 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
     @Autowired
     private UserRecordPool userRecordPool;
+
+    @Autowired
+    private RefreshTokenRecordPool refreshTokenRecordPool;
 
     @Nested
     @DisplayName("saveOne")
@@ -53,11 +58,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
             UserEntity foundUser = userJooqRepository.findOneById(savedExistingUser.getId()).orElse(null);
             assertNotNull(foundUser);
-            assertAll(() -> {
-                assertEquals(savedExistingUser.getId(), foundUser.getId());
-                assertEquals(savedExistingUser.getEmail(), foundUser.getEmail());
-                assertEquals(savedExistingUser.getPassword(), foundUser.getPassword());
-            });
+            assertThatUsersRecordEqualsEntity(savedExistingUser, foundUser);
         }
 
         @Test
@@ -78,11 +79,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             UserEntity entityToUpdate = UserFactory.generateOneEntity(savedExistingUser.getId());
             UserEntity updatedEntity = userJooqRepository.updateOne(entityToUpdate).orElse(null);
             assertNotNull(updatedEntity);
-            assertAll(() -> {
-                assertEquals(savedExistingUser.getId(), updatedEntity.getId());
-                assertEquals(entityToUpdate.getEmail(), updatedEntity.getEmail());
-                assertEquals(entityToUpdate.getPassword(), updatedEntity.getPassword());
-            });
+            assertThatUsersRecordEqualsEntity(savedExistingUser, updatedEntity);
         }
 
         @Test
@@ -122,11 +119,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
             UserEntity foundUser = userJooqRepository.findOneByEmail(savedExistingUser.getEmail()).orElse(null);
             assertNotNull(foundUser);
-            assertAll(() -> {
-                assertEquals(savedExistingUser.getId(), foundUser.getId());
-                assertEquals(savedExistingUser.getEmail(), foundUser.getEmail());
-                assertEquals(savedExistingUser.getPassword(), foundUser.getPassword());
-            });
+            assertThatUsersRecordEqualsEntity(savedExistingUser, foundUser);
         }
 
         @Test
@@ -153,5 +146,27 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         void returnsFalseIfItDoesNotExist() {
             assertFalse(userJooqRepository.oneExistsByEmail("TOTALLY_NON_EXISTENT_EMAIL@NOT_A_THING.org"));
         }
+    }
+
+    @Nested
+    @DisplayName("findOneWithNonExpiredRefreshToken")
+    public class FindOneWithNonExpiredRefreshTokenTests {
+        @Test
+        @DisplayName("returns a user for a valid and non expired refresh token")
+        void returnsAUserForAValidAndNonExpiredRefreshToken() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            RefreshTokensRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
+            Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(refreshToken.getToken());
+            assertTrue(foundUser.isPresent());
+            assertThatUsersRecordEqualsEntity(user, foundUser.get());
+        }
+    }
+
+    private void assertThatUsersRecordEqualsEntity(UsersRecord usersRecord, UserEntity userEntity) {
+        assertAll(() -> {
+            assertEquals(usersRecord.getId(), userEntity.getId());
+            assertEquals(usersRecord.getEmail(), userEntity.getEmail());
+            assertEquals(usersRecord.getPassword(), userEntity.getPassword());
+        });
     }
 }
