@@ -7,4 +7,5 @@ import lombok.Value;
 @Builder
 public class SessionDto {
     String accessToken;
+    String refreshToken;
 }

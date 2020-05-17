@@ -43,15 +43,21 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @DisplayName("returns with the token in the JSON response body")
         public void returnsWithTheToken() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedToken = UUID.randomUUID().toString();
-            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder().accessToken(expectedToken).build());
+            String expectedAccessToken = UUID.randomUUID().toString();
+            String expectedRefreshToken = UUID.randomUUID().toString();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
+                    .accessToken(expectedAccessToken)
+                    .refreshToken(expectedRefreshToken)
+                    .build());
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(jsonPath("$.accessToken").exists())
-                    .andExpect(jsonPath("$.accessToken").value(expectedToken));
+                    .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
+                    .andExpect(jsonPath("$.refreshToken").exists())
+                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken));
         }
     }
 }

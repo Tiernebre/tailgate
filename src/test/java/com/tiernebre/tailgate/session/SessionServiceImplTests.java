@@ -1,6 +1,8 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.token.*;
+import com.tiernebre.tailgate.token.AccessTokenProvider;
+import com.tiernebre.tailgate.token.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.RefreshTokenService;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserService;
@@ -16,7 +18,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.tiernebre.tailgate.session.SessionServiceImpl.NON_EXISTENT_USER_ERROR;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.INVALID_REFRESH_TOKEN_ERROR;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.NON_EXISTENT_USER_FOR_CREATE_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -32,6 +35,9 @@ public class SessionServiceImplTests {
 
     @Mock
     private SessionValidator sessionValidator;
+
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private SessionServiceImpl sessionService;
@@ -50,9 +56,14 @@ public class SessionServiceImplTests {
                     .build();
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             doNothing().when(sessionValidator).validate(createSessionRequest);
-            String expectedToken = UUID.randomUUID().toString();
-            SessionDto expectedSession = SessionDto.builder().accessToken(expectedToken).build();
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            String expectedAccessToken = UUID.randomUUID().toString();
+            String expectedRefreshToken = UUID.randomUUID().toString();
+            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
+            SessionDto expectedSession = SessionDto.builder()
+                    .accessToken(expectedAccessToken)
+                    .refreshToken(expectedRefreshToken)
+                    .build();
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.createOne(createSessionRequest);
             assertEquals(expectedSession, createdSession);
         }
@@ -69,7 +80,7 @@ public class SessionServiceImplTests {
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
             doNothing().when(sessionValidator).validate(createSessionRequest);
             UserNotFoundForSessionException thrown = assertThrows(UserNotFoundForSessionException.class, () -> sessionService.createOne(createSessionRequest));
-            assertEquals(NON_EXISTENT_USER_ERROR, thrown.getMessage());
+            assertEquals(NON_EXISTENT_USER_FOR_CREATE_ERROR, thrown.getMessage());
         }
 
         @Test
@@ -84,6 +95,47 @@ public class SessionServiceImplTests {
             InvalidCreateSessionRequestException expectedException = new InvalidCreateSessionRequestException(Collections.emptySet());
             doThrow(expectedException).when(sessionValidator).validate(createSessionRequest);
             assertThrows(expectedException.getClass(), () -> sessionService.createOne(createSessionRequest));
+        }
+    }
+
+    @Nested
+    @DisplayName("refreshOne")
+    class RefreshOneTests {
+        @Test
+        @DisplayName("returns a properly mapped session DTO representation with the tokens")
+        public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+            UserDto user = UserFactory.generateOneDto();
+            String refreshToken = UUID.randomUUID().toString();
+            when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(user));
+            String expectedToken = UUID.randomUUID().toString();
+            String expectedRefreshToken = UUID.randomUUID().toString();
+            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
+            SessionDto expectedSession = SessionDto.builder()
+                    .accessToken(expectedToken)
+                    .refreshToken(expectedRefreshToken)
+                    .build();
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            SessionDto createdSession = sessionService.refreshOne(refreshToken);
+            assertEquals(expectedSession, createdSession);
+        }
+
+        @Test
+        @DisplayName("throws an invalid refresh request exception if the user could not be found from a given refresh token")
+        public void throwsAnInvalidRefreshRequestExceptionIfTheUserCouldNotBeFoundFromAGivenRefreshToken() {
+            String refreshToken = UUID.randomUUID().toString();
+            when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
+            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
+            assertEquals(INVALID_REFRESH_TOKEN_ERROR, thrownException.getMessage());
+        }
+
+        @Test
+        @DisplayName("throws an invalid refresh request exception if the refresh token is invalid")
+        public void throwsAnInvalidRefreshRequestExceptionIfTheRefreshTokenIsInvalid() throws InvalidRefreshSessionRequestException {
+            String refreshToken = UUID.randomUUID().toString();
+            InvalidRefreshSessionRequestException expectedException = new InvalidRefreshSessionRequestException("Expected Test Error");
+            doThrow(expectedException).when(sessionValidator).validateRefreshToken(eq(refreshToken));
+            InvalidRefreshSessionRequestException thrownException = assertThrows(expectedException.getClass(), () -> sessionService.refreshOne(refreshToken));
+            assertEquals(expectedException, thrownException);
         }
     }
 }

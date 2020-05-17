@@ -136,4 +136,30 @@ public class UserServiceImplTests {
             assertEquals("The password to find a user for is a required parameter and must not be null", thrownException.getMessage());
         }
     }
+
+    @Nested
+    @DisplayName("findOneByNonExpiredRefreshToken")
+    public class FindOneByNonExpiredRefreshTokenTests {
+        @Test
+        @DisplayName("returns the optional containing a user from the repository with a given refresh token")
+        void testReturnsTheOptionalContainingAUserFromTheRepositoryWithAGivenRefreshToken() {
+            String refreshToken = UUID.randomUUID().toString();
+            UserEntity expectedUserFound = UserFactory.generateOneEntity();
+            when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(expectedUserFound));
+            UserDto expectedMappedUser = UserFactory.generateOneDto();
+            when(userConverter.convertFromEntity(eq(expectedUserFound))).thenReturn(expectedMappedUser);
+            Optional<UserDto> foundUser = userService.findOneByNonExpiredRefreshToken(refreshToken);
+            assertTrue(foundUser.isPresent());
+            assertEquals(expectedMappedUser, foundUser.get());
+        }
+
+        @Test
+        @DisplayName("returns an empty optional from the repository with a given refresh token")
+        void testReturnsAnEmptyOptionalFromTheRepositoryWithAGivenRefreshToken() {
+            String refreshToken = UUID.randomUUID().toString();
+            when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
+            Optional<UserDto> foundUser = userService.findOneByNonExpiredRefreshToken(refreshToken);
+            assertFalse(foundUser.isPresent());
+        }
+    }
 }
