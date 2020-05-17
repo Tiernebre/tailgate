@@ -16,5 +16,5 @@ public interface SessionService {
      * @param refreshToken The refresh token used to refresh a session.
      * @return A brand new session with a new access token and refresh token if the refresh token was valid.
      */
-    SessionDto refreshOne(String refreshToken) throws UserNotFoundForSessionException, GenerateAccessTokenException;
+    SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException;
 }

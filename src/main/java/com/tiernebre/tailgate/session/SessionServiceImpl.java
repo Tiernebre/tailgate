@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
-    final static String NON_EXISTENT_USER_ERROR = "The request to create a session included information that did not match up with an existing user.";
+    final static String NON_EXISTENT_USER_FOR_CREATE_ERROR = "The request to create a session included information that did not match up with an existing user.";
+    final static String INVALID_REFRESH_SESSION_REQUEST_ERROR = "The request to refresh a session included information that was invalid.";
 
     private final AccessTokenProvider accessTokenProvider;
     private final SessionValidator validator;
@@ -24,7 +25,7 @@ public class SessionServiceImpl implements SessionService {
                         createSessionRequest.getPassword()
                 )
                 .orElseThrow(
-                        () -> new UserNotFoundForSessionException(NON_EXISTENT_USER_ERROR)
+                        () -> new UserNotFoundForSessionException(NON_EXISTENT_USER_FOR_CREATE_ERROR)
                 );
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(userToCreateSessionFor))
@@ -32,10 +33,10 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionDto refreshOne(String refreshToken) throws UserNotFoundForSessionException, GenerateAccessTokenException {
+    public SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(refreshToken)
-                .orElseThrow(() -> new UserNotFoundForSessionException(NON_EXISTENT_USER_ERROR));
+                .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_SESSION_REQUEST_ERROR));
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(userToCreateRefreshedSessionFor))
                 .build();

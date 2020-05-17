@@ -16,7 +16,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.tiernebre.tailgate.session.SessionServiceImpl.NON_EXISTENT_USER_ERROR;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.INVALID_REFRESH_SESSION_REQUEST_ERROR;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.NON_EXISTENT_USER_FOR_CREATE_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -72,7 +73,7 @@ public class SessionServiceImplTests {
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.empty());
             doNothing().when(sessionValidator).validate(createSessionRequest);
             UserNotFoundForSessionException thrown = assertThrows(UserNotFoundForSessionException.class, () -> sessionService.createOne(createSessionRequest));
-            assertEquals(NON_EXISTENT_USER_ERROR, thrown.getMessage());
+            assertEquals(NON_EXISTENT_USER_FOR_CREATE_ERROR, thrown.getMessage());
         }
 
         @Test
@@ -95,7 +96,7 @@ public class SessionServiceImplTests {
     class RefreshOneTests {
         @Test
         @DisplayName("returns a properly mapped session DTO representation with the tokens")
-        public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException, UserNotFoundForSessionException {
+        public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
             UserDto user = UserFactory.generateOneDto();
             String refreshToken = UUID.randomUUID().toString();
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(user));
@@ -106,6 +107,15 @@ public class SessionServiceImplTests {
             when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
             SessionDto createdSession = sessionService.refreshOne(refreshToken);
             assertEquals(expectedSession, createdSession);
+        }
+
+        @Test
+        @DisplayName("throws an invalid refresh request exception if the user could not be found from a given refresh token")
+        public void throwsAnInvalidRefreshRequestExceptionIfTheUserCouldNotBeFoundFromAGivenRefreshToken() {
+            String refreshToken = UUID.randomUUID().toString();
+            when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
+            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
+            assertEquals(INVALID_REFRESH_SESSION_REQUEST_ERROR, thrownException.getMessage());
         }
     }
 }
