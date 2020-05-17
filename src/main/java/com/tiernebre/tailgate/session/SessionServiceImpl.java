@@ -28,9 +28,7 @@ public class SessionServiceImpl implements SessionService {
                 .orElseThrow(
                         () -> new UserNotFoundForSessionException(NON_EXISTENT_USER_FOR_CREATE_ERROR)
                 );
-        return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(userToCreateSessionFor))
-                .build();
+        return buildOutSessionForUser(userToCreateSessionFor);
     }
 
     @Override
@@ -39,8 +37,12 @@ public class SessionServiceImpl implements SessionService {
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(refreshToken)
                 .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));
+        return buildOutSessionForUser(userToCreateRefreshedSessionFor);
+    }
+
+    private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
         return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(userToCreateRefreshedSessionFor))
+                .accessToken(accessTokenProvider.generateOne(user))
                 .build();
     }
 }
