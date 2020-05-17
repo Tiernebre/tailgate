@@ -95,7 +95,7 @@ public class SessionServiceImplTests {
     class RefreshOneTests {
         @Test
         @DisplayName("returns a properly mapped session DTO representation with the tokens")
-        public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException {
+        public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException, UserNotFoundForSessionException {
             UserDto user = UserFactory.generateOneDto();
             String refreshToken = UUID.randomUUID().toString();
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(user));

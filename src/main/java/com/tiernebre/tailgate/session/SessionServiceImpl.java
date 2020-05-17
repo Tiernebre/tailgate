@@ -32,7 +32,12 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionDto refreshOne(String refreshToken) {
-        return null;
+    public SessionDto refreshOne(String refreshToken) throws UserNotFoundForSessionException, GenerateAccessTokenException {
+        UserDto userToCreateRefreshedSessionFor = userService
+                .findOneByNonExpiredRefreshToken(refreshToken)
+                .orElseThrow(() -> new UserNotFoundForSessionException(NON_EXISTENT_USER_ERROR));
+        return SessionDto.builder()
+                .accessToken(accessTokenProvider.generateOne(userToCreateRefreshedSessionFor))
+                .build();
     }
 }
