@@ -70,4 +70,9 @@ public class UserJooqRepository implements UserRepository {
                     .where(USERS.EMAIL.eq(email))
                 );
     }
+
+    @Override
+    public Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken) {
+        return Optional.empty();
+    }
 }
