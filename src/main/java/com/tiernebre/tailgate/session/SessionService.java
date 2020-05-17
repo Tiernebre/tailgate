@@ -9,4 +9,12 @@ public interface SessionService {
      * @return A session with an access token to allow the user to access the application.
      */
     SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForSessionException, GenerateAccessTokenException;
+
+    /**
+     * Refreshes a session by checking the validity of a given refresh token.
+     *
+     * @param refreshToken The refresh token used to refresh a session.
+     * @return A brand new session with a new access token and refresh token if the refresh token was valid.
+     */
+    SessionDto refreshOne(String refreshToken);
 }

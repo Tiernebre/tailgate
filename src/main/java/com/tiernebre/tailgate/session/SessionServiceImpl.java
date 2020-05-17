@@ -30,4 +30,9 @@ public class SessionServiceImpl implements SessionService {
                 .accessToken(accessTokenProvider.generateOne(userToCreateSessionFor))
                 .build();
     }
+
+    @Override
+    public SessionDto refreshOne(String refreshToken) {
+        return null;
+    }
 }

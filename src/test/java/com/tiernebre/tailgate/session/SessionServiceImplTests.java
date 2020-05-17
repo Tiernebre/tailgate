@@ -33,6 +33,9 @@ public class SessionServiceImplTests {
     @Mock
     private SessionValidator sessionValidator;
 
+    @Mock
+    private RefreshTokenService refreshTokenService;
+
     @InjectMocks
     private SessionServiceImpl sessionService;
 
@@ -84,6 +87,25 @@ public class SessionServiceImplTests {
             InvalidCreateSessionRequestException expectedException = new InvalidCreateSessionRequestException(Collections.emptySet());
             doThrow(expectedException).when(sessionValidator).validate(createSessionRequest);
             assertThrows(expectedException.getClass(), () -> sessionService.createOne(createSessionRequest));
+        }
+    }
+
+    @Nested
+    @DisplayName("refreshOne")
+    class RefreshOneTests {
+        @Test
+        @DisplayName("returns a properly mapped session DTO representation with the tokens")
+        public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException {
+            UserDto user = UserFactory.generateOneDto();
+            String refreshToken = UUID.randomUUID().toString();
+            when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(user));
+            String expectedToken = UUID.randomUUID().toString();
+            SessionDto expectedSession = SessionDto.builder()
+                    .accessToken(expectedToken)
+                    .build();
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            SessionDto createdSession = sessionService.refreshOne(refreshToken);
+            assertEquals(expectedSession, createdSession);
         }
     }
 }
