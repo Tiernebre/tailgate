@@ -79,7 +79,11 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             UserEntity entityToUpdate = UserFactory.generateOneEntity(savedExistingUser.getId());
             UserEntity updatedEntity = userJooqRepository.updateOne(entityToUpdate).orElse(null);
             assertNotNull(updatedEntity);
-            assertThatUsersRecordEqualsEntity(savedExistingUser, updatedEntity);
+            assertAll(() -> {
+                assertEquals(savedExistingUser.getId(), updatedEntity.getId());
+                assertEquals(entityToUpdate.getEmail(), updatedEntity.getEmail());
+                assertEquals(entityToUpdate.getPassword(), updatedEntity.getPassword());
+            });
         }
 
         @Test
