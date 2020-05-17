@@ -152,5 +152,14 @@ public class UserServiceImplTests {
             assertTrue(foundUser.isPresent());
             assertEquals(expectedMappedUser, foundUser.get());
         }
+
+        @Test
+        @DisplayName("returns an empty optional from the repository with a given refresh token")
+        void testReturnsAnEmptyOptionalFromTheRepositoryWithAGivenRefreshToken() {
+            String refreshToken = UUID.randomUUID().toString();
+            when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
+            Optional<UserDto> foundUser = userService.findOneByNonExpiredRefreshToken(refreshToken);
+            assertFalse(foundUser.isPresent());
+        }
     }
 }
