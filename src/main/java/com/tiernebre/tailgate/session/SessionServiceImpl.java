@@ -5,14 +5,12 @@ import com.tiernebre.tailgate.token.GenerateAccessTokenException;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
     final static String NON_EXISTENT_USER_FOR_CREATE_ERROR = "The request to create a session included information that did not match up with an existing user.";
-    final static String INVALID_REFRESH_TOKEN_REQUEST_ERROR = "The request to refresh a session had a null or blank refresh token. Please use a non-null and non-blank refresh token.";
     final static String INVALID_REFRESH_TOKEN_ERROR = "The request to refresh a session had either an invalid or expired refresh token.";
 
     private final AccessTokenProvider accessTokenProvider;
@@ -37,18 +35,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-        validateRefreshToken(refreshToken);
+        validator.validateRefreshToken(refreshToken);
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(refreshToken)
                 .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(userToCreateRefreshedSessionFor))
                 .build();
-    }
-
-    private void validateRefreshToken(String refreshToken) throws InvalidRefreshSessionRequestException {
-        if (StringUtils.isBlank(refreshToken)) {
-            throw new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_REQUEST_ERROR);
-        }
     }
 }

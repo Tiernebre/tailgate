@@ -1,6 +1,8 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.token.*;
+import com.tiernebre.tailgate.token.AccessTokenProvider;
+import com.tiernebre.tailgate.token.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.RefreshTokenService;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserService;
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +18,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.tiernebre.tailgate.session.SessionServiceImpl.*;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.INVALID_REFRESH_TOKEN_ERROR;
+import static com.tiernebre.tailgate.session.SessionServiceImpl.NON_EXISTENT_USER_FOR_CREATE_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -117,24 +118,6 @@ public class SessionServiceImplTests {
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
             InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
             assertEquals(INVALID_REFRESH_TOKEN_ERROR, thrownException.getMessage());
-        }
-
-        @Test
-        @DisplayName("throws an invalid refresh request exception if refresh token is null")
-        public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsNull() {
-            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(null));
-            assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
-        }
-
-        @ParameterizedTest(name = "throws an invalid refresh request exception if refresh token is equal to \"{0}\"")
-        @ValueSource(strings = {
-                "",
-                " ",
-                "    "
-        })
-        public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsEqualTo(String refreshToken) {
-            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
-            assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
         }
     }
 }
