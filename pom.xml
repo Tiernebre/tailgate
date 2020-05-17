@@ -20,7 +20,7 @@
 		<codegen-db.username>codegenuser</codegen-db.username>
 		<codegen-db.password>GenerateJooqCode!</codegen-db.password>
 		<java.version>14</java.version>
-		<testcontainers.version>1.14.1</testcontainers.version>
+		<testcontainers.version>1.14.2</testcontainers.version>
 	</properties>
 
 	<dependencies>
