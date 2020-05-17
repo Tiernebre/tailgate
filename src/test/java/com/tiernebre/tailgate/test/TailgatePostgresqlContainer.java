@@ -9,7 +9,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
  * container is used, rather than several.
  */
 public class TailgatePostgresqlContainer extends PostgreSQLContainer<TailgatePostgresqlContainer> {
-    private static final String IMAGE_VERSION = "postgres:11.1";
+    private static final String IMAGE_VERSION = "postgres:12.2";
     private static TailgatePostgresqlContainer container;
 
     private TailgatePostgresqlContainer() {
