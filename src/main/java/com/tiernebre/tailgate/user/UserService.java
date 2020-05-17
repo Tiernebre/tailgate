@@ -18,4 +18,12 @@ public interface UserService {
      * @return An optional containing the user if found, or an empty optional if no user was found.
      */
     Optional<UserDto> findOneByEmailAndPassword(String email, String password);
+
+    /**
+     * Finds a user by a given valid, non-expired refresh token.
+     * @param refreshToken The refresh token to find an associated user for..
+     * @return An optional containing a user if the refresh token is valid and non-expired, or an empty optional if the
+     *         refresh token is expired or invalid.
+     */
+    Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken);
 }
