@@ -11,5 +11,5 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @Getter
 public class JwtTokenConfigurationProperties {
     private final String secret;
-    private final Integer expirationWindowInMinutes;
+    private final Integer accessTokenExpirationWindowInMinutes;
 }
