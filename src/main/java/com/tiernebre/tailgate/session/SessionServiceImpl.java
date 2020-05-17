@@ -1,9 +1,11 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.token.*;
+import com.tiernebre.tailgate.token.AccessTokenProvider;
+import com.tiernebre.tailgate.token.GenerateAccessTokenException;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,14 +37,18 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-        if (refreshToken == null) {
-            throw new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_REQUEST_ERROR);
-        }
+        validateRefreshToken(refreshToken);
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(refreshToken)
                 .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));
         return SessionDto.builder()
                 .accessToken(accessTokenProvider.generateOne(userToCreateRefreshedSessionFor))
                 .build();
+    }
+
+    private void validateRefreshToken(String refreshToken) throws InvalidRefreshSessionRequestException {
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_REQUEST_ERROR);
+        }
     }
 }
