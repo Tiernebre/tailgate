@@ -160,6 +160,13 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             assertTrue(foundUser.isPresent());
             assertThatUsersRecordEqualsEntity(user, foundUser.get());
         }
+
+        @Test
+        @DisplayName("returns an empty optional for a refresh token that does not exist")
+        void returnsAnEmptyOptionalForANonExistentRefreshToken() {
+            Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(UUID.randomUUID().toString());
+            assertFalse(foundUser.isPresent());
+        }
     }
 
     private void assertThatUsersRecordEqualsEntity(UsersRecord usersRecord, UserEntity userEntity) {
