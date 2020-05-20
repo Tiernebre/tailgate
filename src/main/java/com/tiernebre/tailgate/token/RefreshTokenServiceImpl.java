@@ -16,6 +16,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public void deleteOne(String token) {
-
+        repository.deleteOne(token);
     }
 }
