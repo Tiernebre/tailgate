@@ -10,20 +10,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RefreshTokenServiceImplTests {
     @Mock
     private RefreshTokenRepository refreshTokenRepository;
-
-    @Mock
-    private RefreshTokenConverter refreshTokenConverter;
 
     @InjectMocks
     private RefreshTokenServiceImpl refreshTokenService;
@@ -42,17 +38,13 @@ public class RefreshTokenServiceImplTests {
     }
 
     @Nested
-    class FindOneByIdTests {
+    class DeleteOneTests {
         @Test
-        @DisplayName("returns the found refresh token")
+        @DisplayName("deletes the given token")
         public void returnsTheCreatedRefreshToken() {
-            RefreshTokenEntity expectedRefreshToken = RefreshTokenFactory.generateOneEntity();
-            when(refreshTokenRepository.findOneById(expectedRefreshToken.getToken())).thenReturn(Optional.of(expectedRefreshToken));
-            RefreshTokenDto expectedDto = RefreshTokenFactory.generateOneDto();
-            when(refreshTokenConverter.convertToDto(eq(expectedRefreshToken))).thenReturn(expectedDto);
-            Optional<RefreshTokenDto> foundRefreshToken = refreshTokenService.findOneById(expectedRefreshToken.getToken());
-            assertTrue(foundRefreshToken.isPresent());
-            assertEquals(expectedDto, foundRefreshToken.get());
+            String refreshTokenToDelete = UUID.randomUUID().toString();
+            refreshTokenService.deleteOne(refreshTokenToDelete);
+            verify(refreshTokenRepository, times(1)).deleteOne(eq(refreshTokenToDelete));
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
+import com.tiernebre.tailgate.token.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.TokenFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 
 import javax.servlet.http.Cookie;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static com.tiernebre.tailgate.session.SessionRestfulController.REFRESH_TOKEN_COOKIE_NAME;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,6 +26,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SessionRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
     @MockBean
     private SessionService sessionService;
+
+    @MockBean
+    private RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
+
+    private static final int TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES = 1;
+
+    @BeforeEach
+    public void setup() {
+        when(refreshTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES);
+    }
 
     @Nested
     @DisplayName("POST /sessions")
@@ -72,15 +85,16 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
                     .build());
-            String expectedCookieHeader = String.format("%s=%s; HttpOnly", REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken);
+            int expectedRefreshTokenAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES));
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
-                    .andExpect(header().string("Set-Cookie", expectedCookieHeader))
+                    .andExpect(header().exists("Set-Cookie"))
                     .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken))
-                    .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true));
+                    .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
+                    .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
         }
     }
 
@@ -141,14 +155,15 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .accessToken(UUID.randomUUID().toString())
                     .refreshToken(expectedRefreshToken)
                     .build());
-            String expectedCookieHeader = String.format("%s=%s; HttpOnly", REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken);
+            int expectedRefreshTokenAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES));
             Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken);
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
             )
-                    .andExpect(header().string("Set-Cookie", expectedCookieHeader))
+                    .andExpect(header().exists("Set-Cookie"))
                     .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken))
-                    .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true));
+                    .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
+                    .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
         }
     }
 }

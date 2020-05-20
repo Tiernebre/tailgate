@@ -137,5 +137,17 @@ public class SessionServiceImplTests {
             InvalidRefreshSessionRequestException thrownException = assertThrows(expectedException.getClass(), () -> sessionService.refreshOne(refreshToken));
             assertEquals(expectedException, thrownException);
         }
+
+        @Test
+        @DisplayName("deletes the previously used refresh token")
+        public void deletesThePreviouslyUsedRefreshToken() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+            UserDto user = UserFactory.generateOneDto();
+            String originalRefreshToken = UUID.randomUUID().toString();
+            when(userService.findOneByNonExpiredRefreshToken(eq(originalRefreshToken))).thenReturn(Optional.of(user));
+            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID().toString());
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(UUID.randomUUID().toString());
+            sessionService.refreshOne(originalRefreshToken);
+            verify(refreshTokenService, times(1)).deleteOne(eq(originalRefreshToken));
+        }
     }
 }

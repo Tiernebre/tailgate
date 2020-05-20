@@ -1,7 +1,9 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.token.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.TokenFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.Cookie;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static com.tiernebre.tailgate.session.SessionRestfulController.REFRESH_TOKEN_COOKIE_NAME;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,8 +27,18 @@ public class SessionRestfulControllerTests {
     @Mock
     private SessionService sessionService;
 
+    @Mock
+    private RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
+
     @InjectMocks
     private SessionRestfulController sessionRestfulController;
+
+    private int TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES = 2;
+
+    @BeforeEach
+    public void setup() {
+        when(refreshTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES);
+    }
 
     @Nested
     @DisplayName("createOne")
@@ -100,6 +113,8 @@ public class SessionRestfulControllerTests {
             assertNotNull(refreshTokenCookie);
             assertEquals(expectedNewRefreshToken, refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
+            int expectedCookieAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES));
+            assertEquals(expectedCookieAge, refreshTokenCookie.getMaxAge());
         }
     }
 }

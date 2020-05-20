@@ -2,8 +2,6 @@ package com.tiernebre.tailgate.token;
 
 import com.tiernebre.tailgate.user.UserDto;
 
-import java.util.Optional;
-
 public interface RefreshTokenRepository {
     /**
      * Saves a refresh token for a given user. The generation of the refresh token is handled in this method.
@@ -13,9 +11,8 @@ public interface RefreshTokenRepository {
     RefreshTokenEntity createOneForUser(UserDto user);
 
     /**
-     * Finds a refresh token by its ID, which is the actual string value of the token.
-     * @param id The id of the refresh token, which is just the token string.
-     * @return The found refresh token.
+     * Deletes a Refresh Token by its given unique token value.
+     * @param token The token of the refresh token to delete.
      */
-    Optional<RefreshTokenEntity> findOneById(String id);
+    void deleteOne(String token);
 }
