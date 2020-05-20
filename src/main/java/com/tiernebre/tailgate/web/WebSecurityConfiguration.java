@@ -4,6 +4,7 @@ import com.tiernebre.tailgate.authentication.JwtAuthorizationFilter;
 import com.tiernebre.tailgate.token.AccessTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,7 +22,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers("/users", "/sessions")
+                .antMatchers(HttpMethod.POST, "/users")
+                .permitAll()
+                .antMatchers(HttpMethod.POST, "/sessions")
                 .permitAll()
                 .anyRequest().fullyAuthenticated()
                 .and()

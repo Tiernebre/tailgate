@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import javax.servlet.http.Cookie;
 import java.util.UUID;
@@ -100,6 +101,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
 
     @Nested
     @DisplayName("PUT /sessions")
+    @WithMockUser
     public class PutSessionsTests {
         @Test
         @DisplayName("returns with 201 CREATED status if successful")
