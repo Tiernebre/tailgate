@@ -104,6 +104,15 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         }
 
         @Test
+        @DisplayName("returns with 400 BAD REQUEST status if no refresh token is provided")
+        public void returnsWithBadRequestStatusIfNoRefreshTokenIsProvided() throws Exception {
+            mockMvc.perform(
+                    put("/sessions")
+            )
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
         @DisplayName("returns with the session in the JSON response body")
         public void returnsWithTheSession() throws Exception {
             String originalRefreshToken = UUID.randomUUID().toString();
