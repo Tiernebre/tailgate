@@ -13,4 +13,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public String createOneForUser(UserDto user) {
         return repository.createOneForUser(user).getToken();
     }
+
+    @Override
+    public void deleteOne(String token) {
+
+    }
 }
