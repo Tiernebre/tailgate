@@ -19,11 +19,14 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
     @Autowired
     private UserRecordPool userRecordPool;
 
+    @Autowired
+    private RefreshTokenRecordPool refreshTokenRecordPool;
+
     @Nested
     class CreateOneForUserTests {
         @Test
         @DisplayName("returns the saved refresh token as an entity")
-        public void returnsTheSavedRefreshToken() {
+        void returnsTheSavedRefreshToken() {
             UsersRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.createOneForUser(user);
@@ -31,6 +34,17 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
             assertNotNull(refreshTokenEntity.getCreatedAt());
             assertEquals(user.getId(), refreshTokenEntity.getUserId());
+        }
+    }
+
+    @Nested
+    class DeleteOneTests {
+        @Test
+        @DisplayName("deletes the given refresh token")
+        void deletesTheGivenRefreshToken() {
+            String refreshTokenToDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
+            refreshTokenRepository.deleteOne(refreshTokenToDelete);
+            assertNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
         }
     }
 }

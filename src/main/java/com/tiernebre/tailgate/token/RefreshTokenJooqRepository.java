@@ -19,7 +19,7 @@ public class RefreshTokenJooqRepository implements RefreshTokenRepository {
                 .returningResult(REFRESH_TOKENS.asterisk())
                 .fetchOne()
                 .into(RefreshTokenEntity.class);
-    }
+   }
 
     @Override
     public void deleteOne(String token) {
