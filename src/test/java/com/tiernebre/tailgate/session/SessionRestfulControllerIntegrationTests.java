@@ -11,11 +11,11 @@ import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
+import static com.tiernebre.tailgate.session.SessionRestfulController.REFRESH_TOKEN_COOKIE_NAME;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = SessionRestfulController.class)
 public class SessionRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
@@ -58,6 +58,25 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
                     .andExpect(jsonPath("$.refreshToken").exists())
                     .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken));
+        }
+
+        @Test
+        @DisplayName("returns with the refresh token set as a cookie")
+        public void returnsWithTheRefreshTokenAsACookie() throws Exception {
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
+            String expectedAccessToken = UUID.randomUUID().toString();
+            String expectedRefreshToken = UUID.randomUUID().toString();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
+                    .accessToken(expectedAccessToken)
+                    .refreshToken(expectedRefreshToken)
+                    .build());
+            mockMvc.perform(
+                    post("/sessions")
+                            .content(objectMapper.writeValueAsString(createSessionRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+            )
+                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken))
+                    .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true));
         }
     }
 }
