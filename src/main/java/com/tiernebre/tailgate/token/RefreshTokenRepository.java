@@ -9,4 +9,10 @@ public interface RefreshTokenRepository {
      * @return The saved refresh token.
      */
     RefreshTokenEntity createOneForUser(UserDto user);
+
+    /**
+     * Deletes a Refresh Token by its given unique token value.
+     * @param token The token of the refresh token to delete.
+     */
+    void deleteOne(String token);
 }

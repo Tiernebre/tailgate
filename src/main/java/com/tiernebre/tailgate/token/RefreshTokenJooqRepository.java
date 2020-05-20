@@ -20,4 +20,9 @@ public class RefreshTokenJooqRepository implements RefreshTokenRepository {
                 .fetchOne()
                 .into(RefreshTokenEntity.class);
     }
+
+    @Override
+    public void deleteOne(String token) {
+
+    }
 }
