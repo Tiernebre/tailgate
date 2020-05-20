@@ -34,12 +34,14 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-        validator.validateRefreshToken(refreshToken);
+    public SessionDto refreshOne(String originalRefreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+        validator.validateRefreshToken(originalRefreshToken);
         UserDto userToCreateRefreshedSessionFor = userService
-                .findOneByNonExpiredRefreshToken(refreshToken)
+                .findOneByNonExpiredRefreshToken(originalRefreshToken)
                 .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));
-        return buildOutSessionForUser(userToCreateRefreshedSessionFor);
+        SessionDto refreshedSession = buildOutSessionForUser(userToCreateRefreshedSessionFor);
+        refreshTokenService.deleteOne(originalRefreshToken);
+        return refreshedSession;
     }
 
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
