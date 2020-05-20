@@ -70,11 +70,13 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
                     .build());
+            String expectedCookieHeader = String.format("%s=%s; HttpOnly", REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken);
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
+                    .andExpect(header().string("Set-Cookie", expectedCookieHeader))
                     .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken))
                     .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true));
         }
