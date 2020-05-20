@@ -43,6 +43,7 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
         @DisplayName("deletes the given refresh token")
         void deletesTheGivenRefreshToken() {
             String refreshTokenToDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
+            assertNotNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
             refreshTokenRepository.deleteOne(refreshTokenToDelete);
             assertNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
         }
