@@ -64,6 +64,7 @@ public class SessionRestfulControllerTests {
             assertTrue(refreshTokenCookie.isHttpOnly());
         }
     }
+
     @Nested
     @DisplayName("refreshOne")
     public class RefreshOneTests {
@@ -80,6 +81,25 @@ public class SessionRestfulControllerTests {
             when(sessionService.refreshOne(refreshToken)).thenReturn(expectedRefreshedSession);
             SessionDto refreshedSessionGotten = sessionRestfulController.refreshOne(refreshToken, new MockHttpServletResponse());
             assertEquals(expectedRefreshedSession, refreshedSessionGotten);
+        }
+
+        @Test
+        @DisplayName("sets a cookie with the newly generated refresh token")
+        void setsACookieWithTheNewlyGeneratedRefreshToken() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+            String refreshToken = UUID.randomUUID().toString();
+            String expectedNewAccessToken = UUID.randomUUID().toString();
+            String expectedNewRefreshToken = UUID.randomUUID().toString();
+            SessionDto expectedRefreshedSession = SessionDto.builder()
+                    .accessToken(expectedNewAccessToken)
+                    .refreshToken(expectedNewRefreshToken)
+                    .build();
+            when(sessionService.refreshOne(refreshToken)).thenReturn(expectedRefreshedSession);
+            MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+            sessionRestfulController.refreshOne(refreshToken, mockHttpServletResponse);
+            Cookie refreshTokenCookie = mockHttpServletResponse.getCookie(REFRESH_TOKEN_COOKIE_NAME);
+            assertNotNull(refreshTokenCookie);
+            assertEquals(expectedNewRefreshToken, refreshTokenCookie.getValue());
+            assertTrue(refreshTokenCookie.isHttpOnly());
         }
     }
 }
