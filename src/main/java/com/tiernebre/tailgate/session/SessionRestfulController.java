@@ -28,4 +28,9 @@ public class SessionRestfulController {
         httpServletResponse.addCookie(refreshTokenCookie);
         return createdSession;
     }
+
+    public SessionDto refreshOne(String refreshToken, HttpServletResponse httpServletResponse) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+        SessionDto refreshedSession = service.refreshOne(refreshToken);
+        return refreshedSession;
+    }
 }

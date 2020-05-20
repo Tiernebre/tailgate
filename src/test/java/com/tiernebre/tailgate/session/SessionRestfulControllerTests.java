@@ -31,7 +31,7 @@ public class SessionRestfulControllerTests {
     @DisplayName("createOne")
     public class CreateOneTests {
         @Test
-        @DisplayName("returns the created token")
+        @DisplayName("returns the created session")
         void returnsTheCreatedToken() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
@@ -62,6 +62,24 @@ public class SessionRestfulControllerTests {
             assertNotNull(refreshTokenCookie);
             assertEquals(expectedRefreshToken, refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
+        }
+    }
+    @Nested
+    @DisplayName("refreshOne")
+    public class RefreshOneTests {
+        @Test
+        @DisplayName("returns the refreshed session")
+        void returnsTheRefreshedSession() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+            String refreshToken = UUID.randomUUID().toString();
+            String expectedNewAccessToken = UUID.randomUUID().toString();
+            String expectedNewRefreshToken = UUID.randomUUID().toString();
+            SessionDto expectedRefreshedSession = SessionDto.builder()
+                    .accessToken(expectedNewAccessToken)
+                    .refreshToken(expectedNewRefreshToken)
+                    .build();
+            when(sessionService.refreshOne(refreshToken)).thenReturn(expectedRefreshedSession);
+            SessionDto refreshedSessionGotten = sessionRestfulController.refreshOne(refreshToken, new MockHttpServletResponse());
+            assertEquals(expectedRefreshedSession, refreshedSessionGotten);
         }
     }
 }
