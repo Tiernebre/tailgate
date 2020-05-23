@@ -9,9 +9,10 @@ import static com.tiernebre.tailgate.jooq.Tables.USER_CONFIRMATION_TOKENS;
 
 @Repository
 @RequiredArgsConstructor
-public class UserConfirmationTokenJooqRepository {
+public class UserConfirmationTokenJooqRepository implements UserConfirmationTokenRepository {
     private final DSLContext dslContext;
 
+    @Override
     public UserConfirmationTokenEntity createOneForUser(UserDto user) {
         return dslContext
                 .insertInto(USER_CONFIRMATION_TOKENS, USER_CONFIRMATION_TOKENS.USER_ID)
@@ -21,6 +22,7 @@ public class UserConfirmationTokenJooqRepository {
                 .into(UserConfirmationTokenEntity.class);
     }
 
+    @Override
     public void deleteOne(String token) {
         dslContext
                 .deleteFrom(USER_CONFIRMATION_TOKENS)
