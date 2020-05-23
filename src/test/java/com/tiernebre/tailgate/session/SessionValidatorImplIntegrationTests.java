@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static com.tiernebre.tailgate.session.SessionValidatorImpl.INVALID_REFRESH_TOKEN_REQUEST_ERROR;
+import static com.tiernebre.tailgate.session.SessionValidatorImpl.NULL_CREATE_SESSION_REQUEST_ERROR_MESSAGE;
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,13 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
     @Nested
     @DisplayName("validate")
     public class ValidateTests {
+        @Test
+        @DisplayName("validates that the create session request must not be null")
+        void testNullCreateSessionRequest() {
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> sessionValidator.validate(null));
+            assertEquals(NULL_CREATE_SESSION_REQUEST_ERROR_MESSAGE, thrownException.getMessage());
+        }
+
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
         @NullSource
