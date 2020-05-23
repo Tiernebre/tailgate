@@ -31,7 +31,7 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
         public void returnsTheCreatedInviteTokenForAUser() {
             UsersRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
-            InviteTokenEntity refreshTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
+            UserConfirmationTokenEntity refreshTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
             assertNotNull(refreshTokenEntity.getToken());
             assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
             assertNotNull(refreshTokenEntity.getCreatedAt());

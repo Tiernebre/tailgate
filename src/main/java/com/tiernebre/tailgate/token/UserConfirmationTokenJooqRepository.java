@@ -12,13 +12,13 @@ import static com.tiernebre.tailgate.jooq.Tables.INVITE_TOKENS;
 public class UserConfirmationTokenJooqRepository {
     private final DSLContext dslContext;
 
-    public InviteTokenEntity createOneForUser(UserDto user) {
+    public UserConfirmationTokenEntity createOneForUser(UserDto user) {
         return dslContext
                 .insertInto(INVITE_TOKENS, INVITE_TOKENS.USER_ID)
                 .values(user.getId())
                 .returningResult(INVITE_TOKENS.asterisk())
                 .fetchOne()
-                .into(InviteTokenEntity.class);
+                .into(UserConfirmationTokenEntity.class);
     }
 
     public void deleteOne(String token) {

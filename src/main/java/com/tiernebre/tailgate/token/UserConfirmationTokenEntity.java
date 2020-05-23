@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Value
 @Builder
-public class InviteTokenEntity {
+public class UserConfirmationTokenEntity {
     String token;
     Instant createdAt;
     Long userId;
