@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserConfirmationTokenServiceImplTests {
@@ -38,6 +38,18 @@ public class UserConfirmationTokenServiceImplTests {
             );
             String gottenConfirmationToken = userConfirmationTokenService.createOneForUser(user);
             assertEquals(expectedConfirmationToken, gottenConfirmationToken);
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteOne")
+    public class DeleteOneTests {
+        @Test
+        @DisplayName("deletes the given token")
+        public void deletesTheGivenToken() {
+            String confirmationTokenToDelete = UUID.randomUUID().toString();
+            userConfirmationTokenService.deleteOne(confirmationTokenToDelete);
+            verify(userConfirmationTokenRepository, times(1)).deleteOne(eq(confirmationTokenToDelete));
         }
     }
 }
