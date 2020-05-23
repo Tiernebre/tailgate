@@ -1,6 +1,5 @@
 package com.tiernebre.tailgate.token.access;
 
-import com.tiernebre.tailgate.token.user_confirmation.GenerateAccessTokenException;
 import com.tiernebre.tailgate.user.UserDto;
 
 public interface AccessTokenProvider {

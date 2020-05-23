@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token.user_confirmation;
+package com.tiernebre.tailgate.token.access;
 
 public class GenerateAccessTokenException extends Exception {
     public GenerateAccessTokenException(String message) {

@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.token.access.AccessTokenProvider;
-import com.tiernebre.tailgate.token.user_confirmation.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.access.GenerateAccessTokenException;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenService;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserService;
