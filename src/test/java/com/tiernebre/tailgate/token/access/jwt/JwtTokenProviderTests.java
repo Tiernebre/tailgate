@@ -21,8 +21,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.tiernebre.tailgate.token.access.jwt.JwtTokenProvider.EMAIL_CLAIM;
-import static com.tiernebre.tailgate.token.access.jwt.JwtTokenProvider.ISSUER;
+import static com.tiernebre.tailgate.token.access.jwt.JwtTokenProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -52,14 +51,10 @@ public class JwtTokenProviderTests {
     @Nested
     @DisplayName("generateOne")
     public class GenerateOneTests {
-        @BeforeEach
-        public void setup() {
-            when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
-        }
-
         @Test
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateAccessTokenException {
+            when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
             UserDto userDTO = UserFactory.generateOneDto();
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
@@ -80,6 +75,7 @@ public class JwtTokenProviderTests {
         @Test
         @DisplayName("throws a GenerateTokenException if the JWT token completely failed to sign")
         void throwsGenerateTokenExceptionIfTokenCannotBeSigned() throws GenerateAccessTokenException {
+            when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
                     null,
                     jwtTokenConfigurationProperties,
@@ -87,6 +83,13 @@ public class JwtTokenProviderTests {
             );
             UserDto userDTO = UserFactory.generateOneDto();
             assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
+        }
+
+        @Test
+        @DisplayName("throws a NullPointerException if the user passed in is null with a helpful message")
+        void throwsNullPointerExceptionIfTheUserPassedInIsNullWithAHelpfulMessage() throws GenerateAccessTokenException {
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> jwtTokenProvider.generateOne(null));
+            assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
 
