@@ -72,13 +72,6 @@ public class UserServiceImplTests {
         }
 
         @Test
-        @DisplayName("throws a NullPointerException if the create user request is null")
-        void testCreateOneThrowsNullPointerExceptionIfTheRequestIsNull() throws InvalidUserException {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userService.createOne(null));
-            assertEquals("The create user request is a required parameter and must not be null", thrownException.getMessage());
-        }
-
-        @Test
         @DisplayName("throws a UserAlreadyExistsException if the email already exists")
         void throwsUserAlreadyExistsExceptionIfEmailExists() throws InvalidUserException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
