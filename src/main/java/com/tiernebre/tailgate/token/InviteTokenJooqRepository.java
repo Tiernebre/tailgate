@@ -13,7 +13,8 @@ public class InviteTokenJooqRepository {
     private final DSLContext dslContext;
 
     public InviteTokenEntity createOneForUser(UserDto user) {
-        return dslContext.insertInto(INVITE_TOKENS, INVITE_TOKENS.USER_ID)
+        return dslContext
+                .insertInto(INVITE_TOKENS, INVITE_TOKENS.USER_ID)
                 .values(user.getId())
                 .returningResult(INVITE_TOKENS.asterisk())
                 .fetchOne()
@@ -21,5 +22,9 @@ public class InviteTokenJooqRepository {
     }
 
     public void deleteOne(String token) {
+        dslContext
+                .deleteFrom(INVITE_TOKENS)
+                .where(INVITE_TOKENS.TOKEN.eq(token))
+                .execute();
     }
 }
