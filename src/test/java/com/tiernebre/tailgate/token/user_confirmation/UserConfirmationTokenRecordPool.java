@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.token.user_confirmation;
 
 import com.tiernebre.tailgate.jooq.tables.records.UserConfirmationTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;

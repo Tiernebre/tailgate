@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.session;
 
-import com.tiernebre.tailgate.token.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.user_confirmation.GenerateAccessTokenException;
 
 public interface SessionService {
     /**

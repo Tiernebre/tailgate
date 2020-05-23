@@ -1,10 +1,10 @@
-package com.tiernebre.tailgate.token.jwt;
+package com.tiernebre.tailgate.token.access.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tiernebre.tailgate.token.GenerateAccessTokenException;
+import com.tiernebre.tailgate.token.user_confirmation.GenerateAccessTokenException;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,8 +21,8 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.EMAIL_CLAIM;
-import static com.tiernebre.tailgate.token.jwt.JwtTokenProvider.ISSUER;
+import static com.tiernebre.tailgate.token.access.jwt.JwtTokenProvider.EMAIL_CLAIM;
+import static com.tiernebre.tailgate.token.access.jwt.JwtTokenProvider.ISSUER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 

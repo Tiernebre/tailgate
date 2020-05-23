@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token.jwt;
+package com.tiernebre.tailgate.token.access.jwt;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.RequiredArgsConstructor;
