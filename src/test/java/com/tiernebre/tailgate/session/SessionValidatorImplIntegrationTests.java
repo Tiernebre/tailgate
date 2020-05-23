@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
+import com.tiernebre.tailgate.validator.StringIsBlankException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -84,7 +85,7 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
         })
         @NullSource
         public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsEqualTo(String refreshToken) {
-            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionValidator.validateRefreshToken(refreshToken));
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> sessionValidator.validateRefreshToken(refreshToken));
             assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
         }
 

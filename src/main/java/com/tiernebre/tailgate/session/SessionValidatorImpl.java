@@ -1,8 +1,8 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.validator.BaseValidator;
+import com.tiernebre.tailgate.validator.StringValidator;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +32,7 @@ public class SessionValidatorImpl extends BaseValidator implements SessionValida
     }
 
     @Override
-    public void validateRefreshToken(String refreshToken) throws InvalidRefreshSessionRequestException {
-        if (StringUtils.isBlank(refreshToken)) {
-            throw new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_REQUEST_ERROR);
-        }
+    public void validateRefreshToken(String refreshToken) {
+        StringValidator.requireNonBlank(refreshToken, INVALID_REFRESH_TOKEN_REQUEST_ERROR);
     }
 }
