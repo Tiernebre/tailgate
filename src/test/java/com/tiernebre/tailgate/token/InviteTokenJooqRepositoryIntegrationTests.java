@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.token;
 
+import com.tiernebre.tailgate.jooq.tables.records.InviteTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.user.UserDto;
@@ -18,6 +19,9 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
 
     @Autowired
     private UserRecordPool userRecordPool;
+
+    @Autowired
+    private InviteTokenRecordPool inviteTokenRecordPool;
 
     @Nested
     @DisplayName("createOneForUser")
@@ -41,6 +45,18 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             inviteTokenJooqRepository.createOneForUser(user);
             assertThrows(Exception.class, () -> inviteTokenJooqRepository.createOneForUser(user));
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteOne")
+    public class deleteOneTests {
+        @Test
+        @DisplayName("deletes the given invite token value")
+        public void returnsTheCreatedInviteTokenForAUser() {
+            InviteTokensRecord inviteToken = inviteTokenRecordPool.createAndSaveOne();
+            inviteTokenJooqRepository.deleteOne(inviteToken.getToken());
+            assertNull(inviteTokenRecordPool.getOneById(inviteToken.getToken()));
         }
     }
 }

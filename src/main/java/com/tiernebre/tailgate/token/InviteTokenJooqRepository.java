@@ -19,4 +19,7 @@ public class InviteTokenJooqRepository {
                 .fetchOne()
                 .into(InviteTokenEntity.class);
     }
+
+    public void deleteOne(String token) {
+    }
 }
