@@ -4,14 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tiernebre.tailgate.token.access.GenerateAccessTokenException;
 import com.tiernebre.tailgate.token.access.AccessTokenProvider;
+import com.tiernebre.tailgate.token.access.GenerateAccessTokenException;
 import com.tiernebre.tailgate.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class JwtTokenProvider implements AccessTokenProvider {
     static final String ISSUER = "tailgate";
     static final String EMAIL_CLAIM = "email";
+    static final String NULL_USER_ERROR_MESSAGE = "The user to generate a JWT token from must not be null.";
 
     private final Algorithm algorithm;
     private final JwtTokenConfigurationProperties configurationProperties;
@@ -29,6 +31,8 @@ public class JwtTokenProvider implements AccessTokenProvider {
 
     @Override
     public String generateOne(UserDto user) throws GenerateAccessTokenException {
+        Objects.requireNonNull(user, NULL_USER_ERROR_MESSAGE);
+
         try {
             return JWT.create()
                     .withIssuer(ISSUER)

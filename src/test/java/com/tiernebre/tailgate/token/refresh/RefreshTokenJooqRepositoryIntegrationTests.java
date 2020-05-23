@@ -4,12 +4,18 @@ import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserRecordPool;
+import com.tiernebre.tailgate.validator.StringIsBlankException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.BLANK_TOKEN_ERROR_MESSAGE;
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.*;
 
 public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
@@ -35,6 +41,13 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             assertNotNull(refreshTokenEntity.getCreatedAt());
             assertEquals(user.getId(), refreshTokenEntity.getUserId());
         }
+
+        @Test
+        @DisplayName("throws a NullPointerException with a helpful message if the user to create a token for is null")
+        void throwsANullPointerExceptionWithAHelpfulMessageIfTheUserToCreateATokenForIsNull() {
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> refreshTokenRepository.createOneForUser(null));
+            assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
+        }
     }
 
     @Nested
@@ -58,6 +71,14 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             refreshTokenRepository.deleteOne(refreshTokenToDelete);
             assertNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
             assertNotNull(refreshTokenRecordPool.getOneById(refreshTokenToNotDelete));
+        }
+
+        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful message if the token to delete is \"{0}\"")
+        @NullSource
+        @ValueSource(strings = { "", " " })
+        void throwsStringIsBlankExceptionWithAHelpfulMessageIfTheTokenToDeleteIs(String tokenToDelete) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> refreshTokenRepository.deleteOne(tokenToDelete));
+            assertEquals(BLANK_TOKEN_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
 }

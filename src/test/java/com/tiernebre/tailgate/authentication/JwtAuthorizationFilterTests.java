@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,12 +42,6 @@ public class JwtAuthorizationFilterTests {
     @Nested
     @DisplayName("doFilterInternal")
     public class DoFilterInternalTests {
-        @Test
-        @DisplayName("does not set an authentication in the context if the token is null")
-        void doesNotSetForNullToken() throws IOException, ServletException {
-            assertSecurityContextHolderDoesNotGetSetForToken(null);
-        }
-
         @ParameterizedTest(name = "does set an authentication in the context if token = \"{0}\"")
         @ValueSource(strings = {
                 "",
@@ -54,6 +49,7 @@ public class JwtAuthorizationFilterTests {
                 "test",
                 "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0"
         })
+        @NullSource
         void testNotSetAuthenticationSituationsForTokenBeing(String token) throws IOException, ServletException {
             assertSecurityContextHolderDoesNotGetSetForToken(token);
         }

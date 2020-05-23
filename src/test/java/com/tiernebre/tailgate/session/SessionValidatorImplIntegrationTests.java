@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,23 +22,9 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
     @Nested
     @DisplayName("validate")
     public class ValidateTests {
-        @Test
-        @DisplayName("validates that the email must not be null")
-        void testNullEmail() {
-            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
-                    .email(null)
-                    .password(UUID.randomUUID().toString())
-                    .build();
-            assertThatValidationInvalidatedCorrectly(
-                    sessionValidator,
-                    createSessionRequest,
-                    InvalidCreateSessionRequestException.class,
-                    "email must not be blank"
-            );
-        }
-
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
+        @NullSource
         void testBlankEmail(String email) {
             CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .email(email)
@@ -51,23 +38,9 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
             );
         }
 
-        @Test
-        @DisplayName("validates that the password must not be null")
-        void testNullPassword() {
-            CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
-                    .password(null)
-                    .email(UUID.randomUUID().toString() + ".com")
-                    .build();
-            assertThatValidationInvalidatedCorrectly(
-                    sessionValidator,
-                    createSessionRequest,
-                    InvalidCreateSessionRequestException.class,
-                    "password must not be blank"
-            );
-        }
-
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
+        @NullSource
         void testBlankPassword(String password) {
             CreateSessionRequest createSessionRequest = CreateSessionRequest.builder()
                     .password(password)
@@ -95,20 +68,13 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
     @Nested
     @DisplayName("validateRefreshToken")
     public class ValidateRefreshTokenTests {
-
-        @Test
-        @DisplayName("throws an invalid refresh request exception if refresh token is null")
-        public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsNull() {
-            InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionValidator.validateRefreshToken(null));
-            assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
-        }
-
         @ParameterizedTest(name = "throws an invalid refresh request exception if refresh token is equal to \"{0}\"")
         @ValueSource(strings = {
                 "",
                 " ",
                 "    "
         })
+        @NullSource
         public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsEqualTo(String refreshToken) {
             InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionValidator.validateRefreshToken(refreshToken));
             assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
