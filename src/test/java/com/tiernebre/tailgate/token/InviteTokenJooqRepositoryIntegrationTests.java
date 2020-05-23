@@ -53,10 +53,20 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
     public class deleteOneTests {
         @Test
         @DisplayName("deletes the given invite token value")
-        public void returnsTheCreatedInviteTokenForAUser() {
+        public void deletesTheGivenInviteTokenValue() {
             InviteTokensRecord inviteToken = inviteTokenRecordPool.createAndSaveOne();
             inviteTokenJooqRepository.deleteOne(inviteToken.getToken());
             assertNull(inviteTokenRecordPool.getOneById(inviteToken.getToken()));
+        }
+
+        @Test
+        @DisplayName("does not delete multiple invite tokens accidentally")
+        public void doesNotDeleteMultipleInviteTokensAccidentally() {
+            InviteTokensRecord inviteTokenToDelete = inviteTokenRecordPool.createAndSaveOne();
+            InviteTokensRecord otherInviteToken = inviteTokenRecordPool.createAndSaveOne();
+            inviteTokenJooqRepository.deleteOne(inviteTokenToDelete.getToken());
+            assertNull(inviteTokenRecordPool.getOneById(inviteTokenToDelete.getToken()));
+            assertNotNull(inviteTokenRecordPool.getOneById(otherInviteToken.getToken()));
         }
     }
 }
