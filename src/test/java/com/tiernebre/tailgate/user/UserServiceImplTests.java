@@ -1,10 +1,14 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.user.validator.UserValidator;
+import com.tiernebre.tailgate.validator.StringIsBlankException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +18,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.tiernebre.tailgate.user.UserServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -66,13 +71,6 @@ public class UserServiceImplTests {
         }
 
         @Test
-        @DisplayName("throws a NullPointerException if the create user request is null")
-        void testCreateOneThrowsNullPointerExceptionIfTheRequestIsNull() throws InvalidUserException {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userService.createOne(null));
-            assertEquals("The create user request is a required parameter and must not be null", thrownException.getMessage());
-        }
-
-        @Test
         @DisplayName("throws a UserAlreadyExistsException if the email already exists")
         void throwsUserAlreadyExistsExceptionIfEmailExists() throws InvalidUserException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
@@ -122,18 +120,20 @@ public class UserServiceImplTests {
             assertTrue(gottenUser.isEmpty());
         }
 
-        @Test
-        @DisplayName("throws a NullPointerException if the email is null")
-        void testThrowsNullPointerExceptionIfEmailIsNull() throws InvalidUserException {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userService.findOneByEmailAndPassword(null, UUID.randomUUID().toString()));
-            assertEquals("The email to find a user for is a required parameter and must not be null", thrownException.getMessage());
+        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful error message if the email is \"{0}\"")
+        @NullSource
+        @ValueSource(strings = {"", " "})
+        void testThrowsNullPointerExceptionIfEmailIs(String email) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByEmailAndPassword(email, UUID.randomUUID().toString()));
+            assertEquals(REQUIRED_EMAIL_MESSAGE, thrownException.getMessage());
         }
 
-        @Test
-        @DisplayName("throws a NullPointerException if the password is null")
-        void testThrowsNullPointerExceptionIfPasswordIsNull() throws InvalidUserException {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userService.findOneByEmailAndPassword(UUID.randomUUID().toString(), null));
-            assertEquals("The password to find a user for is a required parameter and must not be null", thrownException.getMessage());
+        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful error message if the password is \"{0}\"")
+        @NullSource
+        @ValueSource(strings = {"", " "})
+        void testThrowsNullPointerExceptionIfPasswordIs(String password) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByEmailAndPassword(UUID.randomUUID().toString(), password));
+            assertEquals(REQUIRED_PASSWORD_MESSAGE, thrownException.getMessage());
         }
     }
 
@@ -160,6 +160,14 @@ public class UserServiceImplTests {
             when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
             Optional<UserDto> foundUser = userService.findOneByNonExpiredRefreshToken(refreshToken);
             assertFalse(foundUser.isPresent());
+        }
+
+        @ParameterizedTest(name = "throws a StringIsBlankException if the refresh token is \"{0}\"")
+        @NullSource
+        @ValueSource(strings = { "", " " })
+        void throwsAStringIsBlankExceptionIfTheRefreshTokenIs(String refreshToken) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByNonExpiredRefreshToken(refreshToken));
+            assertEquals(REQUIRED_REFRESH_TOKEN_MESSAGE, thrownException.getMessage());
         }
     }
 }

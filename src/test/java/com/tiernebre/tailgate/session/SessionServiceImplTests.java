@@ -6,6 +6,7 @@ import com.tiernebre.tailgate.token.refresh.RefreshTokenService;
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserService;
+import com.tiernebre.tailgate.validator.StringIsBlankException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -130,11 +131,11 @@ public class SessionServiceImplTests {
 
         @Test
         @DisplayName("throws an invalid refresh request exception if the refresh token is invalid")
-        public void throwsAnInvalidRefreshRequestExceptionIfTheRefreshTokenIsInvalid() throws InvalidRefreshSessionRequestException {
+        public void throwsAnInvalidRefreshRequestExceptionIfTheRefreshTokenIsInvalid() {
             String refreshToken = UUID.randomUUID().toString();
-            InvalidRefreshSessionRequestException expectedException = new InvalidRefreshSessionRequestException("Expected Test Error");
+            StringIsBlankException expectedException = new StringIsBlankException("Test Error!");
             doThrow(expectedException).when(sessionValidator).validateRefreshToken(eq(refreshToken));
-            InvalidRefreshSessionRequestException thrownException = assertThrows(expectedException.getClass(), () -> sessionService.refreshOne(refreshToken));
+            StringIsBlankException thrownException = assertThrows(expectedException.getClass(), () -> sessionService.refreshOne(refreshToken));
             assertEquals(expectedException, thrownException);
         }
 
