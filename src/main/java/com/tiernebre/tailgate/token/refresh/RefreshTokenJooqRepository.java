@@ -9,13 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Objects;
 
 import static com.tiernebre.tailgate.jooq.Tables.REFRESH_TOKENS;
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.BLANK_TOKEN_ERROR_MESSAGE;
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 
 @Repository
 @RequiredArgsConstructor
 public class RefreshTokenJooqRepository implements RefreshTokenRepository {
-    static final String NULL_USER_ERROR_MESSAGE = "The user to create a refresh token for must not be null.";
-    static final String BLANK_TOKEN_ERROR_MESSAGE = "The token provided must be a non-null and non-blank string";
-
     private final DSLContext dslContext;
 
     @Override

@@ -12,7 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -34,6 +36,13 @@ public class RefreshTokenServiceImplTests {
             when(refreshTokenRepository.createOneForUser(eq(userDto))).thenReturn(expectedRefreshToken);
             String createdToken = refreshTokenService.createOneForUser(userDto);
             assertEquals(expectedRefreshToken.getToken(), createdToken);
+        }
+
+        @Test
+        @DisplayName("throws NullPointerException with a helpful error message if the user is null")
+        public void throwsNullPointerExceptionWithAHelpfulErrorMessageIfTheUserIsNull() {
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> refreshTokenService.createOneForUser(null));
+            assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
 

@@ -14,8 +14,8 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.tiernebre.tailgate.token.refresh.RefreshTokenJooqRepository.BLANK_TOKEN_ERROR_MESSAGE;
-import static com.tiernebre.tailgate.token.refresh.RefreshTokenJooqRepository.NULL_USER_ERROR_MESSAGE;
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.BLANK_TOKEN_ERROR_MESSAGE;
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.*;
 
 public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
