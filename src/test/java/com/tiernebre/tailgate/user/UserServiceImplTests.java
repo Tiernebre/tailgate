@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.tiernebre.tailgate.user.UserServiceImpl.REQUIRED_EMAIL_MESSAGE;
+import static com.tiernebre.tailgate.user.UserServiceImpl.REQUIRED_PASSWORD_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -127,7 +128,7 @@ public class UserServiceImplTests {
             assertTrue(gottenUser.isEmpty());
         }
 
-        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful error message if the email is null")
+        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful error message if the email is \"{0}\"")
         @NullSource
         @ValueSource(strings = {"", " "})
         void testThrowsNullPointerExceptionIfEmailIs(String email) {
@@ -135,11 +136,12 @@ public class UserServiceImplTests {
             assertEquals(REQUIRED_EMAIL_MESSAGE, thrownException.getMessage());
         }
 
-        @Test
-        @DisplayName("throws a NullPointerException if the password is null")
-        void testThrowsNullPointerExceptionIfPasswordIsNull() throws InvalidUserException {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userService.findOneByEmailAndPassword(UUID.randomUUID().toString(), null));
-            assertEquals("The password to find a user for is a required parameter and must not be null", thrownException.getMessage());
+        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful error message if the password is \"{0}\"")
+        @NullSource
+        @ValueSource(strings = {"", " "})
+        void testThrowsNullPointerExceptionIfPasswordIs(String password) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByEmailAndPassword(UUID.randomUUID().toString(), password));
+            assertEquals(REQUIRED_PASSWORD_MESSAGE, thrownException.getMessage());
         }
     }
 

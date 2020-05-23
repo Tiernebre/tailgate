@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDto> findOneByEmailAndPassword(String email, String password) {
         StringValidator.requireNonBlank(email, REQUIRED_EMAIL_MESSAGE);
-        Objects.requireNonNull(password, REQUIRED_PASSWORD_MESSAGE);
+        StringValidator.requireNonBlank(password, REQUIRED_PASSWORD_MESSAGE);
 
         Optional<UserEntity> foundUserByEmail = repository.findOneByEmail(email);
         return foundUserByEmail
