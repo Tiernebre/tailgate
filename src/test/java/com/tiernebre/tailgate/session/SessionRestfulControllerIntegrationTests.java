@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
-import com.tiernebre.tailgate.token.RefreshTokenConfigurationProperties;
+import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.TokenFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

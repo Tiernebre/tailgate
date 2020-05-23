@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.token.refresh;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

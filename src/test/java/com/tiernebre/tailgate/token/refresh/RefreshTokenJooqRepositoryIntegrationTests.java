@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.token.refresh;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;

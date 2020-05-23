@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.token.refresh;
 
 import com.tiernebre.tailgate.user.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
