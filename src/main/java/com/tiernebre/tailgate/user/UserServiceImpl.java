@@ -11,8 +11,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    static final String REQUIRED_EMAIL_MESSAGE = "The email to find a user for is a required parameter and must not be null or blank";
-    static final String REQUIRED_PASSWORD_MESSAGE = "The password to find a user for is a required parameter and must not be null or blank";
+    static final String REQUIRED_EMAIL_MESSAGE = "The email to find a user for is a required parameter and must not be null or blank.";
+    static final String REQUIRED_PASSWORD_MESSAGE = "The password to find a user for is a required parameter and must not be null or blank.";
+    static final String REQUIRED_REFRESH_TOKEN_MESSAGE = "The refresh token to find a user for must not be null or blank.";
 
     private final UserRepository repository;
     private final UserConverter converter;
@@ -43,7 +44,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken) {
-        return repository.findOneWithNonExpiredRefreshToken(refreshToken)
+        StringValidator.requireNonBlank(refreshToken, REQUIRED_REFRESH_TOKEN_MESSAGE);
+
+        return repository
+                .findOneWithNonExpiredRefreshToken(refreshToken)
                 .map(converter::convertFromEntity);
     }
 

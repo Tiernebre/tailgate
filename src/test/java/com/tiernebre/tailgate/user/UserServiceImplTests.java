@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.tiernebre.tailgate.user.UserServiceImpl.REQUIRED_EMAIL_MESSAGE;
-import static com.tiernebre.tailgate.user.UserServiceImpl.REQUIRED_PASSWORD_MESSAGE;
+import static com.tiernebre.tailgate.user.UserServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -161,6 +160,14 @@ public class UserServiceImplTests {
             when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
             Optional<UserDto> foundUser = userService.findOneByNonExpiredRefreshToken(refreshToken);
             assertFalse(foundUser.isPresent());
+        }
+
+        @ParameterizedTest(name = "throws a StringIsBlankException if the refresh token is \"{0}\"")
+        @NullSource
+        @ValueSource(strings = { "", " " })
+        void throwsAStringIsBlankExceptionIfTheRefreshTokenIs(String refreshToken) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByNonExpiredRefreshToken(refreshToken));
+            assertEquals(REQUIRED_REFRESH_TOKEN_MESSAGE, thrownException.getMessage());
         }
     }
 }
