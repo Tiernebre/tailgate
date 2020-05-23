@@ -9,7 +9,7 @@ import static com.tiernebre.tailgate.jooq.Tables.INVITE_TOKENS;
 
 @Repository
 @RequiredArgsConstructor
-public class InviteTokenJooqRepository {
+public class UserConfirmationTokenJooqRepository {
     private final DSLContext dslContext;
 
     public InviteTokenEntity createOneForUser(UserDto user) {

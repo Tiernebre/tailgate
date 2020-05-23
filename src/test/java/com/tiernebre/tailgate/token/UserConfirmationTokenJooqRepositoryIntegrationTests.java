@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
-public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserConfirmationTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
     @Autowired
-    private InviteTokenJooqRepository inviteTokenJooqRepository;
+    private UserConfirmationTokenJooqRepository userConfirmationTokenJooqRepository;
 
     @Autowired
     private UserRecordPool userRecordPool;
@@ -31,7 +31,7 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
         public void returnsTheCreatedInviteTokenForAUser() {
             UsersRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
-            InviteTokenEntity refreshTokenEntity = inviteTokenJooqRepository.createOneForUser(user);
+            InviteTokenEntity refreshTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
             assertNotNull(refreshTokenEntity.getToken());
             assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
             assertNotNull(refreshTokenEntity.getCreatedAt());
@@ -43,8 +43,8 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
         public void onlyAllowsOneInviteTokenForAUser() {
             UsersRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
-            inviteTokenJooqRepository.createOneForUser(user);
-            assertThrows(Exception.class, () -> inviteTokenJooqRepository.createOneForUser(user));
+            userConfirmationTokenJooqRepository.createOneForUser(user);
+            assertThrows(Exception.class, () -> userConfirmationTokenJooqRepository.createOneForUser(user));
         }
     }
 
@@ -55,7 +55,7 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
         @DisplayName("deletes the given invite token value")
         public void deletesTheGivenInviteTokenValue() {
             InviteTokensRecord inviteToken = inviteTokenRecordPool.createAndSaveOne();
-            inviteTokenJooqRepository.deleteOne(inviteToken.getToken());
+            userConfirmationTokenJooqRepository.deleteOne(inviteToken.getToken());
             assertNull(inviteTokenRecordPool.getOneById(inviteToken.getToken()));
         }
 
@@ -64,7 +64,7 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
         public void doesNotDeleteMultipleInviteTokensAccidentally() {
             InviteTokensRecord inviteTokenToDelete = inviteTokenRecordPool.createAndSaveOne();
             InviteTokensRecord otherInviteToken = inviteTokenRecordPool.createAndSaveOne();
-            inviteTokenJooqRepository.deleteOne(inviteTokenToDelete.getToken());
+            userConfirmationTokenJooqRepository.deleteOne(inviteTokenToDelete.getToken());
             assertNull(inviteTokenRecordPool.getOneById(inviteTokenToDelete.getToken()));
             assertNotNull(inviteTokenRecordPool.getOneById(otherInviteToken.getToken()));
         }
