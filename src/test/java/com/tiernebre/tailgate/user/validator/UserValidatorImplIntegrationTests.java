@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,27 +27,12 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
     public class ValidateTests {
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
+        @NullSource
         void testThatBlankPasswordFails(String password) throws InvalidUserException {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email("test@" + UUID.randomUUID().toString())
                     .password(password)
                     .confirmationPassword(password)
-                    .build();
-            assertThatValidationInvalidatedCorrectly(
-                    userValidator,
-                    createUserRequest,
-                    InvalidUserException.class,
-                    "password must not be blank"
-            );
-        }
-
-        @Test
-        @DisplayName("validates that password must not be null")
-        void testThatNullPasswordFails() throws InvalidUserException {
-            CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                    .email("test@" + UUID.randomUUID().toString())
-                    .password(null)
-                    .confirmationPassword(UUID.randomUUID().toString())
                     .build();
             assertThatValidationInvalidatedCorrectly(
                     userValidator,
@@ -62,6 +48,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                 " ",
                 "      "
         })
+        @NullSource
         void testThatBlankEmailFails(String email) throws InvalidUserException {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(email)
@@ -132,22 +119,6 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             assertDoesNotThrow(() -> {
                 userValidator.validate(createUserRequest);
             });
-        }
-
-        @Test
-        @DisplayName("validates that email must not be null")
-        void testThatNullEmailFails() throws InvalidUserException {
-            CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                    .email(null)
-                    .password(STRONG_PASSWORD)
-                    .confirmationPassword(STRONG_PASSWORD)
-                    .build();
-            assertThatValidationInvalidatedCorrectly(
-                    userValidator,
-                    createUserRequest,
-                    InvalidUserException.class,
-                    "email must not be blank"
-            );
         }
 
         @Test
