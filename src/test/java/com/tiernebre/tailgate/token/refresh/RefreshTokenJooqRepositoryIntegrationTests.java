@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.tiernebre.tailgate.token.refresh.RefreshTokenJooqRepository.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.*;
 
 public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
@@ -34,6 +35,13 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
             assertNotNull(refreshTokenEntity.getCreatedAt());
             assertEquals(user.getId(), refreshTokenEntity.getUserId());
+        }
+
+        @Test
+        @DisplayName("throws a NullPointerException with a helpful message if the user to create a token for is null")
+        void throwsANullPointerExceptionWithAHelpfulMessageIfTheUserToCreateATokenForIsNull() {
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> refreshTokenRepository.createOneForUser(null));
+            assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
 
