@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.authentication;
 
-import com.tiernebre.tailgate.token.AccessTokenProvider;
+import com.tiernebre.tailgate.token.access.AccessTokenProvider;
 import com.tiernebre.tailgate.user.UserDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

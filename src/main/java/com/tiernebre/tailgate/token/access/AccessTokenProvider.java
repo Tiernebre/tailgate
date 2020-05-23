@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.token.access;
 
 import com.tiernebre.tailgate.user.UserDto;
 

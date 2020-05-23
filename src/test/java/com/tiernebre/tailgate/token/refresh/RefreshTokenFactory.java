@@ -1,4 +1,6 @@
-package com.tiernebre.tailgate.token;
+package com.tiernebre.tailgate.token.refresh;
+
+import com.tiernebre.tailgate.token.refresh.RefreshTokenEntity;
 
 import java.time.Instant;
 import java.util.Random;

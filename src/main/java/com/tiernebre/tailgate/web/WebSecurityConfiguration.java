@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.web;
 
 import com.tiernebre.tailgate.authentication.JwtAuthorizationFilter;
-import com.tiernebre.tailgate.token.AccessTokenProvider;
+import com.tiernebre.tailgate.token.access.AccessTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
