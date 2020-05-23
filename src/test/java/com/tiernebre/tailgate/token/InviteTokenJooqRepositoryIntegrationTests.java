@@ -33,5 +33,14 @@ public class InviteTokenJooqRepositoryIntegrationTests extends DatabaseIntegrati
             assertNotNull(refreshTokenEntity.getCreatedAt());
             assertEquals(user.getId(), refreshTokenEntity.getUserId());
         }
+
+        @Test
+        @DisplayName("only allows one invite token for a user")
+        public void onlyAllowsOneInviteTokenForAUser() {
+            UsersRecord userRecord = userRecordPool.createAndSaveOne();
+            UserDto user = UserDto.builder().id(userRecord.getId()).build();
+            inviteTokenJooqRepository.createOneForUser(user);
+            assertThrows(Exception.class, () -> inviteTokenJooqRepository.createOneForUser(user));
+        }
     }
 }
