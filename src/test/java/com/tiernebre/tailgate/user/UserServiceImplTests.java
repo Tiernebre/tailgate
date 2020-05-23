@@ -1,10 +1,14 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.user.validator.UserValidator;
+import com.tiernebre.tailgate.validator.StringIsBlankException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +18,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.tiernebre.tailgate.user.UserServiceImpl.REQUIRED_EMAIL_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -122,11 +127,12 @@ public class UserServiceImplTests {
             assertTrue(gottenUser.isEmpty());
         }
 
-        @Test
-        @DisplayName("throws a NullPointerException if the email is null")
-        void testThrowsNullPointerExceptionIfEmailIsNull() throws InvalidUserException {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userService.findOneByEmailAndPassword(null, UUID.randomUUID().toString()));
-            assertEquals("The email to find a user for is a required parameter and must not be null", thrownException.getMessage());
+        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful error message if the email is null")
+        @NullSource
+        @ValueSource(strings = {"", " "})
+        void testThrowsNullPointerExceptionIfEmailIs(String email) {
+            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByEmailAndPassword(email, UUID.randomUUID().toString()));
+            assertEquals(REQUIRED_EMAIL_MESSAGE, thrownException.getMessage());
         }
 
         @Test
