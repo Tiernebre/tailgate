@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
+import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NULL_CREATE_USER_REQUEST_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
@@ -25,6 +26,13 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
     @Nested
     @DisplayName("validate")
     public class ValidateTests {
+        @Test
+        @DisplayName("validates that the create user request must not be null")
+        void testNullCreateUserRequestThrowsException() {
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> userValidator.validate(null));
+            assertEquals(NULL_CREATE_USER_REQUEST_ERROR_MESSAGE, thrownException.getMessage());
+        }
+
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
         @NullSource
