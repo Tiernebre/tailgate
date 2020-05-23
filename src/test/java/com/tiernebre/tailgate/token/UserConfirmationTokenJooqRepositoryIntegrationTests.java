@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.token;
 
-import com.tiernebre.tailgate.jooq.tables.records.InviteTokensRecord;
+import com.tiernebre.tailgate.jooq.tables.records.UserConfirmationTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.user.UserDto;
@@ -21,7 +21,7 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
     private UserRecordPool userRecordPool;
 
     @Autowired
-    private InviteTokenRecordPool inviteTokenRecordPool;
+    private UserConfirmationTokenRecordPool userConfirmationTokenRecordPool;
 
     @Nested
     @DisplayName("createOneForUser")
@@ -54,19 +54,19 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
         @Test
         @DisplayName("deletes the given invite token value")
         public void deletesTheGivenInviteTokenValue() {
-            InviteTokensRecord inviteToken = inviteTokenRecordPool.createAndSaveOne();
-            userConfirmationTokenJooqRepository.deleteOne(inviteToken.getToken());
-            assertNull(inviteTokenRecordPool.getOneById(inviteToken.getToken()));
+            UserConfirmationTokensRecord userConfirmationTokensRecord = userConfirmationTokenRecordPool.createAndSaveOne();
+            userConfirmationTokenJooqRepository.deleteOne(userConfirmationTokensRecord.getToken());
+            assertNull(userConfirmationTokenRecordPool.getOneById(userConfirmationTokensRecord.getToken()));
         }
 
         @Test
         @DisplayName("does not delete multiple invite tokens accidentally")
         public void doesNotDeleteMultipleInviteTokensAccidentally() {
-            InviteTokensRecord inviteTokenToDelete = inviteTokenRecordPool.createAndSaveOne();
-            InviteTokensRecord otherInviteToken = inviteTokenRecordPool.createAndSaveOne();
-            userConfirmationTokenJooqRepository.deleteOne(inviteTokenToDelete.getToken());
-            assertNull(inviteTokenRecordPool.getOneById(inviteTokenToDelete.getToken()));
-            assertNotNull(inviteTokenRecordPool.getOneById(otherInviteToken.getToken()));
+            UserConfirmationTokensRecord userConfirmationTokensRecordToDelete = userConfirmationTokenRecordPool.createAndSaveOne();
+            UserConfirmationTokensRecord otherUserConfirmationToken = userConfirmationTokenRecordPool.createAndSaveOne();
+            userConfirmationTokenJooqRepository.deleteOne(userConfirmationTokensRecordToDelete.getToken());
+            assertNull(userConfirmationTokenRecordPool.getOneById(userConfirmationTokensRecordToDelete.getToken()));
+            assertNotNull(userConfirmationTokenRecordPool.getOneById(otherUserConfirmationToken.getToken()));
         }
     }
 }
