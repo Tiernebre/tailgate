@@ -10,7 +10,7 @@ services:
             POSTGRES_PASSWORD: password
             POSTGRES_DB: tailgate
     smtp:
-        image: mailhog
+        image: mailhog/mailhog
         ports:
             - "1025:1025"
             - "8025:8025"
