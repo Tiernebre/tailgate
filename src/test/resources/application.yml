@@ -3,6 +3,14 @@ tailgate:
     secret: 'secretforjsonwebtokenswow'
   refresh-token:
     expiration-window-in-minutes: 1
+  email:
+    from: 'noreply@tailgate.io'
+  user:
+    confirmation:
+      email:
+        subject: 'Confirm your account with Tailgate'
+        confirmationTokenTag: '{{ confirmationToken }}'
+        message: 'Please go to https://tailgate.io/account/confirm/${tailgate.user.confirmation.email.confirmationTokenTag}'
 
 spring:
   flyway:
