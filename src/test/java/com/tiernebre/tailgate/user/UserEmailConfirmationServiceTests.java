@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.mail.TailgateEmailConfigurationProperties;
+import com.tiernebre.tailgate.token.user_confirmation.UserConfirmationTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -27,6 +30,9 @@ public class UserEmailConfirmationServiceTests {
     @Mock
     private UserEmailConfirmationConfigurationProperties configurationProperties;
 
+    @Mock
+    private UserConfirmationTokenService tokenService;
+
     @Nested
     @DisplayName("sendOne")
     public class SendOneTests {
@@ -36,17 +42,22 @@ public class UserEmailConfirmationServiceTests {
             String from = "expectedTest@tailgate.io";
             when(tailgateEmailConfigurationProperties.getFrom()).thenReturn(from);
             String subject = "Confirm Your Account With Tailgate";
-            String message = "Navigate to <link> to confirm your account";
+            String confirmationToken = UUID.randomUUID().toString();
+            String confirmationTokenTag = "{{ confirmationToken }}";
+            String message = "Navigate to " + confirmationTokenTag + "to confirm your account";
             when(configurationProperties.getSubject()).thenReturn(subject);
             when(configurationProperties.getMessage()).thenReturn(message);
+            when(configurationProperties.getConfirmationTokenTag()).thenReturn(confirmationTokenTag);
             UserDto user = UserFactory.generateOneDto();
+            when(tokenService.createOneForUser(eq(user))).thenReturn(confirmationToken);
             userEmailConfirmationService.sendOne(user);
-            SimpleMailMessage expectedMessage = new SimpleMailMessage();
-            expectedMessage.setTo(user.getEmail());
-            expectedMessage.setFrom(from);
-            expectedMessage.setSubject(subject);
-            expectedMessage.setText(message);
-            verify(javaMailSender, times(1)).send(eq(expectedMessage));
+            String expectedFormattedTextMessage = message.replace(confirmationTokenTag, confirmationToken);
+            SimpleMailMessage expectedEmailSent = new SimpleMailMessage();
+            expectedEmailSent.setTo(user.getEmail());
+            expectedEmailSent.setFrom(from);
+            expectedEmailSent.setSubject(subject);
+            expectedEmailSent.setText(expectedFormattedTextMessage);
+            verify(javaMailSender, times(1)).send(eq(expectedEmailSent));
         }
     }
 }

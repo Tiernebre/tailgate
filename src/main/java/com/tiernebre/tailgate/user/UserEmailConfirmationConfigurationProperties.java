@@ -12,4 +12,5 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 public class UserEmailConfirmationConfigurationProperties {
     private final String subject;
     private final String message;
+    private final String confirmationTokenTag;
 }
