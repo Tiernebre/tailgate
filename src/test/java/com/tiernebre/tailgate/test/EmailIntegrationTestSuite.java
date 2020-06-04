@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.test;
 
+import com.tiernebre.tailgate.test.email.TailgateMailhogContainer;
 import org.junit.ClassRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
