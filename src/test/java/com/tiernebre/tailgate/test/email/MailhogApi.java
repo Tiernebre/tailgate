@@ -9,14 +9,12 @@ import org.springframework.web.client.RestTemplate;
 public class MailhogApi {
     private final RestTemplate mailhogRestTemplate;
 
-    public MailhogApiResponse search(String kind, String query, int start, int limit) {
+    public MailhogSearchResponse search(String kind, String query) {
         return mailhogRestTemplate.getForObject(
-                "/search?kind={kind}&query={query}&start={start}&limit={limit}",
-                MailhogApiResponse.class,
+                "/search?kind={kind}&query={query}",
+                MailhogSearchResponse.class,
                 kind,
-                query,
-                start,
-                limit
+                query
         );
     }
 }

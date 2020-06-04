@@ -3,7 +3,7 @@ package com.tiernebre.tailgate.user;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.EmailIntegrationTestSuite;
 import com.tiernebre.tailgate.test.email.MailhogApi;
-import com.tiernebre.tailgate.test.email.MailhogApiResponse;
+import com.tiernebre.tailgate.test.email.MailhogSearchResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,13 +31,11 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
                     .email(userToConfirm.getEmail())
                     .build();
             userEmailConfirmationService.sendOne(userToConfirmAsDto);
-            MailhogApiResponse mailhogApiResponse = mailhogApi.search(
-                    "containing",
-                    userToConfirm.getEmail(),
-                    0,
-                    1
+            MailhogSearchResponse mailhogSearchResponse = mailhogApi.search(
+                    "to",
+                    userToConfirm.getEmail()
             );
-            mailhogApiResponse.getCount();
+            mailhogSearchResponse.getCount();
         }
     }
 }
