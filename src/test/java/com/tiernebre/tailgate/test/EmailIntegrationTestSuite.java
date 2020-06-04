@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Testcontainers
 @ContextConfiguration(initializers = EmailIntegrationTestSuite.Initializer.class)
 @SpringBootTest
-public abstract class EmailIntegrationTestSuite {
+public abstract class EmailIntegrationTestSuite extends SpringIntegrationTestingSuite {
     @ClassRule
     private static final TailgateMailhogContainer tailgateMailhogContainer = TailgateMailhogContainer.getInstance();
 

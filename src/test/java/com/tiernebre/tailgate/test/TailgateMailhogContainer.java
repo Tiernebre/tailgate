@@ -13,7 +13,8 @@ public class TailgateMailhogContainer extends GenericContainer {
 
     private TailgateMailhogContainer() {
         super(IMAGE_VERSION);
-        setExposedPorts(ImmutableList.of(1025, 8025));
+        setPortBindings(ImmutableList.of("1025:1025"));
+        setExposedPorts(ImmutableList.of(1025));
     }
 
     public static TailgateMailhogContainer getInstance() {
