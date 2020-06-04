@@ -26,4 +26,33 @@ public class MailhogItem {
         @JsonProperty("Params")
         private String params;
     }
+
+    @Data
+    private static class MailhogItemContent {
+
+    }
+
+    @Data
+    private static class MailhogItemContentHeaders {
+        @JsonProperty("Content-Transfer-Encoding")
+        private Set<String> contentTransferEncoding;
+        @JsonProperty("Content-Type")
+        private Set<String> contentType;
+        @JsonProperty("Date")
+        private Set<String> date;
+        @JsonProperty("From")
+        private Set<String> from;
+        @JsonProperty("MIME-Version")
+        private Set<String> mimeVersion;
+        @JsonProperty("Message-ID")
+        private Set<String> messageId;
+        @JsonProperty("Received")
+        private Set<String> received;
+        @JsonProperty("Return-Path")
+        private Set<String> returnPath;
+        @JsonProperty("Subject")
+        private Set<String> subject;
+        @JsonProperty("To")
+        private Set<String> to;
+    }
 }
