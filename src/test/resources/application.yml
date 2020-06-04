@@ -6,7 +6,6 @@ tailgate:
   email:
     from: 'noreply@tailgate.io'
     host: 'localhost'
-    port: 1025
   user:
     confirmation:
       email:
@@ -20,4 +19,3 @@ spring:
 
 mailhog:
   host: localhost
-  port: 8025

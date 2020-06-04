@@ -27,7 +27,7 @@ public abstract class EmailIntegrationTestSuite extends SpringIntegrationTesting
             int dynamicallyAllocatedSmtpPort = tailgateMailhogContainer.getMappedPort(tailgateMailhogContainer.getSmtpPort());
             int dynamicallyAllocatedApiPort = tailgateMailhogContainer.getMappedPort(tailgateMailhogContainer.getApiPort());
             configurableApplicationContext.getEnvironment().getSystemProperties().put("tailgate.email.port", dynamicallyAllocatedSmtpPort);
-            configurableApplicationContext.getEnvironment().getSystemProperties().put("tailgate.mailhog.port", dynamicallyAllocatedApiPort);
+            configurableApplicationContext.getEnvironment().getSystemProperties().put("mailhog.port", dynamicallyAllocatedApiPort);
         }
     }
 }
