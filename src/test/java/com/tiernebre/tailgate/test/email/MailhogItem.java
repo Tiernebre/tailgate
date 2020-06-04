@@ -3,6 +3,7 @@ package com.tiernebre.tailgate.test.email;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -11,6 +12,8 @@ public class MailhogItem {
     private String id;
     @JsonProperty("From")
     private MailhogItemContact from;
+    @JsonProperty("To")
+    private List<MailhogItemContact> to;
 
     @Data
     private static class MailhogItemContact {
