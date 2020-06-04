@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.Assert.assertFalse;
+
 public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrationTestSuite {
     @Autowired
     private UserEmailConfirmationService userEmailConfirmationService;
@@ -35,7 +37,7 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
                     "to",
                     userToConfirm.getEmail()
             );
-            mailhogSearchResponse.getCount();
+            assertFalse(mailhogSearchResponse.getItems().isEmpty());
         }
     }
 }
