@@ -2,14 +2,15 @@ package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.EmailIntegrationTestSuite;
-import com.tiernebre.tailgate.test.email.MailhogApi;
-import com.tiernebre.tailgate.test.email.MailhogSearchResponse;
+import com.tiernebre.tailgate.test.email.TestEmail;
+import com.tiernebre.tailgate.test.email.TestEmailInboxService;
+import com.tiernebre.tailgate.test.email.TestEmailSearchOption;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrationTestSuite {
     @Autowired
@@ -19,7 +20,7 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
     private UserRecordPool userRecordPool;
 
     @Autowired
-    private MailhogApi mailhogApi;
+    private TestEmailInboxService testEmailInboxService;
 
     @Nested
     @DisplayName("sendOne")
@@ -33,11 +34,12 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
                     .email(userToConfirm.getEmail())
                     .build();
             userEmailConfirmationService.sendOne(userToConfirmAsDto);
-            MailhogSearchResponse mailhogSearchResponse = mailhogApi.search(
-                    "to",
+            TestEmail foundEmail = testEmailInboxService.searchForEmail(
+                    TestEmailSearchOption.TO,
                     userToConfirm.getEmail()
             );
-            assertFalse(mailhogSearchResponse.getItems().isEmpty());
+            assertNotNull(foundEmail.getTo());
+            assertNotNull(foundEmail.getFrom());
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.test.email;
+package com.tiernebre.tailgate.test.email.mailhog;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

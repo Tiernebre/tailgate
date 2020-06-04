@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.test.email;
+package com.tiernebre.tailgate.test.email.mailhog;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;

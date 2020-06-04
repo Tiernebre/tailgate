@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.test.email;
+package com.tiernebre.tailgate.test.email.mailhog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class MailhogItem {
     private MailhogItemRaw raw;
 
     @Data
-    private static class MailhogItemContact {
+    public static class MailhogItemContact {
         @JsonProperty("Relays")
         private Set<String> relays;
         @JsonProperty("Mailbox")
@@ -36,7 +36,7 @@ public class MailhogItem {
     }
 
     @Data
-    private static class MailhogItemContent {
+    public static class MailhogItemContent {
         @JsonProperty("Headers")
         MailhogItemContentHeaders headers;
         @JsonProperty("Body")
@@ -48,7 +48,7 @@ public class MailhogItem {
     }
 
     @Data
-    private static class MailhogItemContentHeaders {
+    public static class MailhogItemContentHeaders {
         @JsonProperty("Content-Transfer-Encoding")
         private Set<String> contentTransferEncoding;
         @JsonProperty("Content-Type")
@@ -72,11 +72,11 @@ public class MailhogItem {
     }
 
     @Data
-    private static class MailhogItemRaw {
+    public static class MailhogItemRaw {
         @JsonProperty("From")
         private String from;
         @JsonProperty("To")
-        private String to;
+        private Set<String> to;
         @JsonProperty("Data")
         private String data;
         @JsonProperty("Helo")
