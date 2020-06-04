@@ -11,4 +11,6 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @Getter
 public class TailgateEmailConfigurationProperties {
     private final String from;
+    private final String host;
+    private final Integer port;
 }
