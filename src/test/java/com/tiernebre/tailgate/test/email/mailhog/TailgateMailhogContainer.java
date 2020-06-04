@@ -9,16 +9,13 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
  */
 public class TailgateMailhogContainer extends GenericContainer {
     private static final int SMTP_PORT = 1025;
-    private static final String SMTP_PORT_BINDING = String.format("%d:%d", SMTP_PORT, SMTP_PORT);
     private static final int API_PORT = 8025;
-    private static final String API_PORT_BINDING = String.format("%d:%d", API_PORT, API_PORT);
 
     private static final String IMAGE_VERSION = "mailhog/mailhog";
     private static TailgateMailhogContainer container;
 
     private TailgateMailhogContainer() {
         super(IMAGE_VERSION);
-        setPortBindings(ImmutableList.of(SMTP_PORT_BINDING, API_PORT_BINDING));
         setExposedPorts(ImmutableList.of(SMTP_PORT, API_PORT));
     }
 
@@ -37,5 +34,13 @@ public class TailgateMailhogContainer extends GenericContainer {
     @Override
     public void stop() {
         //do nothing, JVM handles own
+    }
+
+    public int getSmtpPort() {
+        return SMTP_PORT;
+    }
+
+    public int getApiPort() {
+        return API_PORT;
     }
 }
