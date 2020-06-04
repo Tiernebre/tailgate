@@ -17,3 +17,7 @@ tailgate:
 spring:
   flyway:
     enabled: true
+
+mailhog:
+  host: 'localhost'
+  port: 8025
