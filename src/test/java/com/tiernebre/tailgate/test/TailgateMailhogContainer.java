@@ -8,13 +8,16 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
  * email tests:
  */
 public class TailgateMailhogContainer extends GenericContainer {
+    private static final int SMTP_PORT = 1025;
+    private static final String SMTP_PORT_BINDING = String.format("%d:%d", SMTP_PORT, SMTP_PORT);
+
     private static final String IMAGE_VERSION = "mailhog/mailhog";
     private static TailgateMailhogContainer container;
 
     private TailgateMailhogContainer() {
         super(IMAGE_VERSION);
-        setPortBindings(ImmutableList.of("1025:1025"));
-        setExposedPorts(ImmutableList.of(1025));
+        setPortBindings(ImmutableList.of(SMTP_PORT_BINDING));
+        setExposedPorts(ImmutableList.of(SMTP_PORT));
     }
 
     public static TailgateMailhogContainer getInstance() {
