@@ -1,8 +1,8 @@
 package com.tiernebre.tailgate.test.email;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class MailhogApiResponse {
     int total;
     int start;

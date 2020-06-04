@@ -2,6 +2,8 @@ package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.EmailIntegrationTestSuite;
+import com.tiernebre.tailgate.test.email.MailhogApi;
+import com.tiernebre.tailgate.test.email.MailhogApiResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
 
     @Autowired
     private UserRecordPool userRecordPool;
+
+    @Autowired
+    private MailhogApi mailhogApi;
 
     @Nested
     @DisplayName("sendOne")
@@ -26,6 +31,13 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
                     .email(userToConfirm.getEmail())
                     .build();
             userEmailConfirmationService.sendOne(userToConfirmAsDto);
+            MailhogApiResponse mailhogApiResponse = mailhogApi.search(
+                    "containing",
+                    userToConfirm.getEmail(),
+                    0,
+                    1
+            );
+            mailhogApiResponse.getCount();
         }
     }
 }
