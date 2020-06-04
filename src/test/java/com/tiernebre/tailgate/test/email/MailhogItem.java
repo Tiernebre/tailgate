@@ -14,6 +14,10 @@ public class MailhogItem {
     private MailhogItemContact from;
     @JsonProperty("To")
     private List<MailhogItemContact> to;
+    @JsonProperty("Content")
+    private MailhogItemContent content;
+    @JsonProperty("Created")
+    private String created;
 
     @Data
     private static class MailhogItemContact {
@@ -29,7 +33,14 @@ public class MailhogItem {
 
     @Data
     private static class MailhogItemContent {
-
+        @JsonProperty("Headers")
+        MailhogItemContentHeaders headers;
+        @JsonProperty("Body")
+        private String body;
+        @JsonProperty("MIME")
+        private String mime;
+        @JsonProperty("Size")
+        private long Size;
     }
 
     @Data
