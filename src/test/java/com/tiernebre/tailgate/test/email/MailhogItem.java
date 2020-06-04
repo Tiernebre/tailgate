@@ -18,6 +18,10 @@ public class MailhogItem {
     private MailhogItemContent content;
     @JsonProperty("Created")
     private String created;
+    @JsonProperty("MIME")
+    private String mime;
+    @JsonProperty("Raw")
+    private MailhogItemRaw raw;
 
     @Data
     private static class MailhogItemContact {
@@ -65,5 +69,17 @@ public class MailhogItem {
         private Set<String> subject;
         @JsonProperty("To")
         private Set<String> to;
+    }
+
+    @Data
+    private static class MailhogItemRaw {
+        @JsonProperty("From")
+        private String from;
+        @JsonProperty("To")
+        private String to;
+        @JsonProperty("Data")
+        private String data;
+        @JsonProperty("Helo")
+        private String helo;
     }
 }
