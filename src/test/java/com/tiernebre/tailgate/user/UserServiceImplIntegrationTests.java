@@ -7,12 +7,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@MockBeans({
+        @MockBean(UserConfirmationService.class)
+})
 public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuite {
     @Autowired
     private UserService userService;
