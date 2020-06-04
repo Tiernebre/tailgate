@@ -37,6 +37,9 @@ public class UserServiceImplTests {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UserConfirmationService confirmationService;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -60,6 +63,7 @@ public class UserServiceImplTests {
             when(repository.oneExistsByEmail(eq(createUserRequest.getEmail()))).thenReturn(false);
             UserDto gottenUserCreated = userService.createOne(createUserRequest);
             assertEquals(expectedUserCreated, gottenUserCreated);
+            verify(confirmationService, times(1)).sendOne(eq(expectedUserCreated));
         }
 
         @Test

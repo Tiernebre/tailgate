@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService {
     private final UserConverter converter;
     private final UserValidator validator;
     private final PasswordEncoder passwordEncoder;
+    private final UserConfirmationService confirmationService;
 
     @Override
     public UserDto createOne(CreateUserRequest createUserRequest) throws InvalidUserException, UserAlreadyExistsException {
@@ -28,7 +29,9 @@ public class UserServiceImpl implements UserService {
         CreateUserRequest encryptedCreateUserRequest = createUserRequest.withPassword(encryptedPassword);
         UserEntity entityToCreate = converter.convertFromCreateOrUpdateRequest(encryptedCreateUserRequest);
         UserEntity entityCreated = repository.saveOne(entityToCreate);
-        return converter.convertFromEntity(entityCreated);
+        UserDto createdUser = converter.convertFromEntity(entityCreated);
+        confirmationService.sendOne(createdUser);
+        return createdUser;
     }
 
     @Override
