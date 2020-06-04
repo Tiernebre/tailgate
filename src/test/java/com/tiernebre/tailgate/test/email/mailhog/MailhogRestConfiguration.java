@@ -11,10 +11,10 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 @Configuration
 @Data
 public class MailhogRestConfiguration {
-    @Value("${mailhog.host}")
+    @Value("${mailhog.host:localhost}")
     private String host;
 
-    @Value("${mailhog.port}")
+    @Value("${mailhog.port:8025}")
     private int port;
 
     @Bean
