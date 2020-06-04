@@ -8,9 +8,10 @@ import com.tiernebre.tailgate.test.email.TestEmailSearchOption;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrationTestSuite {
     @Autowired
@@ -38,8 +39,11 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
                     TestEmailSearchOption.TO,
                     userToConfirm.getEmail()
             );
-            assertNotNull(foundEmail.getTo());
-            assertNotNull(foundEmail.getFrom());
+            assertTrue(StringUtils.isNotBlank(foundEmail.getFrom()));
+            assertTrue(StringUtils.isNotBlank(foundEmail.getTo()));
+            assertTrue(StringUtils.isNotBlank(foundEmail.getSubject()));
+            assertTrue(StringUtils.isNotBlank(foundEmail.getText()));
+            assertEquals(userToConfirm.getEmail(), foundEmail.getTo());
         }
     }
 }
