@@ -9,8 +9,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 public class MailhogRestConfiguration {
     @Bean
     public RestTemplate mailhogRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:8025/api/v2"));
-        return restTemplate;
+        RestTemplate mailhogRestTemplate = new RestTemplate();
+        mailhogRestTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:8025/api/v2"));
+        return mailhogRestTemplate;
     }
 }
