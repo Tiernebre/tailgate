@@ -28,26 +28,22 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class ConverterImpl<T, U, V> implements Converter<T, U, V> {
+public abstract class ConverterImpl<T, U> implements Converter<T, U> {
     private final Function<T, U> fromDto;
     private final Function<U, T> fromEntity;
-    private final Function<V, U> fromCreateOrUpdateRequest;
 
     /**
      * Constructor.
      *
      * @param fromDto    Function that converts given dto entity into the domain entity.
      * @param fromEntity Function that converts given domain entity into the dto entity.
-     * @param fromCreateOrUpdateRequest Function that converts given create or update request entity into the domain entity.
      */
     public ConverterImpl(
             final Function<T, U> fromDto,
-            final Function<U, T> fromEntity,
-            final Function<V, U> fromCreateOrUpdateRequest
+            final Function<U, T> fromEntity
     ) {
         this.fromDto = fromDto;
         this.fromEntity = fromEntity;
-        this.fromCreateOrUpdateRequest = fromCreateOrUpdateRequest;
     }
 
     @Override
@@ -58,11 +54,6 @@ public abstract class ConverterImpl<T, U, V> implements Converter<T, U, V> {
     @Override
     public final T convertFromEntity(final U entity) {
         return fromEntity.apply(entity);
-    }
-
-    @Override
-    public final U convertFromCreateOrUpdateRequest(final V createOrUpdateRequest) {
-        return fromCreateOrUpdateRequest.apply(createOrUpdateRequest);
     }
 
     @Override
