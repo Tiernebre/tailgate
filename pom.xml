@@ -235,6 +235,11 @@
 									<expression>public.users.email</expression>
 									<types>CITEXT</types>
 								</forcedType>
+								<forcedType>
+									<name>CLOB</name>
+									<expression>public.security_questions.question</expression>
+									<types>CITEXT</types>
+								</forcedType>
 							</forcedTypes>
 						</database>
 						<target>
