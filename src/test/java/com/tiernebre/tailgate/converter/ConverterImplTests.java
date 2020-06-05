@@ -85,7 +85,7 @@ public class ConverterImplTests {
     public class CreateFromDtosTests {
         @Test
         @DisplayName("returns a converted list of entities from dto objects")
-        public void returnsTheAppliedFromDtoFunctionResult() {
+        public void returnsAConvertedListOfEntitiesFromDtoObjects() {
             List<StubDto> dtos = ImmutableList.of(
                     StubDto.builder().id(1).name(UUID.randomUUID().toString()).build(),
                     StubDto.builder().id(2).name(UUID.randomUUID().toString()).build()
@@ -107,6 +107,36 @@ public class ConverterImplTests {
         @DisplayName("returns null if given a null value")
         public void returnsNullIfGivenANullValue() {
             assertNull(stubConverter.createFromDtos(null));
+        }
+    }
+
+    @Nested
+    @DisplayName("createFromEntities")
+    public class CreateFromEntitiesTests {
+        @Test
+        @DisplayName("returns a converted list of dtos from entity objects")
+        public void returnsAConvertedListOfDtosFromEntityObjects() {
+            List<StubEntity> entities = ImmutableList.of(
+                    StubEntity.builder().id(1).name(UUID.randomUUID().toString()).build(),
+                    StubEntity.builder().id(2).name(UUID.randomUUID().toString()).build()
+            );
+            List<StubDto> expectedDtos = ImmutableList.of(
+                    StubDto.builder().id(1).name(UUID.randomUUID().toString()).build(),
+                    StubDto.builder().id(2).name(UUID.randomUUID().toString()).build()
+            );
+            for (int i = 0; i < entities.size(); i++) {
+                StubEntity entity = entities.get(i);
+                StubDto expectedDto = expectedDtos.get(i);
+                when(fromEntity.apply(eq(entity))).thenReturn(expectedDto);
+            }
+            List<StubDto> returnedDtos = stubConverter.createFromEntities(entities);
+            assertEquals(expectedDtos, returnedDtos);
+        }
+
+        @Test
+        @DisplayName("returns null if given a null value")
+        public void returnsNullIfGivenANullValue() {
+            assertNull(stubConverter.createFromEntities(null));
         }
     }
 }
