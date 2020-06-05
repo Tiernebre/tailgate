@@ -1,10 +1,10 @@
 package com.tiernebre.tailgate.user;
 
-import com.tiernebre.tailgate.converter.ConverterImpl;
+import com.tiernebre.tailgate.converter.CreatableConverterImpl;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserConverterImpl extends ConverterImpl<UserDto, UserEntity, CreateUserRequest> implements UserConverter {
+public class UserConverterImpl extends CreatableConverterImpl<UserDto, UserEntity, CreateUserRequest> implements UserConverter {
     public UserConverterImpl() {
         super(
                 UserConverterImpl::convertToEntity,

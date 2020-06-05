@@ -23,55 +23,48 @@
 
 package com.tiernebre.tailgate.converter;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class ConverterImpl<T, U, V> implements Converter<T, U, V> {
+public abstract class ConverterImpl<T, U> implements Converter<T, U> {
     private final Function<T, U> fromDto;
     private final Function<U, T> fromEntity;
-    private final Function<V, U> fromCreateOrUpdateRequest;
 
     /**
      * Constructor.
      *
      * @param fromDto    Function that converts given dto entity into the domain entity.
      * @param fromEntity Function that converts given domain entity into the dto entity.
-     * @param fromCreateOrUpdateRequest Function that converts given create or update request entity into the domain entity.
      */
     public ConverterImpl(
             final Function<T, U> fromDto,
-            final Function<U, T> fromEntity,
-            final Function<V, U> fromCreateOrUpdateRequest
+            final Function<U, T> fromEntity
     ) {
         this.fromDto = fromDto;
         this.fromEntity = fromEntity;
-        this.fromCreateOrUpdateRequest = fromCreateOrUpdateRequest;
     }
 
     @Override
     public final U convertFromDto(final T dto) {
-        return fromDto.apply(dto);
+        return dto != null ? fromDto.apply(dto) : null;
     }
 
     @Override
     public final T convertFromEntity(final U entity) {
-        return fromEntity.apply(entity);
-    }
-
-    @Override
-    public final U convertFromCreateOrUpdateRequest(final V createOrUpdateRequest) {
-        return fromCreateOrUpdateRequest.apply(createOrUpdateRequest);
+        return entity != null ? fromEntity.apply(entity) : null;
     }
 
     @Override
     public final List<U> createFromDtos(final Collection<T> dtos) {
-        return dtos.stream().map(this::convertFromDto).collect(Collectors.toList());
+        return CollectionUtils.isNotEmpty(dtos) ? dtos.stream().map(this::convertFromDto).collect(Collectors.toList()) : null;
     }
 
     @Override
     public final List<T> createFromEntities(final Collection<U> entities) {
-        return entities.stream().map(this::convertFromEntity).collect(Collectors.toList());
+        return CollectionUtils.isNotEmpty(entities) ? entities.stream().map(this::convertFromEntity).collect(Collectors.toList()) : null;
     }
 }
