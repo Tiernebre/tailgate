@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -78,6 +79,17 @@ public class ConverterImplTests {
         public void returnsNullIfGivenANullValue() {
            assertNull(stubConverter.convertFromEntity(null));
         }
+
+        @Test
+        @DisplayName("returns collection of nulls if nulls are provided")
+        public void returnsCollectionOfNullsIfNullsAreProvided() {
+            List<StubDto> nullDtos = new ArrayList<>();
+            nullDtos.add(null);
+            List<StubEntity> expectedEntities = new ArrayList<>();
+            expectedEntities.add(null);
+            List<StubEntity> returnedEntities = stubConverter.createFromDtos(nullDtos);
+            assertEquals(expectedEntities, returnedEntities);
+        }
     }
 
     @Nested
@@ -137,6 +149,17 @@ public class ConverterImplTests {
         @DisplayName("returns null if given a null value")
         public void returnsNullIfGivenANullValue() {
             assertNull(stubConverter.createFromEntities(null));
+        }
+
+        @Test
+        @DisplayName("returns collection of nulls if nulls are provided")
+        public void returnsCollectionOfNullsIfNullsAreProvided() {
+            List<StubEntity> nullEntities = new ArrayList<>();
+            nullEntities.add(null);
+            List<StubDto> expectedDtos = new ArrayList<>();
+            expectedDtos.add(null);
+            List<StubDto> returnedDtos = stubConverter.createFromEntities(nullEntities);
+            assertEquals(expectedDtos, returnedDtos);
         }
     }
 }
