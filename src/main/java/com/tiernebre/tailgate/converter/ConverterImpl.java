@@ -48,12 +48,12 @@ public abstract class ConverterImpl<T, U> implements Converter<T, U> {
 
     @Override
     public final U convertFromDto(final T dto) {
-        return fromDto.apply(dto);
+        return dto != null ? fromDto.apply(dto) : null;
     }
 
     @Override
     public final T convertFromEntity(final U entity) {
-        return fromEntity.apply(entity);
+        return entity != null ? fromEntity.apply(entity) : null;
     }
 
     @Override

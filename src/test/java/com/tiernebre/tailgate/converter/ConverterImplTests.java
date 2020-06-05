@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +48,12 @@ public class ConverterImplTests {
             StubEntity returnedEntity = stubConverter.convertFromDto(stubDto);
             assertEquals(expectedEntity, returnedEntity);
         }
+
+        @Test
+        @DisplayName("returns null if given a null value")
+        public void returnsNullIfGivenANullValue() {
+            assertNull(stubConverter.convertFromDto(null));
+        }
     }
 
     @Nested
@@ -62,6 +69,12 @@ public class ConverterImplTests {
             when(fromEntity.apply(eq(stubEntity))).thenReturn(expectedDto);
             StubDto returnedDto = stubConverter.convertFromEntity(stubEntity);
             assertEquals(expectedDto, returnedDto);
+        }
+
+        @Test
+        @DisplayName("returns null if given a null value")
+        public void returnsNullIfGivenANullValue() {
+           assertNull(stubConverter.convertFromEntity(null));
         }
     }
 }
