@@ -48,4 +48,20 @@ public class ConverterImplTests {
             assertEquals(expectedEntity, returnedEntity);
         }
     }
+
+    @Nested
+    @DisplayName("convertFromEntity")
+    public class ConvertFromEntityTests {
+        @Test
+        @DisplayName("returns the applied fromEntity function result")
+        public void returnsTheAppliedFromDtoFunctionResult() {
+            StubEntity stubEntity = StubEntity.builder().build();
+            StubDto expectedDto = StubDto.builder()
+                    .id(new Random().nextLong())
+                    .build();
+            when(fromEntity.apply(eq(stubEntity))).thenReturn(expectedDto);
+            StubDto returnedDto = stubConverter.convertFromEntity(stubEntity);
+            assertEquals(expectedDto, returnedDto);
+        }
+    }
 }
