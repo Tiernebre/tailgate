@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +77,36 @@ public class ConverterImplTests {
         @DisplayName("returns null if given a null value")
         public void returnsNullIfGivenANullValue() {
            assertNull(stubConverter.convertFromEntity(null));
+        }
+    }
+
+    @Nested
+    @DisplayName("createFromDtos")
+    public class CreateFromDtosTests {
+        @Test
+        @DisplayName("returns a converted list of entities from dto objects")
+        public void returnsTheAppliedFromDtoFunctionResult() {
+            List<StubDto> dtos = ImmutableList.of(
+                    StubDto.builder().id(1).name(UUID.randomUUID().toString()).build(),
+                    StubDto.builder().id(2).name(UUID.randomUUID().toString()).build()
+            );
+            List<StubEntity> expectedEntities = ImmutableList.of(
+                    StubEntity.builder().id(1).name(UUID.randomUUID().toString()).build(),
+                    StubEntity.builder().id(2).name(UUID.randomUUID().toString()).build()
+            );
+            for (int i = 0; i < dtos.size(); i++) {
+                StubDto dto = dtos.get(i);
+                StubEntity expectedEntity = expectedEntities.get(i);
+                when(fromDto.apply(eq(dto))).thenReturn(expectedEntity);
+            }
+            List<StubEntity> returnedEntities = stubConverter.createFromDtos(dtos);
+            assertEquals(expectedEntities,returnedEntities);
+        }
+
+        @Test
+        @DisplayName("returns null if given a null value")
+        public void returnsNullIfGivenANullValue() {
+            assertNull(stubConverter.createFromDtos(null));
         }
     }
 }
