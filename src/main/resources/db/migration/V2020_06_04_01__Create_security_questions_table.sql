@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS security_questions (
+    id BIGSERIAL PRIMARY KEY,
+    question CITEXT NOT NULL UNIQUE
+);
