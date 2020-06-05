@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
     @Autowired
@@ -30,6 +31,10 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
                     .map(securityQuestionsRecord -> securityQuestionsRecord.into(SecurityQuestionEntity.class))
                     .collect(Collectors.toList());;
             List<SecurityQuestionEntity> gottenQuestions = securityQuestionJooqRepository.getAll();
+            assertNotNull(gottenQuestions);
+            assertNotNull(gottenQuestions.get(0));
+            assertNotNull(gottenQuestions.get(0).getId());
+            assertNotNull(gottenQuestions.get(0).getQuestion());
             assertEquals(expectedQuestions, gottenQuestions);
         }
     }
