@@ -10,9 +10,8 @@ import java.util.List;
  *
  * @param <T> DTO representation's type
  * @param <U> Domain representation's type
- * @param <V> Create / Update request for Domain
  */
-public interface Converter<T, U, V> {
+public interface Converter<T, U> {
     /**
      * Converts DTO to Entity.
      *
@@ -30,15 +29,6 @@ public interface Converter<T, U, V> {
      *     entity.
      */
     T convertFromEntity(final U entity);
-
-    /**
-     * Converts a Create or Update Request to an Entity.
-     *
-     * @param createOrUpdateRequest the request to create or update a domain
-     * @return The domain representation - the result of the converting function application on create
-     *     or update request entity.
-     */
-    U convertFromCreateOrUpdateRequest(final V createOrUpdateRequest);
 
     /**
      * Converts list of DTOs to list of Entities.
