@@ -29,4 +29,19 @@ public class SecurityQuestionConverterImplTests {
             );
         }
     }
+
+    @Nested
+    @DisplayName("convertFromEntity")
+    public class ConvertFromEntityTests {
+        @Test
+        @DisplayName("returns the converted dto from the given entity")
+        public void returnsTheConvertedEntityFromTheGivenDto () {
+            SecurityQuestionEntity entity = SecurityQuestionFactory.generateOneEntity();
+            SecurityQuestionDto dto = securityQuestionConverter.convertFromEntity(entity);
+            assertAll(
+                    () -> assertEquals(entity.getId(), dto.getId()),
+                    () -> assertEquals(entity.getQuestion(), dto.getQuestion())
+            );
+        }
+    }
 }
