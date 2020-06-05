@@ -15,6 +15,9 @@ public class SecurityQuestionConverterImpl extends ConverterImpl<SecurityQuestio
     }
 
     private static SecurityQuestionEntity convertToEntity(SecurityQuestionDto dto) {
-        return null;
+        return SecurityQuestionEntity.builder()
+                .id(dto.getId())
+                .question(dto.getQuestion())
+                .build();
     }
 }
