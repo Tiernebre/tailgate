@@ -2,6 +2,8 @@ package com.tiernebre.tailgate.security_questions;
 
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class SecurityQuestionFactory {
@@ -10,6 +12,14 @@ public class SecurityQuestionFactory {
                 .id(new Random().nextLong())
                 .question(generateQuestion())
                 .build();
+    }
+
+    public static List<SecurityQuestionDto> generateMultipleDtos() {
+        List<SecurityQuestionDto> securityQuestions = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            securityQuestions.add(generateOneDto());
+        }
+        return securityQuestions;
     }
 
     public static SecurityQuestionEntity generateOneEntity() {
