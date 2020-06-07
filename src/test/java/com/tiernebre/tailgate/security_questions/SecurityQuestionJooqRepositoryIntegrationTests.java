@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.security_questions;
 
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
     @Autowired
@@ -18,6 +18,11 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
 
     @Autowired
     private SecurityQuestionJooqRepository securityQuestionJooqRepository;
+
+    @BeforeEach
+    public void setup() {
+        recordPool.deleteAll();
+    }
 
     @Nested
     @DisplayName("getAll")
@@ -36,6 +41,13 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
             assertNotNull(gottenQuestions.get(0).getId());
             assertNotNull(gottenQuestions.get(0).getQuestion());
             assertEquals(expectedQuestions, gottenQuestions);
+        }
+
+        @Test
+        @DisplayName("returns an empty list if none exist")
+        public void returnsAnEmptyListIfNoneExist() {
+            List<SecurityQuestionEntity> gottenQuestions = securityQuestionJooqRepository.getAll();
+            assertTrue(gottenQuestions.isEmpty());
         }
     }
 }

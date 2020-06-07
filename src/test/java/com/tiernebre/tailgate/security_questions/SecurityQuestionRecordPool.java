@@ -26,4 +26,8 @@ public class SecurityQuestionRecordPool {
         }
         return securityQuestionsRecords;
     }
+
+    public void deleteAll() {
+        dslContext.deleteFrom(SECURITY_QUESTIONS).execute();
+    }
 }
