@@ -35,12 +35,17 @@ public class SecurityQuestionRestfulControllerIntegrationTests extends WebContro
         public void returnsWithTheSecurityQuestionsFormattedInTheJsonResponseBody() throws Exception {
             List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
             SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestions.get(0);
+            SecurityQuestionDto secondSecurityQuestionDto = expectedSecurityQuestions.get(1);
             when(securityQuestionService.getAll()).thenReturn(expectedSecurityQuestions);
             mockMvc.perform(get("/security-questions"))
                     .andExpect(jsonPath("$[0].id").exists())
                     .andExpect(jsonPath("$[0].id").value(firstSecurityQuestionDto.getId()))
                     .andExpect(jsonPath("$[0].question").exists())
-                    .andExpect(jsonPath("$[0].question").value(firstSecurityQuestionDto.getQuestion()));
+                    .andExpect(jsonPath("$[0].question").value(firstSecurityQuestionDto.getQuestion()))
+                    .andExpect(jsonPath("$[1].id").exists())
+                    .andExpect(jsonPath("$[1].id").value(secondSecurityQuestionDto.getId()))
+                    .andExpect(jsonPath("$[1].question").exists())
+                    .andExpect(jsonPath("$[1].question").value(secondSecurityQuestionDto.getQuestion()));
         }
     }
 }
