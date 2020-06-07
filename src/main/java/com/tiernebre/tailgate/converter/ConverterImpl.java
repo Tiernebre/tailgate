@@ -23,8 +23,6 @@
 
 package com.tiernebre.tailgate.converter;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -60,11 +58,11 @@ public abstract class ConverterImpl<T, U> implements Converter<T, U> {
 
     @Override
     public final List<U> createFromDtos(final Collection<T> dtos) {
-        return CollectionUtils.isNotEmpty(dtos) ? dtos.stream().map(this::convertFromDto).collect(Collectors.toList()) : null;
+        return dtos != null ? dtos.stream().map(this::convertFromDto).collect(Collectors.toList()) : null;
     }
 
     @Override
     public final List<T> createFromEntities(final Collection<U> entities) {
-        return CollectionUtils.isNotEmpty(entities) ? entities.stream().map(this::convertFromEntity).collect(Collectors.toList()) : null;
+        return entities != null ? entities.stream().map(this::convertFromEntity).collect(Collectors.toList()) : null;
     }
 }
