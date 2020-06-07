@@ -11,7 +11,7 @@ import java.util.List;
 public class SecurityQuestionRestfulController {
     private final SecurityQuestionService service;
 
-    @PostMapping
+    @GetMapping
     public List<SecurityQuestionDto> getAll() {
         return service.getAll();
     }
