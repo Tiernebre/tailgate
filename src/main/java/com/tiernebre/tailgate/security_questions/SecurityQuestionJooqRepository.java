@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.security_questions;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,16 @@ public class SecurityQuestionJooqRepository implements SecurityQuestionRepositor
 
     @Override
     public boolean allExistWithIds(Set<Long> ids) {
-        return false;
+        int numberOfFoundSecurityQuestions = getCountForAllWithIds(ids);
+        return numberOfFoundSecurityQuestions > 0 && numberOfFoundSecurityQuestions == ids.size();
+    }
+
+    private int getCountForAllWithIds(Set<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) return 0;
+
+        return dslContext.fetchCount(
+                dslContext.selectFrom(SECURITY_QUESTIONS)
+                        .where(SECURITY_QUESTIONS.ID.in(ids))
+        );
     }
 }

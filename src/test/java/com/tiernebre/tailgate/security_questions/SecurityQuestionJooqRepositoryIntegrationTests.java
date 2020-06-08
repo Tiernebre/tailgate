@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,10 +58,17 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
     @Nested
     @DisplayName("allExistWithIds")
     public class AllExistWithIdsTests {
-        @ParameterizedTest(name = "returns false if the set of ids provided is empty")
+        @ParameterizedTest(name = "returns false if the set of ids provided is \"{0}\"")
         @NullAndEmptySource
         public void returnsFalseIfTheListOfIdsProvidedIsEmpty(Set<Long> ids) {
             assertFalse(securityQuestionJooqRepository.allExistWithIds(ids));
+        }
+
+        @Test
+        @DisplayName("returns true if one id exists")
+        public void returnsTrue() {
+            Long id = recordPool.createOne().getId();
+            assertTrue(securityQuestionJooqRepository.allExistWithIds(Collections.singleton(id)));
         }
     }
 }
