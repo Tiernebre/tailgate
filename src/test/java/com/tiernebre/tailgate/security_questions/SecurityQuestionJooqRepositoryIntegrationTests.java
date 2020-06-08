@@ -5,10 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -55,10 +57,10 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
     @Nested
     @DisplayName("allExistWithIds")
     public class AllExistWithIdsTests {
-        @Test
-        @DisplayName("returns false if the set of ids provided is empty")
-        public void returnsFalseIfTheListOfIdsProvidedIsEmpty() {
-            assertFalse(securityQuestionJooqRepository.allExistWithIds(Collections.emptySet()));
+        @ParameterizedTest(name = "returns false if the set of ids provided is empty")
+        @NullAndEmptySource
+        public void returnsFalseIfTheListOfIdsProvidedIsEmpty(Set<Long> ids) {
+            assertFalse(securityQuestionJooqRepository.allExistWithIds(ids));
         }
     }
 }
