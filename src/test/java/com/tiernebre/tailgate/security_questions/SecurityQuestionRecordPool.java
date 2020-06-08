@@ -19,12 +19,16 @@ public class SecurityQuestionRecordPool {
     public List<SecurityQuestionsRecord> createMultiple() {
         List<SecurityQuestionsRecord> securityQuestionsRecords = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            SecurityQuestionsRecord securityQuestionsRecord = dslContext.newRecord(SECURITY_QUESTIONS);
-            securityQuestionsRecord.setQuestion(UUID.randomUUID().toString());
-            securityQuestionsRecord.store();
-            securityQuestionsRecords.add(securityQuestionsRecord);
+            securityQuestionsRecords.add(createOne());
         }
         return securityQuestionsRecords;
+    }
+
+    public SecurityQuestionsRecord createOne() {
+        SecurityQuestionsRecord securityQuestionsRecord = dslContext.newRecord(SECURITY_QUESTIONS);
+        securityQuestionsRecord.setQuestion(UUID.randomUUID().toString());
+        securityQuestionsRecord.store();
+        return securityQuestionsRecord;
     }
 
     public void deleteAll() {
