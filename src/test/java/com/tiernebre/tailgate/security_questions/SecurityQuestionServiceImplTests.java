@@ -8,10 +8,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +47,18 @@ public class SecurityQuestionServiceImplTests {
             when(securityQuestionConverter.createFromEntities(eq(entities))).thenReturn(expectedDtos);
             List<SecurityQuestionDto> gottenSecurityQuestions = securityQuestionService.getAll();
             assertEquals(expectedDtos, gottenSecurityQuestions);
+        }
+    }
+
+    @Nested
+    @DisplayName("allExistWithIds")
+    public class AllExistWithIdsTests {
+        @Test
+        @DisplayName("returns the result from the repository")
+        public void returnsTheResultFromTheRepository() {
+            Set<Long> ids = ImmutableSet.of(1L, 5L, 12L);
+            when(securityQuestionRepository.allExistWithIds(eq(ids))).thenReturn(true);
+            assertTrue(securityQuestionService.allExistWithIds(ids));
         }
     }
 }
