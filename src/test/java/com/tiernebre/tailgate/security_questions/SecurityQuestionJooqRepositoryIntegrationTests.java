@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,16 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
         public void returnsAnEmptyListIfNoneExist() {
             List<SecurityQuestionEntity> gottenQuestions = securityQuestionJooqRepository.getAll();
             assertTrue(gottenQuestions.isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("allExistWithIds")
+    public class AllExistWithIdsTests {
+        @Test
+        @DisplayName("returns false if the set of ids provided is empty")
+        public void returnsFalseIfTheListOfIdsProvidedIsEmpty() {
+            assertFalse(securityQuestionJooqRepository.allExistWithIds(Collections.emptySet()));
         }
     }
 }

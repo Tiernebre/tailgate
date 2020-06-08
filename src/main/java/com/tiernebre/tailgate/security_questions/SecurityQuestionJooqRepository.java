@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.tiernebre.tailgate.jooq.tables.SecurityQuestions.SECURITY_QUESTIONS;
 
@@ -20,5 +21,10 @@ public class SecurityQuestionJooqRepository implements SecurityQuestionRepositor
         return dslContext
                 .selectFrom(SECURITY_QUESTIONS)
                 .fetchInto(SecurityQuestionEntity.class);
+    }
+
+    @Override
+    public boolean allExistWithIds(Set<Long> ids) {
+        return false;
     }
 }
