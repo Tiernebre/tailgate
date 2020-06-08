@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.security_questions;
 
+import com.tiernebre.tailgate.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,9 +67,16 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
 
         @Test
         @DisplayName("returns true if one id exists")
-        public void returnsTrue() {
+        public void returnsTrueIfOneIdExists() {
             Long id = recordPool.createOne().getId();
             assertTrue(securityQuestionJooqRepository.allExistWithIds(Collections.singleton(id)));
+        }
+
+        @Test
+        @DisplayName("returns true if multiple ids exist")
+        public void returnsTrueIfMultipleIdsExist() {
+            Set<Long> ids = recordPool.createMultiple().stream().map(SecurityQuestionsRecord::getId).collect(Collectors.toSet());
+            assertTrue(securityQuestionJooqRepository.allExistWithIds(ids));
         }
     }
 }
