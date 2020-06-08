@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +78,27 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
         public void returnsTrueIfMultipleIdsExist() {
             Set<Long> ids = recordPool.createMultiple().stream().map(SecurityQuestionsRecord::getId).collect(Collectors.toSet());
             assertTrue(securityQuestionJooqRepository.allExistWithIds(ids));
+        }
+
+        @Test
+        @DisplayName("returns false if one id does not exist")
+        public void returnsFalseIfOneIdDoesNotExist() {
+            assertFalse(securityQuestionJooqRepository.allExistWithIds(Collections.singleton(Long.MAX_VALUE)));
+        }
+
+        @Test
+        @DisplayName("returns false if all ids do not exist")
+        public void returnsFalseIfAllIdsDoNotExist() {
+            Set<Long> ids = ImmutableSet.of(Long.MAX_VALUE, Long.MAX_VALUE - 1);
+            assertFalse(securityQuestionJooqRepository.allExistWithIds(ids));
+        }
+
+        @Test
+        @DisplayName("returns false if one of the provided ids does not exist, but another one of them does")
+        public void returnsFalseIfOneOfTheProvidedIdsDoesNotExistButAnotherOneOfThemDoes() {
+            Set<Long> ids = recordPool.createMultiple().stream().map(SecurityQuestionsRecord::getId).collect(Collectors.toSet());
+            ids.add(Long.MAX_VALUE);
+            assertFalse(securityQuestionJooqRepository.allExistWithIds(ids));
         }
     }
 }
