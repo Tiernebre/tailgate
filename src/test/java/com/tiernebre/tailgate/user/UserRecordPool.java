@@ -1,12 +1,16 @@
 package com.tiernebre.tailgate.user;
 
+import com.tiernebre.tailgate.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import static com.tiernebre.tailgate.jooq.Tables.USERS;
+import static com.tiernebre.tailgate.jooq.Tables.USER_SECURITY_QUESTIONS;
 
 /**
  * Manages data within the jooq data context that is used within the integration tests.
@@ -35,5 +39,9 @@ public class UserRecordPool {
 
     public UsersRecord findOneByIdAndEmail(Long id, String email) {
         return dslContext.selectFrom(USERS).where(USERS.ID.eq(id).and(USERS.EMAIL.eq(email))).fetchAny();
+    }
+
+    public List<UserSecurityQuestionsRecord> getSecurityQuestionsForUserWithId(Long id) {
+        return dslContext.selectFrom(USER_SECURITY_QUESTIONS).where(USER_SECURITY_QUESTIONS.USER_ID.eq(id)).fetch();
     }
 }
