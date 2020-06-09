@@ -48,7 +48,7 @@ public class UserValidatorImpl extends BaseValidator implements UserValidator {
         Collection<CreateUserSecurityQuestionRequest> securityQuestionsToValidate = createUserRequest.getSecurityQuestions();
         if (CollectionUtils.isEmpty(securityQuestionsToValidate)) return Collections.emptySet();
 
-        Set<Long> securityQuestionIds = createUserRequest.getSecurityQuestions()
+        Set<Long> securityQuestionIds = securityQuestionsToValidate
                 .stream()
                 .map(CreateUserSecurityQuestionRequest::getId)
                 .collect(Collectors.toSet());
