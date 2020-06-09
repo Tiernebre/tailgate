@@ -53,7 +53,7 @@ public class UserValidatorImpl extends BaseValidator implements UserValidator {
                 .map(CreateUserSecurityQuestionRequest::getId)
                 .collect(Collectors.toSet());
         Set<String> foundErrors = new HashSet<>();
-        if (!securityQuestionService.allExistWithIds(securityQuestionIds)) {
+        if (securityQuestionService.someDoNotExistWithIds(securityQuestionIds)) {
             foundErrors.add(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE);
         }
         return foundErrors;

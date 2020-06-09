@@ -43,7 +43,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
 
     @BeforeEach
     public void setup() {
-        when(securityQuestionService.allExistWithIds(anySet())).thenReturn(true);
+        when(securityQuestionService.someDoNotExistWithIds(anySet())).thenReturn(false);
     }
 
     @Nested
@@ -212,7 +212,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
-            when(securityQuestionService.allExistWithIds(eq(securityQuestionIds))).thenReturn(false);
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(true);
             assertThatValidationInvalidatedCorrectly(
                     userValidator,
                     createUserRequest,
@@ -229,7 +229,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
-            when(securityQuestionService.allExistWithIds(eq(securityQuestionIds))).thenReturn(true);
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
             InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
             assertFalse(thrownException.getErrors().contains(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE));
         }
