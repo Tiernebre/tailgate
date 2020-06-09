@@ -3,8 +3,8 @@ package com.tiernebre.tailgate.session;
 import com.tiernebre.tailgate.token.access.AccessTokenProvider;
 import com.tiernebre.tailgate.token.access.GenerateAccessTokenException;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenService;
-import com.tiernebre.tailgate.user.UserDto;
-import com.tiernebre.tailgate.user.UserService;
+import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,6 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
+
+import com.tiernebre.tailgate.user.dto.UserDto;
 
 /**
  * Service that handles confirmations for users.

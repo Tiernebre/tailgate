@@ -1,10 +1,14 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.repository;
 
 import com.tiernebre.tailgate.jooq.tables.records.RefreshTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenRecordPool;
+import com.tiernebre.tailgate.user.UserFactory;
+import com.tiernebre.tailgate.user.UserRecordPool;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.entity.UserEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

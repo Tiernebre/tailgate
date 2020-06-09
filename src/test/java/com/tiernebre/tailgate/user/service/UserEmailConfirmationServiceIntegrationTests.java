@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.mail.TailgateEmailConfigurationProperties;
@@ -6,6 +6,10 @@ import com.tiernebre.tailgate.test.EmailIntegrationTestSuite;
 import com.tiernebre.tailgate.test.email.TestEmail;
 import com.tiernebre.tailgate.test.email.TestEmailInboxService;
 import com.tiernebre.tailgate.test.email.TestEmailSearchOption;
+import com.tiernebre.tailgate.user.UserRecordPool;
+import com.tiernebre.tailgate.user.configuration.UserEmailConfirmationConfigurationProperties;
+import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.service.UserEmailConfirmationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

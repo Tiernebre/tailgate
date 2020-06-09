@@ -1,5 +1,9 @@
 package com.tiernebre.tailgate.user;
 
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.entity.UserEntity;
+
 import java.util.UUID;
 
 /**

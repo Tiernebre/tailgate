@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.configuration;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,11 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
+import com.tiernebre.tailgate.user.repository.UserRepository;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.entity.UserEntity;
+import com.tiernebre.tailgate.user.exception.InvalidUserException;
+import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
 import com.tiernebre.tailgate.user.validator.UserValidator;
 import com.tiernebre.tailgate.validator.StringValidator;
 import lombok.RequiredArgsConstructor;

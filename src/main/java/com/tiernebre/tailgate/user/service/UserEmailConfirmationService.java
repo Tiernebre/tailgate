@@ -1,7 +1,9 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.mail.TailgateEmailConfigurationProperties;
 import com.tiernebre.tailgate.token.user_confirmation.UserConfirmationTokenService;
+import com.tiernebre.tailgate.user.configuration.UserEmailConfirmationConfigurationProperties;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.user.validator;
 
-import com.tiernebre.tailgate.user.CreateUserRequest;
-import com.tiernebre.tailgate.user.InvalidUserException;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

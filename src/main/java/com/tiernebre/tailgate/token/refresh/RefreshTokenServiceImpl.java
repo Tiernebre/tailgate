@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.token.refresh;
 
-import com.tiernebre.tailgate.user.UserDto;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.validator.StringValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
