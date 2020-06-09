@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Validator;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,6 +45,9 @@ public class UserValidatorImpl extends BaseValidator implements UserValidator {
     }
 
     private Set<String> validateSecurityQuestions(CreateUserRequest createUserRequest) {
+        Collection<CreateUserSecurityQuestionRequest> securityQuestionsToValidate = createUserRequest.getSecurityQuestions();
+        if (CollectionUtils.isEmpty(securityQuestionsToValidate)) return Collections.emptySet();
+
         Set<Long> securityQuestionIds = createUserRequest.getSecurityQuestions()
                 .stream()
                 .map(CreateUserSecurityQuestionRequest::getId)

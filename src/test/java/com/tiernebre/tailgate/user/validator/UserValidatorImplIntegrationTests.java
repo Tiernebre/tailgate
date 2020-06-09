@@ -6,6 +6,7 @@ import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,17 +16,19 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
+import static com.tiernebre.tailgate.user.dto.CreateUserRequest.NUMBER_OF_ALLOWED_SECURITY_QUESTIONS;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NULL_CREATE_USER_REQUEST_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +40,11 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
 
     @Autowired
     private UserValidator userValidator;
+
+    @BeforeEach
+    public void setup() {
+        when(securityQuestionService.allExistWithIds(anySet())).thenReturn(true);
+    }
 
     @Nested
     @DisplayName("validate")
@@ -138,9 +146,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     .email(email)
                     .password(STRONG_PASSWORD)
                     .confirmationPassword(STRONG_PASSWORD)
-                    .securityQuestions(ImmutableList.of(
-                            CreateUserSecurityQuestionRequest.builder().build()
-                    ))
+                    .securityQuestions(generateSecurityQuestions())
                     .build();
             assertDoesNotThrow(() -> {
                 userValidator.validate(createUserRequest);
@@ -185,7 +191,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
 
         @EmptySource
         @NullSource
-        @ParameterizedTest(name = "validates that the security questions must not be \0")
+        @ParameterizedTest(name = "validates that the security questions must not be {0}")
         void testEmptySecurityQuestions(List<CreateUserSecurityQuestionRequest> securityQuestions) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestions)
@@ -201,14 +207,12 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         @Test
         @DisplayName("validates that the security question ids provided must all exist")
         void testValidExistenceOfSecurityQuestionIds() {
-            Long securityQuestionId = new Random().nextLong();
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = ImmutableList.of(
-                    CreateUserSecurityQuestionRequest.builder().id(securityQuestionId).answer(UUID.randomUUID().toString()).build()
-            );
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
-            when(securityQuestionService.allExistWithIds(eq(Collections.singleton(securityQuestionId)))).thenReturn(false);
+            when(securityQuestionService.allExistWithIds(eq(securityQuestionIds))).thenReturn(false);
             assertThatValidationInvalidatedCorrectly(
                     userValidator,
                     createUserRequest,
@@ -220,16 +224,44 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         @Test
         @DisplayName("allows security question ids that exist")
         void allowsSecurityQuestionIdsThatExist() {
-            Long securityQuestionId = new Random().nextLong();
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = ImmutableList.of(
-                    CreateUserSecurityQuestionRequest.builder().id(securityQuestionId).answer(UUID.randomUUID().toString()).build()
-            );
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
-            when(securityQuestionService.allExistWithIds(eq(Collections.singleton(securityQuestionId)))).thenReturn(true);
+            when(securityQuestionService.allExistWithIds(eq(securityQuestionIds))).thenReturn(true);
             InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
             assertFalse(thrownException.getErrors().contains(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE));
+        }
+
+        @ValueSource(ints = { 1, 3, 4, 5, 10 })
+        @ParameterizedTest(name = "does not allow {0} security questions to be created")
+        void doesNotAllowNonTwoNumberOfSecurityQuestions(int numberOfSecurityQuestions) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestions(numberOfSecurityQuestions);
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(securityQuestionRequests)
+                    .build();
+            assertThatValidationInvalidatedCorrectly(
+                    userValidator,
+                    createUserRequest,
+                    InvalidUserException.class,
+                    "securityQuestions size must be between 2 and 2"
+            );
+        }
+
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {
+            return generateSecurityQuestions(NUMBER_OF_ALLOWED_SECURITY_QUESTIONS);
+        }
+
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions(int size) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
+            for(int i = 0; i < size; i++) {
+                securityQuestionRequests.add(CreateUserSecurityQuestionRequest.builder()
+                        .answer(UUID.randomUUID().toString())
+                        .id(Integer.toUnsignedLong(i))
+                        .build());
+            }
+            return securityQuestionRequests;
         }
     }
 }
