@@ -9,8 +9,8 @@ import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
-import com.tiernebre.tailgate.user.service.UserConfirmationService;
-import com.tiernebre.tailgate.user.service.UserService;
+import com.tiernebre.tailgate.user.validator.UserValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @MockBeans({
         @MockBean(UserConfirmationService.class)
@@ -32,6 +34,14 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
 
     @Autowired
     private UserRecordPool userRecordPool;
+
+    @MockBean
+    private UserValidator validator;
+
+    @BeforeEach
+    public void setup() throws InvalidUserException {
+        doNothing().when(validator).validate(any());
+    }
 
     @Nested
     @DisplayName("createOne")
