@@ -2,10 +2,7 @@ package com.tiernebre.tailgate.security_questions;
 
 import com.tiernebre.tailgate.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,11 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
 
     @BeforeEach
     public void setup() {
+        recordPool.deleteAll();
+    }
+
+    @AfterEach
+    public void cleanup() {
         recordPool.deleteAll();
     }
 

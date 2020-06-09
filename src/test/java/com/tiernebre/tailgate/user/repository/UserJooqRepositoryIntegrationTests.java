@@ -1,7 +1,10 @@
 package com.tiernebre.tailgate.user.repository;
 
 import com.tiernebre.tailgate.jooq.tables.records.RefreshTokensRecord;
+import com.tiernebre.tailgate.jooq.tables.records.SecurityQuestionsRecord;
+import com.tiernebre.tailgate.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
+import com.tiernebre.tailgate.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenRecordPool;
@@ -9,17 +12,23 @@ import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.entity.UserEntity;
+import org.apache.commons.collections4.CollectionUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,12 +45,21 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
     @Autowired
     private RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
 
+    @Autowired
+    private SecurityQuestionRecordPool securityQuestionRecordPool;
+
+    @AfterEach
+    public void cleanup() {
+        userRecordPool.deleteAll();
+        securityQuestionRecordPool.deleteAll();
+    }
+
     @Nested
     @DisplayName("createOne")
     public class CreateOneTests {
         @Test
         @DisplayName("returns the correctly mapped saved entity")
-        void testThatTheCreatedEntityReturnsProperly() {
+        void returnsTheCorrectlyMappedSavedEntity() {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
             UserEntity savedEntity = userJooqRepository.createOne(createUserRequest);
             assertAll(
@@ -52,11 +70,48 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         }
 
         @Test
-        @DisplayName("persists an entity onto the database")
-        void testThatTheCreatedEntityActuallyPersistedToTheDatabase() {
+        @DisplayName("persists a user entity onto the database")
+        void persistsAnEntityOntoTheDatabase() {
             UserEntity savedEntity = userJooqRepository.createOne(UserFactory.generateOneCreateUserRequest());
-            Boolean entityGotSaved = userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail());
-            assertTrue(entityGotSaved);
+            assertTrue(userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail()));
+        }
+
+        @Test
+        @DisplayName("does not persist a user entity onto the database if an invalid security question is passed")
+        void doesNotPersistAUserEntityOntoTheDatabaseIfAnInvalidSecurityQuestionIsPassed() {
+            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest(ImmutableSet.of(Long.MAX_VALUE));
+            assertThrows(Exception.class, () -> userJooqRepository.createOne(createUserRequest));
+            assertFalse(userRecordPool.oneExistsWithEmail(createUserRequest.getEmail()));
+        }
+
+        @Test
+        @DisplayName("creates the security question answers for the user")
+        void createsTheSecurityQuestionsForTheUser() {
+            List<SecurityQuestionsRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
+            Set<Long> securityQuestionIds = securityQuestionsCreated
+                    .stream()
+                    .map(SecurityQuestionsRecord::getId)
+                    .collect(Collectors.toSet());
+            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest(securityQuestionIds);
+            Long userId = userJooqRepository.createOne(createUserRequest).getId();
+            List<UserSecurityQuestionsRecord> expectedSecurityQuestions = createUserRequest
+                    .getSecurityQuestions()
+                    .stream()
+                    .map(securityQuestion -> {
+                        UserSecurityQuestionsRecord expectedRecord = new UserSecurityQuestionsRecord();
+                        expectedRecord.setUserId(userId);
+                        expectedRecord.setSecurityQuestionId(securityQuestion.getId());
+                        expectedRecord.setAnswer(securityQuestion.getAnswer());
+                        return expectedRecord;
+                    })
+                    .collect(Collectors.toList());
+
+            List<UserSecurityQuestionsRecord> foundSecurityQuestions = userRecordPool.getSecurityQuestionsForUserWithId(userId);
+            assertAll(
+                    () -> assertTrue(CollectionUtils.isNotEmpty(expectedSecurityQuestions)),
+                    () -> assertTrue(CollectionUtils.isNotEmpty(foundSecurityQuestions))
+            );
+            assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
         }
     }
 

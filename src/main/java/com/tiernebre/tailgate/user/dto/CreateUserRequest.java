@@ -7,6 +7,7 @@ import lombok.With;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 
 @Value
 @Builder
@@ -17,9 +18,13 @@ public class CreateUserRequest {
     @NotBlank
     @Email
     String email;
+
     @NotBlank
     @Size(min = MINIMUM_PASSWORD_LENGTH, max = MAXIMUM_PASSWORD_LENGTH)
     @With
     String password;
+
     String confirmationPassword;
+
+    Collection<CreateUserSecurityQuestionRequest> securityQuestions;
 }

@@ -1,12 +1,15 @@
 package com.tiernebre.tailgate.user;
 
+import com.tiernebre.tailgate.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.tiernebre.tailgate.jooq.Tables.USERS;
+import java.util.List;
+
+import static com.tiernebre.tailgate.jooq.Tables.*;
 
 /**
  * Manages data within the jooq data context that is used within the integration tests.
@@ -33,7 +36,22 @@ public class UserRecordPool {
         return dslContext.fetchExists(dslContext.selectFrom(USERS).where(USERS.ID.eq(id)).and(USERS.EMAIL.eq(email)));
     }
 
+    public Boolean oneExistsWithEmail(String email) {
+        return dslContext.fetchExists(dslContext.selectFrom(USERS).where(USERS.EMAIL.eq(email)));
+    }
+
     public UsersRecord findOneByIdAndEmail(Long id, String email) {
         return dslContext.selectFrom(USERS).where(USERS.ID.eq(id).and(USERS.EMAIL.eq(email))).fetchAny();
+    }
+
+    public List<UserSecurityQuestionsRecord> getSecurityQuestionsForUserWithId(Long id) {
+        return dslContext.selectFrom(USER_SECURITY_QUESTIONS).where(USER_SECURITY_QUESTIONS.USER_ID.eq(id)).fetch();
+    }
+
+    public void deleteAll() {
+        dslContext.deleteFrom(USER_CONFIRMATION_TOKENS).execute();
+        dslContext.deleteFrom(REFRESH_TOKENS).execute();
+        dslContext.deleteFrom(USER_SECURITY_QUESTIONS).execute();
+        dslContext.deleteFrom(USERS).execute();
     }
 }
