@@ -41,7 +41,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
     public class CreateOneTests {
         @Test
         @DisplayName("returns the correctly mapped saved entity")
-        void testThatTheCreatedEntityReturnsProperly() {
+        void returnsTheCorrectlyMappedSavedEntity() {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
             UserEntity savedEntity = userJooqRepository.createOne(createUserRequest);
             assertAll(
@@ -53,10 +53,16 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
         @Test
         @DisplayName("persists an entity onto the database")
-        void testThatTheCreatedEntityActuallyPersistedToTheDatabase() {
+        void persistsAnEntityOntoTheDatabase() {
             UserEntity savedEntity = userJooqRepository.createOne(UserFactory.generateOneCreateUserRequest());
             Boolean entityGotSaved = userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail());
             assertTrue(entityGotSaved);
+        }
+
+        @Test
+        @DisplayName("creates the security question answers for the user")
+        void createsTheSecurityQuestionsForTheUser() {
+
         }
     }
 
