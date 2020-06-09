@@ -50,13 +50,11 @@ public class UserServiceImplTests {
         @DisplayName("returns the created User as a DTO")
         void testCreateOneReturnsProperly() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            UserEntity entityFromCreateUserRequest = UserFactory.generateOneEntity();
             String encryptedPassword = "abcd12345!WOW";
             when(passwordEncoder.encode(createUserRequest.getPassword())).thenReturn(encryptedPassword);
             CreateUserRequest encryptedUserRequest = createUserRequest.withPassword(encryptedPassword);
-            when(userConverter.convertFromCreateOrUpdateRequest(eq(encryptedUserRequest))).thenReturn(entityFromCreateUserRequest);
             UserEntity entitySaved = UserFactory.generateOneEntity();
-            when(repository.saveOne(eq(entityFromCreateUserRequest))).thenReturn(entitySaved);
+            when(repository.createOne(eq(encryptedUserRequest))).thenReturn(entitySaved);
             UserDto expectedUserCreated = UserFactory.generateOneDto();
             when(userConverter.convertFromEntity(eq(entitySaved))).thenReturn(expectedUserCreated);
             doNothing().when(userValidator).validate(eq(createUserRequest));

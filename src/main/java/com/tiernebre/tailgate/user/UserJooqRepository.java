@@ -20,10 +20,8 @@ public class UserJooqRepository implements UserRepository {
     private final RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
 
     @Override
-    public UserEntity saveOne(UserEntity entity) {
-        UsersRecord usersRecord = dslContext.newRecord(USERS);
-        usersRecord.setEmail(entity.getEmail());
-        usersRecord.setPassword(entity.getPassword());
+    public UserEntity createOne(CreateUserRequest createUserRequest) {
+        UsersRecord usersRecord = dslContext.newRecord(USERS, createUserRequest);
         usersRecord.store();
         return usersRecord.into(UserEntity.class);
     }

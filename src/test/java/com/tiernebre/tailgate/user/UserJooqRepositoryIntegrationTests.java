@@ -33,25 +33,24 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
     private RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
 
     @Nested
-    @DisplayName("saveOne")
-    public class SaveOneTests {
+    @DisplayName("createOne")
+    public class CreateOneTests {
         @Test
         @DisplayName("returns the correctly mapped saved entity")
         void testThatTheCreatedEntityReturnsProperly() {
-            UserEntity entityToSave = UserFactory.generateOneEntity();
-            UserEntity savedEntity = userJooqRepository.saveOne(entityToSave);
+            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
+            UserEntity savedEntity = userJooqRepository.createOne(createUserRequest);
             assertAll(
                     () -> assertNotNull(savedEntity.getId()),
-                    () -> assertEquals(entityToSave.getEmail(), savedEntity.getEmail()),
-                    () -> assertEquals(entityToSave.getPassword(), savedEntity.getPassword())
+                    () -> assertEquals(createUserRequest.getEmail(), savedEntity.getEmail()),
+                    () -> assertEquals(createUserRequest.getPassword(), savedEntity.getPassword())
             );
         }
 
         @Test
         @DisplayName("persists an entity onto the database")
         void testThatTheCreatedEntityActuallyPersistedToTheDatabase() {
-            UserEntity entityToSave = UserFactory.generateOneEntity();
-            UserEntity savedEntity = userJooqRepository.saveOne(entityToSave);
+            UserEntity savedEntity = userJooqRepository.createOne(UserFactory.generateOneCreateUserRequest());
             Boolean entityGotSaved = userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail());
             assertTrue(entityGotSaved);
         }

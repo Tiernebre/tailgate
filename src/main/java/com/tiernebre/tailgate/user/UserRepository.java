@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * Provides operations to perform on Users data.
  */
-public interface UserRepository extends Repository<UserEntity, Long> {
+public interface UserRepository extends Repository<UserEntity, Long, CreateUserRequest> {
     /**
      * Returns a UserEntity with a specific email.
      * @param email The email to find a user based off of.
