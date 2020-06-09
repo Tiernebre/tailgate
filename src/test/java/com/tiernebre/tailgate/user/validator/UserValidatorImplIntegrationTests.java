@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.user.validator;
 
+import com.tiernebre.tailgate.exception.InvalidException;
 import com.tiernebre.tailgate.security_questions.SecurityQuestionService;
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
@@ -50,7 +51,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
         @ValueSource(strings = { "", " " })
         @NullSource
-        void testThatBlankPasswordFails(String password) throws InvalidUserException {
+        void testThatBlankPasswordFails(String password) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email("test@" + UUID.randomUUID().toString())
                     .password(password)
@@ -71,7 +72,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                 "      "
         })
         @NullSource
-        void testThatBlankEmailFails(String email) throws InvalidUserException {
+        void testThatBlankEmailFails(String email) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(email)
                     .password(STRONG_PASSWORD)
@@ -132,7 +133,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                 "email@example.co.jp",
                 "firstname-lastname@example.com"
         })
-        void testThatValidEmailSucceeds(String email) throws InvalidUserException {
+        void testThatValidEmailSucceeds(String email) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(email)
                     .password(STRONG_PASSWORD)
@@ -148,7 +149,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
 
         @Test
         @DisplayName("validates that a password with 7 characters fails")
-        void testThatPasswordWithLengthOfSevenCharactersFails() throws InvalidUserException {
+        void testThatPasswordWithLengthOfSevenCharactersFails() {
             String password = "aBcD1!2";
             assertEquals(7, password.length());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
@@ -166,7 +167,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
 
         @Test
         @DisplayName("validates that a password with 72 characters fails")
-        void testThatPasswordWithLengthOfSeventyTwoCharactersFails() throws InvalidUserException {
+        void testThatPasswordWithLengthOfSeventyTwoCharactersFails() {
             String password = "aBcD1234!*".repeat(7) + "aB";
             assertEquals(72, password.length());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
@@ -214,6 +215,21 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     InvalidUserException.class,
                     NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE
             );
+        }
+
+        @Test
+        @DisplayName("allows security question ids that exist")
+        void allowsSecurityQuestionIdsThatExist() {
+            Long securityQuestionId = new Random().nextLong();
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = ImmutableList.of(
+                    CreateUserSecurityQuestionRequest.builder().id(securityQuestionId).answer(UUID.randomUUID().toString()).build()
+            );
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(createUserSecurityQuestionRequests)
+                    .build();
+            when(securityQuestionService.allExistWithIds(eq(Collections.singleton(securityQuestionId)))).thenReturn(true);
+            InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
+            assertFalse(thrownException.getErrors().contains(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE));
         }
     }
 }
