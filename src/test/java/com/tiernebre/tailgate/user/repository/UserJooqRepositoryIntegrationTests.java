@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -62,11 +63,18 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         }
 
         @Test
-        @DisplayName("persists an entity onto the database")
+        @DisplayName("persists a user entity onto the database")
         void persistsAnEntityOntoTheDatabase() {
             UserEntity savedEntity = userJooqRepository.createOne(UserFactory.generateOneCreateUserRequest());
-            Boolean entityGotSaved = userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail());
-            assertTrue(entityGotSaved);
+            assertTrue(userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail()));
+        }
+
+        @Test
+        @DisplayName("does not persist a user entity onto the database if an invalid security question is passed")
+        void doesNotPersistAUserEntityOntoTheDatabaseIfAnInvalidSecurityQuestionIsPassed() {
+            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest(ImmutableSet.of(Long.MAX_VALUE));
+            assertThrows(Exception.class, () -> userJooqRepository.createOne(createUserRequest));
+            assertFalse(userRecordPool.oneExistsWithEmail(createUserRequest.getEmail()));
         }
 
         @Test

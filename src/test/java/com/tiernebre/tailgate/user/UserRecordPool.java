@@ -37,6 +37,10 @@ public class UserRecordPool {
         return dslContext.fetchExists(dslContext.selectFrom(USERS).where(USERS.ID.eq(id)).and(USERS.EMAIL.eq(email)));
     }
 
+    public Boolean oneExistsWithEmail(String email) {
+        return dslContext.fetchExists(dslContext.selectFrom(USERS).where(USERS.EMAIL.eq(email)));
+    }
+
     public UsersRecord findOneByIdAndEmail(Long id, String email) {
         return dslContext.selectFrom(USERS).where(USERS.ID.eq(id).and(USERS.EMAIL.eq(email))).fetchAny();
     }
