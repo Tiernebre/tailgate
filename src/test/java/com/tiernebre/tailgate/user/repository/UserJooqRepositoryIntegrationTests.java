@@ -48,7 +48,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
     @Autowired
     private SecurityQuestionRecordPool securityQuestionRecordPool;
 
-    @AfterEach()
+    @AfterEach
     public void cleanup() {
         userRecordPool.deleteAll();
         securityQuestionRecordPool.deleteAll();
