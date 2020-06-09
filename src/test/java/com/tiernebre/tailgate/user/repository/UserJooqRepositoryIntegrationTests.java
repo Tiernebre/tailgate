@@ -13,6 +13,7 @@ import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import org.apache.commons.collections4.CollectionUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,12 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
     @Autowired
     private SecurityQuestionRecordPool securityQuestionRecordPool;
+
+    @AfterEach()
+    public void cleanup() {
+        userRecordPool.deleteAll();
+        securityQuestionRecordPool.deleteAll();
+    }
 
     @Nested
     @DisplayName("createOne")

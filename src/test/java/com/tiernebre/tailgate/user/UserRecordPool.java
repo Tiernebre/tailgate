@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.tiernebre.tailgate.jooq.Tables.USERS;
-import static com.tiernebre.tailgate.jooq.Tables.USER_SECURITY_QUESTIONS;
+import static com.tiernebre.tailgate.jooq.Tables.*;
 
 /**
  * Manages data within the jooq data context that is used within the integration tests.
@@ -47,5 +46,12 @@ public class UserRecordPool {
 
     public List<UserSecurityQuestionsRecord> getSecurityQuestionsForUserWithId(Long id) {
         return dslContext.selectFrom(USER_SECURITY_QUESTIONS).where(USER_SECURITY_QUESTIONS.USER_ID.eq(id)).fetch();
+    }
+
+    public void deleteAll() {
+        dslContext.deleteFrom(USER_CONFIRMATION_TOKENS).execute();
+        dslContext.deleteFrom(REFRESH_TOKENS).execute();
+        dslContext.deleteFrom(USER_SECURITY_QUESTIONS).execute();
+        dslContext.deleteFrom(USERS).execute();
     }
 }
