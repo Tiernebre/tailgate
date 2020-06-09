@@ -2,11 +2,11 @@ package com.tiernebre.tailgate.session;
 
 import com.tiernebre.tailgate.exception.InvalidException;
 
-import java.util.Collection;
+import java.util.Set;
 
 public class InvalidCreateSessionRequestException extends InvalidException {
     public InvalidCreateSessionRequestException(
-            Collection<String> errors
+            Set<String> errors
     ) {
         super("The request to create an access token contained invalid data.", errors);
     }

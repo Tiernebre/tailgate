@@ -18,7 +18,11 @@ public class SecurityQuestionServiceImpl implements SecurityQuestionService {
     }
 
     @Override
-    public boolean allExistWithIds(Set<Long> ids) {
+    public boolean someDoNotExistWithIds(Set<Long> ids) {
+        return !allExistWithIds(ids);
+    }
+
+    private boolean allExistWithIds(Set<Long> ids) {
         return repository.allExistWithIds(ids);
     }
 }

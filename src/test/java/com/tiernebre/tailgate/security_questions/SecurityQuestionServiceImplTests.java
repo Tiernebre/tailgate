@@ -13,8 +13,7 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -51,14 +50,22 @@ public class SecurityQuestionServiceImplTests {
     }
 
     @Nested
-    @DisplayName("allExistWithIds")
-    public class AllExistWithIdsTests {
+    @DisplayName("someDoNotExistWithIdsTests")
+    public class SomeDoNotExistWithIdsTests {
         @Test
-        @DisplayName("returns the result from the repository")
-        public void returnsTheResultFromTheRepository() {
+        @DisplayName("returns the opposite result of whether all ids exist (true case)")
+        public void returnsTheOppositeResultOfWhetherAllIdsExistTrueCase() {
             Set<Long> ids = ImmutableSet.of(1L, 5L, 12L);
             when(securityQuestionRepository.allExistWithIds(eq(ids))).thenReturn(true);
-            assertTrue(securityQuestionService.allExistWithIds(ids));
+            assertFalse(securityQuestionService.someDoNotExistWithIds(ids));
+        }
+
+        @Test
+        @DisplayName("returns the opposite result of whether all ids exist (false case)")
+        public void returnsTheOppositeResultOfWhetherAllIdsExistFalseCase() {
+            Set<Long> ids = ImmutableSet.of(1L, 5L, 12L);
+            when(securityQuestionRepository.allExistWithIds(eq(ids))).thenReturn(false);
+            assertTrue(securityQuestionService.someDoNotExistWithIds(ids));
         }
     }
 }

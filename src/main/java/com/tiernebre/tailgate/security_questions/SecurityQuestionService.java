@@ -10,12 +10,11 @@ public interface SecurityQuestionService {
      */
     List<SecurityQuestionDto> getAll();
 
-
     /**
-     * Determines if a set of ids provided all exist in a data store.
+     * Determines if a set with some ids do not exist.
      * @param ids The ids to check
-     * @return true if _all_ ids match up to security questions
-     *         false if at least one of the ids does not match up to a security question
+     * @return false if _all_ ids match up to security questions
+     *         true if at least one of the ids does not match up to a security question
      */
-    boolean allExistWithIds(Set<Long> ids);
+    boolean someDoNotExistWithIds(Set<Long> ids);
 }

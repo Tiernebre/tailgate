@@ -6,12 +6,14 @@ import lombok.With;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 
 @Value
 @Builder
 public class CreateUserRequest {
+    public static final int NUMBER_OF_ALLOWED_SECURITY_QUESTIONS = 2;
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
     private static final int MAXIMUM_PASSWORD_LENGTH = 71;
 
@@ -26,5 +28,7 @@ public class CreateUserRequest {
 
     String confirmationPassword;
 
+    @NotEmpty
+    @Size(min = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS, max = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS)
     Collection<CreateUserSecurityQuestionRequest> securityQuestions;
 }

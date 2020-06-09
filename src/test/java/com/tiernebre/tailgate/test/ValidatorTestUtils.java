@@ -3,7 +3,7 @@ package com.tiernebre.tailgate.test;
 import com.tiernebre.tailgate.exception.InvalidException;
 import com.tiernebre.tailgate.validator.Validator;
 
-import java.util.Collection;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,7 +18,7 @@ public final class ValidatorTestUtils {
             Class<U> exception,
             String errorMessageToCheck
     ) {
-        Collection<String> errors = assertThrows(exception, () -> {
+        Set<String> errors = assertThrows(exception, () -> {
             validator.validate(value);
         }).getErrors();
         assertTrue(errors.contains(errorMessageToCheck));
