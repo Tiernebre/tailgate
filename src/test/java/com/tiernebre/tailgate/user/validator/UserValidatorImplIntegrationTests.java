@@ -2,15 +2,18 @@ package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
@@ -162,6 +165,21 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     createUserRequest,
                     InvalidUserException.class,
                     "password size must be between 8 and 71"
+            );
+        }
+
+        @EmptySource
+        @NullSource
+        @ParameterizedTest(name = "validates that the security questions must not be \0")
+        void testEmptySecurityQuestions(List<CreateUserSecurityQuestionRequest> securityQuestions) {
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(securityQuestions)
+                    .build();
+            assertThatValidationInvalidatedCorrectly(
+                    userValidator,
+                    createUserRequest,
+                    InvalidUserException.class,
+                    "securityQuestions must not be empty"
             );
         }
     }
