@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.dto;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

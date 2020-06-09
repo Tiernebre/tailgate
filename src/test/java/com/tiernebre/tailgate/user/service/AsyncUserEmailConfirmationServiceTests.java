@@ -1,5 +1,7 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
+import com.tiernebre.tailgate.user.UserFactory;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

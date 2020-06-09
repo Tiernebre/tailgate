@@ -2,7 +2,7 @@ package com.tiernebre.tailgate.token.refresh;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
-import com.tiernebre.tailgate.user.UserDto;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.validator.StringIsBlankException;
 import org.apache.commons.lang3.StringUtils;

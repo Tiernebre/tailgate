@@ -3,7 +3,7 @@ package com.tiernebre.tailgate.token.user_confirmation;
 import com.tiernebre.tailgate.jooq.tables.records.UserConfirmationTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
-import com.tiernebre.tailgate.user.UserDto;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;

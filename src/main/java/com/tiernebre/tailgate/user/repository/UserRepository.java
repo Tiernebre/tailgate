@@ -1,6 +1,8 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.repository;
 
 import com.tiernebre.tailgate.repository.Repository;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.entity.UserEntity;
 
 import java.util.Optional;
 

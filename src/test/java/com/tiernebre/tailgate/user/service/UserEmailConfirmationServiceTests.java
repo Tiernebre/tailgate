@@ -1,7 +1,10 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.mail.TailgateEmailConfigurationProperties;
 import com.tiernebre.tailgate.token.user_confirmation.UserConfirmationTokenService;
+import com.tiernebre.tailgate.user.UserFactory;
+import com.tiernebre.tailgate.user.configuration.UserEmailConfirmationConfigurationProperties;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,9 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.repository;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;

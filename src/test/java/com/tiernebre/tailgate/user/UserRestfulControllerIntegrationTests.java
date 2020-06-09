@@ -1,6 +1,9 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

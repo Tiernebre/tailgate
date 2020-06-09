@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.entity;
 
 import lombok.Builder;
 import lombok.Value;

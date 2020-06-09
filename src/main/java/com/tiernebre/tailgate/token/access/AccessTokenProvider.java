@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.token.access;
 
-import com.tiernebre.tailgate.user.UserDto;
+import com.tiernebre.tailgate.user.dto.UserDto;
 
 public interface AccessTokenProvider {
     /**

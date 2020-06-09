@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
+import com.tiernebre.tailgate.user.entity.UserEntity;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

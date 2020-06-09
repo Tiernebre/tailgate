@@ -5,7 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.tailgate.token.access.GenerateAccessTokenException;
-import com.tiernebre.tailgate.user.UserDto;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

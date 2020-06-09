@@ -1,8 +1,8 @@
 package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
-import com.tiernebre.tailgate.user.CreateUserRequest;
-import com.tiernebre.tailgate.user.InvalidUserException;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

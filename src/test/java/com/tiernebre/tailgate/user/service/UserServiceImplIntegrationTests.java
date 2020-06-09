@@ -1,8 +1,16 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
 
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.tailgate.user.UserFactory;
+import com.tiernebre.tailgate.user.UserRecordPool;
+import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.exception.InvalidUserException;
+import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
+import com.tiernebre.tailgate.user.service.UserConfirmationService;
+import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.exception;
 
 import com.tiernebre.tailgate.exception.InvalidException;
 import lombok.Getter;

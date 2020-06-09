@@ -1,5 +1,6 @@
-package com.tiernebre.tailgate.user;
+package com.tiernebre.tailgate.user.service;
 
+import com.tiernebre.tailgate.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
