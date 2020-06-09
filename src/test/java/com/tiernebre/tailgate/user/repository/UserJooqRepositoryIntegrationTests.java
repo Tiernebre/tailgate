@@ -101,7 +101,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
             List<UserSecurityQuestionsRecord> foundSecurityQuestions = userRecordPool.getSecurityQuestionsForUserWithId(userId);
             assertAll(
-                    () -> assertTrue(CollectionUtils.isNotEmpty(createUserRequest.getSecurityQuestions())),
+                    () -> assertTrue(CollectionUtils.isNotEmpty(expectedSecurityQuestions)),
                     () -> assertTrue(CollectionUtils.isNotEmpty(foundSecurityQuestions))
             );
             assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
