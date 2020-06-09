@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.UUID;
@@ -126,6 +127,9 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     .email(email)
                     .password(STRONG_PASSWORD)
                     .confirmationPassword(STRONG_PASSWORD)
+                    .securityQuestions(ImmutableList.of(
+                            CreateUserSecurityQuestionRequest.builder().build()
+                    ))
                     .build();
             assertDoesNotThrow(() -> {
                 userValidator.validate(createUserRequest);
