@@ -249,6 +249,17 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             );
         }
 
+        @ValueSource(ints = { 2 })
+        @ParameterizedTest(name = "allows {0} security questions to be created")
+        void allowsNumberOfSecurityQuestions(int numberOfSecurityQuestions) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestions(numberOfSecurityQuestions);
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(securityQuestionRequests)
+                    .build();
+            InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
+            assertFalse(thrownException.getErrors().contains("securityQuestions size must be between 2 and 2"));
+        }
+
         private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {
             return generateSecurityQuestions(NUMBER_OF_ALLOWED_SECURITY_QUESTIONS);
         }
