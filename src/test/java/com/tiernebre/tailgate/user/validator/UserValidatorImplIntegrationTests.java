@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,7 +246,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     userValidator,
                     createUserRequest,
                     InvalidUserException.class,
-                    "securityQuestions size must be between 2 and 2"
+                    "securityQuestions " + CreateUserRequest.NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE
             );
         }
 
@@ -253,6 +254,21 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         @ParameterizedTest(name = "allows {0} security questions to be created")
         void allowsNumberOfSecurityQuestions(int numberOfSecurityQuestions) {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestions(numberOfSecurityQuestions);
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(securityQuestionRequests)
+                    .build();
+            assertThatValidationInvalidatedCorrectly(
+                    userValidator,
+                    createUserRequest,
+                    InvalidUserException.class,
+                    "securityQuestions must not be null"
+            );
+        }
+
+        @Test
+        @DisplayName("does not allow null security questions")
+        void doesNotAllowNullSecurityQuestions() {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(null, null);
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestionRequests)
                     .build();
