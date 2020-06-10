@@ -50,6 +50,7 @@ public class UserValidatorImpl extends BaseValidator implements UserValidator {
 
         Set<Long> securityQuestionIds = securityQuestionsToValidate
                 .stream()
+                .filter(Objects::nonNull)
                 .map(CreateUserSecurityQuestionRequest::getId)
                 .collect(Collectors.toSet());
         Set<String> foundErrors = new HashSet<>();
