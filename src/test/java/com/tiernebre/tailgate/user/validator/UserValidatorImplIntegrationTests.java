@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
-import static com.tiernebre.tailgate.user.dto.CreateUserRequest.*;
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NULL_CREATE_USER_REQUEST_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;

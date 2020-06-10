@@ -7,17 +7,11 @@ import lombok.With;
 import javax.validation.constraints.*;
 import java.util.Collection;
 
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
+
 @Value
 @Builder
 public class CreateUserRequest {
-    public static final int NUMBER_OF_ALLOWED_SECURITY_QUESTIONS = 2;
-    public static final String NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE =
-            "securityQuestions must have exactly " +
-            NUMBER_OF_ALLOWED_SECURITY_QUESTIONS +
-            " entries.";
-    public static final String NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE =
-            "securityQuestions provided must not include null entries";
-
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
     private static final int MAXIMUM_PASSWORD_LENGTH = 71;
 
