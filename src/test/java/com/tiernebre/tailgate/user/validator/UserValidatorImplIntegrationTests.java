@@ -317,6 +317,28 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             );
         }
 
+        @ParameterizedTest(name = "does not allow security questions with answer = \"{0}\"")
+        @NullSource
+        @EmptySource
+        @ValueSource(strings = {" "})
+        void doesNotAllowSecurityQuestionsWithBlankAnswer(String answer) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(
+                    CreateUserSecurityQuestionRequest.builder()
+                            .id(null)
+                            .answer(answer)
+                            .build()
+            );
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(securityQuestionRequests)
+                    .build();
+            assertThatValidationInvalidatedCorrectly(
+                    userValidator,
+                    createUserRequest,
+                    InvalidUserException.class,
+                    NULL_SECURITY_QUESTION_ANSWER_VALIDATION_MESSAGE
+            );
+        }
+
         private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {
             return generateSecurityQuestions(NUMBER_OF_ALLOWED_SECURITY_QUESTIONS);
         }
