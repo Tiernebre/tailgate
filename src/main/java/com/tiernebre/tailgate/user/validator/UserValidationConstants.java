@@ -8,4 +8,6 @@ public final class UserValidationConstants {
                     " entries.";
     public static final String NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE =
             "securityQuestions provided must not include null entries";
+    public static final int MINIMUM_PASSWORD_LENGTH = 8;
+    public static final int MAXIMUM_PASSWORD_LENGTH = 71;
 }

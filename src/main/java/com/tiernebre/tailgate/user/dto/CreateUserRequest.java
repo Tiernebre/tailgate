@@ -12,9 +12,6 @@ import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 @Value
 @Builder
 public class CreateUserRequest {
-    private static final int MINIMUM_PASSWORD_LENGTH = 8;
-    private static final int MAXIMUM_PASSWORD_LENGTH = 71;
-
     @NotBlank
     @Email
     String email;
