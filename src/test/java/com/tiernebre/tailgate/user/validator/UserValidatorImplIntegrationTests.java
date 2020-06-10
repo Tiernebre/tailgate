@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
-import static com.tiernebre.tailgate.user.dto.CreateUserRequest.NUMBER_OF_ALLOWED_SECURITY_QUESTIONS;
+import static com.tiernebre.tailgate.user.dto.CreateUserRequest.*;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NULL_CREATE_USER_REQUEST_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -246,7 +245,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     userValidator,
                     createUserRequest,
                     InvalidUserException.class,
-                    "securityQuestions " + CreateUserRequest.NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE
+                    NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE
             );
         }
 
@@ -257,23 +256,26 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestionRequests)
                     .build();
-            assertThatValidationInvalidatedCorrectly(
-                    userValidator,
-                    createUserRequest,
-                    InvalidUserException.class,
-                    "securityQuestions must not be null"
-            );
+            InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
+            assertFalse(thrownException.getErrors().contains("securityQuestions " + NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE));
         }
 
         @Test
         @DisplayName("does not allow null security questions")
         void doesNotAllowNullSecurityQuestions() {
-            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(null, null);
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
+            for (int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+                securityQuestionRequests.add(null);
+            }
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestionRequests)
                     .build();
-            InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
-            assertFalse(thrownException.getErrors().contains("securityQuestions size must be between 2 and 2"));
+            assertThatValidationInvalidatedCorrectly(
+                    userValidator,
+                    createUserRequest,
+                    InvalidUserException.class,
+                    NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE
+            );
         }
 
         private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,8 @@ public abstract class BaseValidator {
     }
 
     private <T> String formatErrorMessage(ConstraintViolation<T> constraintViolation) {
-        return constraintViolation.getPropertyPath() + " " + constraintViolation.getMessage();
+        String originalMessage = constraintViolation.getMessage();
+        boolean customMessageIsProvided = Objects.equals(originalMessage, constraintViolation.getMessageTemplate());
+        return customMessageIsProvided ? originalMessage : String.format("%s %s", constraintViolation.getPropertyPath(), originalMessage);
     }
 }
