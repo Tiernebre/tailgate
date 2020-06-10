@@ -57,6 +57,12 @@ public class UserValidatorImpl extends BaseValidator implements UserValidator {
         if (securityQuestionService.someDoNotExistWithIds(securityQuestionIds)) {
             foundErrors.add(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE);
         }
+
+        Set<String> errorsWithEntries = securityQuestionsToValidate.stream()
+                .map(this::validateCommon)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+        foundErrors.addAll(errorsWithEntries);
         return foundErrors;
     }
 }
