@@ -59,6 +59,7 @@ public class UserValidatorImpl extends BaseValidator implements UserValidator {
         }
 
         Set<String> errorsWithEntries = securityQuestionsToValidate.stream()
+                .filter(Objects::nonNull)
                 .map(this::validateCommon)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
