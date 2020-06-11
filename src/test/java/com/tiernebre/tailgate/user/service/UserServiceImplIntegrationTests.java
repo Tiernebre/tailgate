@@ -49,6 +49,7 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
 
     @AfterEach
     public void cleanup() {
+        userRecordPool.deleteAll();
         securityQuestionRecordPool.deleteAll();
     }
 
