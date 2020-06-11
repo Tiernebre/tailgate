@@ -1,10 +1,8 @@
 package com.tiernebre.tailgate.user.validator;
 
-import com.tiernebre.tailgate.security_questions.SecurityQuestionService;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
-import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
@@ -38,12 +37,7 @@ public class UserValidatorImplTests {
     private Validator validator;
 
     @Mock
-    private SecurityQuestionService securityQuestionService;
-
-    @Before
-    public void setup() {
-        when(securityQuestionService.someDoNotExistWithIds(anySet())).thenReturn(false);
-    }
+    private UserSecurityQuestionValidator securityQuestionValidator;
 
     @DisplayName("validate")
     @Nested
@@ -52,6 +46,7 @@ public class UserValidatorImplTests {
         @Test
         void testValidateThrowsInvalidExceptionIfASingleErrorOccurs() {
             when(userPasswordValidator.validate(anyString(), anyString())).thenReturn(Collections.emptySet());
+            when(securityQuestionValidator.validate(any())).thenReturn(Collections.emptySet());
             CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
             String property = "foo";
             Path propertyPath = mock(Path.class);
@@ -70,8 +65,9 @@ public class UserValidatorImplTests {
 
         @DisplayName("throws UserInvalidException if multiple errors were found")
         @Test
-        void testValidateThrowsInvalidExceptionIfMultipleErrorsOccurred() throws InvalidUserException {
+        void testValidateThrowsInvalidExceptionIfMultipleErrorsOccurred() {
             when(userPasswordValidator.validate(anyString(), anyString())).thenReturn(Collections.emptySet());
+            when(securityQuestionValidator.validate(any())).thenReturn(Collections.emptySet());
             List<String> propertiesWithErrors = List.of(
                     "bar",
                     "baz"
@@ -109,6 +105,7 @@ public class UserValidatorImplTests {
         @Test
         void testValidateDoesNothingIfNoErrorsExist() {
             when(userPasswordValidator.validate(anyString(), anyString())).thenReturn(Collections.emptySet());
+            when(securityQuestionValidator.validate(any())).thenReturn(Collections.emptySet());
             CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
             when(validator.validate(eq(entityToValidate))).thenReturn(Collections.emptySet());
             assertDoesNotThrow(() -> {
@@ -120,6 +117,7 @@ public class UserValidatorImplTests {
         @Test
         void testValidateAccountsForPasswordErrors() {
             CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
+            when(securityQuestionValidator.validate(any())).thenReturn(Collections.emptySet());
             when(validator.validate(eq(entityToValidate))).thenReturn(Collections.emptySet());
             String expectedPasswordError = "Expected Test Failure for Password.";
             when(userPasswordValidator.validate(eq(entityToValidate.getPassword()), eq(entityToValidate.getConfirmationPassword()))).thenReturn(Set.of(expectedPasswordError));
@@ -127,6 +125,20 @@ public class UserValidatorImplTests {
                 userValidator.validate(entityToValidate);
             });
             assertTrue(thrownException.getErrors().contains(expectedPasswordError));
+        }
+
+        @DisplayName("throws UserInvalidException if errors were found from the user security questionvalidator")
+        @Test
+        void testValidateAccountsForSecurityQuestionErrors() {
+            when(userPasswordValidator.validate(anyString(), anyString())).thenReturn(Collections.emptySet());
+            CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
+            when(validator.validate(eq(entityToValidate))).thenReturn(Collections.emptySet());
+            String expectedSecurityQuestionError = "Expected Test Failure for Security Questions.";
+            when(securityQuestionValidator.validate(entityToValidate)).thenReturn(ImmutableSet.of(expectedSecurityQuestionError));
+            InvalidUserException thrownException = assertThrows(InvalidUserException.class, () -> {
+                userValidator.validate(entityToValidate);
+            });
+            assertTrue(thrownException.getErrors().contains(expectedSecurityQuestionError));
         }
     }
 }

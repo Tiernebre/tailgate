@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private CreateUserSecurityQuestionRequest hashSecurityQuestion(CreateUserSecurityQuestionRequest securityQuestionToHash) {
-        String hashedAnswer = passwordEncoder.encode(securityQuestionToHash.getAnswer());
+        String hashedAnswer = passwordEncoder.encode(securityQuestionToHash.getAnswer().toLowerCase());
         return securityQuestionToHash.withAnswer(hashedAnswer);
     }
 }

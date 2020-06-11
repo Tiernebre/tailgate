@@ -1,7 +1,6 @@
 package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.exception.InvalidException;
-import com.tiernebre.tailgate.security_questions.SecurityQuestionService;
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
@@ -16,32 +15,28 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.tiernebre.tailgate.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
 import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
-import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NULL_CREATE_USER_REQUEST_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
     private static final String STRONG_PASSWORD = "Strong_Password_12345!";
 
-    @MockBean
-    private SecurityQuestionService securityQuestionService;
-
     @Autowired
     private UserValidator userValidator;
 
+    @MockBean
+    private UserSecurityQuestionValidator securityQuestionValidator;
+
     @BeforeEach
     public void setup() {
-        when(securityQuestionService.someDoNotExistWithIds(anySet())).thenReturn(false);
+        when(securityQuestionValidator.validate(any())).thenReturn(Collections.emptySet());
     }
 
     @Nested
@@ -202,36 +197,6 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
             );
         }
 
-        @Test
-        @DisplayName("validates that the security question ids provided must all exist")
-        void testValidExistenceOfSecurityQuestionIds() {
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
-            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
-            CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                    .securityQuestions(createUserSecurityQuestionRequests)
-                    .build();
-            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(true);
-            assertThatValidationInvalidatedCorrectly(
-                    userValidator,
-                    createUserRequest,
-                    InvalidUserException.class,
-                    NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE
-            );
-        }
-
-        @Test
-        @DisplayName("allows security question ids that exist")
-        void allowsSecurityQuestionIdsThatExist() {
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
-            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
-            CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                    .securityQuestions(createUserSecurityQuestionRequests)
-                    .build();
-            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
-            InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
-            assertFalse(thrownException.getErrors().contains(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE));
-        }
-
         @ValueSource(ints = { 1, 3, 4, 5, 10 })
         @ParameterizedTest(name = "does not allow {0} security questions to be created")
         void doesNotAllowNonTwoNumberOfSecurityQuestions(int numberOfSecurityQuestions) {
@@ -297,45 +262,6 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
                     createUserRequest,
                     InvalidUserException.class,
                     NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE
-            );
-        }
-
-        @Test
-        @DisplayName("does not allow security questions with null ids")
-        void doesNotAllowSecurityQuestionsWithNullIds() {
-            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(
-                    CreateUserSecurityQuestionRequest.builder().id(null).build()
-            );
-            CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                    .securityQuestions(securityQuestionRequests)
-                    .build();
-            assertThatValidationInvalidatedCorrectly(
-                    userValidator,
-                    createUserRequest,
-                    InvalidUserException.class,
-                    NULL_SECURITY_QUESTION_ID_VALIDATION_MESSAGE
-            );
-        }
-
-        @ParameterizedTest(name = "does not allow security questions with answer = \"{0}\"")
-        @NullSource
-        @EmptySource
-        @ValueSource(strings = {" "})
-        void doesNotAllowSecurityQuestionsWithBlankAnswer(String answer) {
-            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(
-                    CreateUserSecurityQuestionRequest.builder()
-                            .id(null)
-                            .answer(answer)
-                            .build()
-            );
-            CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                    .securityQuestions(securityQuestionRequests)
-                    .build();
-            assertThatValidationInvalidatedCorrectly(
-                    userValidator,
-                    createUserRequest,
-                    InvalidUserException.class,
-                    NULL_SECURITY_QUESTION_ANSWER_VALIDATION_MESSAGE
             );
         }
 
