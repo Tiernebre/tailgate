@@ -16,8 +16,7 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tiernebre.tailgate.user.validator.UserValidationConstants.NUMBER_OF_ALLOWED_SECURITY_QUESTIONS;
-import static com.tiernebre.tailgate.user.validator.UserValidationConstants.SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE;
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -83,6 +82,21 @@ public class UserSecurityQuestionsValidatorImplTests {
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
             Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
             assertTrue(errorsFound.contains(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
+        }
+
+        @Test
+        @DisplayName("does not allow security questions answers that contain the user password")
+        void doesNotAllowSecurityQuestionAnswersThatContainTheUserPassword() {
+            String password = UUID.randomUUID().toString();
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(password);
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(createUserSecurityQuestionRequests)
+                    .password(password)
+                    .build();
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
+            Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
+            assertTrue(errorsFound.contains(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION));
         }
 
         @Test

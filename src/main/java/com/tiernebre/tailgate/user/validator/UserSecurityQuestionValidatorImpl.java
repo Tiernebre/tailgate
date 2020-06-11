@@ -12,8 +12,7 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tiernebre.tailgate.user.validator.UserValidationConstants.NUMBER_OF_ALLOWED_SECURITY_QUESTIONS;
-import static com.tiernebre.tailgate.user.validator.UserValidationConstants.SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE;
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 
 @Component
@@ -36,7 +35,7 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
 
         Set<String> foundErrors = validateSecurityQuestionsExist(securityQuestionsToValidate);
         foundErrors.addAll(validateSecurityQuestionDtosAreValid(securityQuestionsToValidate));
-        foundErrors.addAll(validateSecurityQuestionsDoNotHaveDuplicateInformation(securityQuestionsToValidate));
+        foundErrors.addAll(validateSecurityQuestionsDoNotHaveDuplicateInformation(createUserRequest));
         return foundErrors;
     }
 
@@ -61,13 +60,18 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
                 .collect(Collectors.toSet());
     }
 
-    private Set<String> validateSecurityQuestionsDoNotHaveDuplicateInformation(Collection<CreateUserSecurityQuestionRequest> securityQuestionRequests) {
+    private Set<String> validateSecurityQuestionsDoNotHaveDuplicateInformation(
+            CreateUserRequest createUserRequest
+    ) {
         Set<String> foundErrors = new HashSet<>();
-        Set<String> uniqueSecurityQuestionAnswers = securityQuestionRequests.stream()
+        Set<String> uniqueSecurityQuestionAnswers = createUserRequest.getSecurityQuestions().stream()
                 .map(CreateUserSecurityQuestionRequest::getAnswer)
                 .collect(Collectors.toSet());
         if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS) {
             foundErrors.add(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE);
+        }
+        if (uniqueSecurityQuestionAnswers.contains(createUserRequest.getPassword())) {
+            foundErrors.add(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION);
         }
         return foundErrors;
     }
