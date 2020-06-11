@@ -63,7 +63,7 @@ public class UserServiceImplTests {
             for (int i = 0; i < createUserRequest.getSecurityQuestions().size(); i++) {
                 CreateUserSecurityQuestionRequest originalRequest = createUserRequest.getSecurityQuestions().get(i);
                 String expectedAnswer = UUID.randomUUID().toString();
-                when(passwordEncoder.encode(originalRequest.getAnswer())).thenReturn(expectedAnswer);
+                when(passwordEncoder.encode(originalRequest.getAnswer().toLowerCase())).thenReturn(expectedAnswer);
                 hashedSecurityQuestions.add(CreateUserSecurityQuestionRequest.builder()
                         .id(originalRequest.getId())
                         .answer(expectedAnswer)
