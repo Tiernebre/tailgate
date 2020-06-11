@@ -9,7 +9,7 @@ public interface PasswordResetTokenRepository {
      * @param user The user to create a confirmation token for.
      * @return The created confirmation token.
      */
-    UserConfirmationTokenEntity createOneForUser(UserDto user);
+    PasswordResetTokenEntity createOneForUser(UserDto user);
 
     /**
      * Deletes a confirmation token.
