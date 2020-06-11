@@ -12,6 +12,8 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.NUMBER_OF_ALLOWED_SECURITY_QUESTIONS;
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE;
 import static com.tiernebre.tailgate.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
 
 @Component
@@ -32,7 +34,14 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
         Collection<CreateUserSecurityQuestionRequest> securityQuestionsToValidate = createUserRequest.getSecurityQuestions();
         if (CollectionUtils.isEmpty(securityQuestionsToValidate)) return Collections.emptySet();
 
-        Set<Long> securityQuestionIds = securityQuestionsToValidate
+        Set<String> foundErrors = validateSecurityQuestionsExist(securityQuestionsToValidate);
+        foundErrors.addAll(validateSecurityQuestionDtosAreValid(securityQuestionsToValidate));
+        foundErrors.addAll(validateSecurityQuestionsDoNotHaveDuplicateInformation(securityQuestionsToValidate));
+        return foundErrors;
+    }
+
+    private Set<String> validateSecurityQuestionsExist(Collection<CreateUserSecurityQuestionRequest> securityQuestionRequests) {
+        Set<Long> securityQuestionIds = securityQuestionRequests
                 .stream()
                 .filter(Objects::nonNull)
                 .map(CreateUserSecurityQuestionRequest::getId)
@@ -41,13 +50,25 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
         if (securityQuestionService.someDoNotExistWithIds(securityQuestionIds)) {
             foundErrors.add(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE);
         }
+        return foundErrors;
+    }
 
-        Set<String> errorsWithEntries = securityQuestionsToValidate.stream()
+    private Set<String> validateSecurityQuestionDtosAreValid(Collection<CreateUserSecurityQuestionRequest> securityQuestionRequests) {
+        return securityQuestionRequests.stream()
                 .filter(Objects::nonNull)
                 .map(this::validateCommon)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
-        foundErrors.addAll(errorsWithEntries);
+    }
+
+    private Set<String> validateSecurityQuestionsDoNotHaveDuplicateInformation(Collection<CreateUserSecurityQuestionRequest> securityQuestionRequests) {
+        Set<String> foundErrors = new HashSet<>();
+        Set<String> uniqueSecurityQuestionAnswers = securityQuestionRequests.stream()
+                .map(CreateUserSecurityQuestionRequest::getAnswer)
+                .collect(Collectors.toSet());
+        if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS) {
+            foundErrors.add(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE);
+        }
         return foundErrors;
     }
 }
