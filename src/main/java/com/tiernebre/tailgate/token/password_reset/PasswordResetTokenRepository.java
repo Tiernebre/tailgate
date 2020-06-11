@@ -4,17 +4,17 @@ import com.tiernebre.tailgate.user.dto.UserDto;
 
 public interface PasswordResetTokenRepository {
     /**
-     * Creates a confirmation token for a provided user.
+     * Creates a password reset token for a provided user.
      *
-     * @param user The user to create a confirmation token for.
-     * @return The created confirmation token.
+     * @param user The user to create a password reset token for.
+     * @return The created password reset token.
      */
     PasswordResetTokenEntity createOneForUser(UserDto user);
 
     /**
-     * Deletes a confirmation token.
+     * Deletes a password reset token.
      *
-     * @param token The confirmation token to delete.
+     * @param token The password reset token to delete.
      */
     void deleteOne(String token);
 }
