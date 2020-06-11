@@ -19,10 +19,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class PasswordResetTokenServiceImplTests {
     @InjectMocks
-    private PasswordResetTokenServiceImpl PasswordResetTokenService;
+    private PasswordResetTokenServiceImpl passwordResetTokenService;
 
     @Mock
-    private PasswordResetTokenRepository PasswordResetTokenRepository;
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Nested
     @DisplayName("createOneForUser")
@@ -32,11 +32,11 @@ public class PasswordResetTokenServiceImplTests {
         public void returnsTheCreatedPasswordResetToken() {
             UserDto user = UserFactory.generateOneDto();
             String expectedPasswordResetToken = UUID.randomUUID().toString();
-            when(PasswordResetTokenRepository.createOneForUser(eq(user))).thenReturn(PasswordResetTokenEntity.builder()
+            when(passwordResetTokenRepository.createOneForUser(eq(user))).thenReturn(PasswordResetTokenEntity.builder()
                     .token(expectedPasswordResetToken)
                     .build()
             );
-            String gottenConfirmationToken = PasswordResetTokenService.createOneForUser(user);
+            String gottenConfirmationToken = passwordResetTokenService.createOneForUser(user);
             assertEquals(expectedPasswordResetToken, gottenConfirmationToken);
         }
     }
@@ -48,8 +48,8 @@ public class PasswordResetTokenServiceImplTests {
         @DisplayName("deletes the given token")
         public void deletesTheGivenToken() {
             String passwordTokenToDelete = UUID.randomUUID().toString();
-            PasswordResetTokenService.deleteOne(passwordTokenToDelete);
-            verify(PasswordResetTokenRepository, times(1)).deleteOne(eq(passwordTokenToDelete));
+            passwordResetTokenService.deleteOne(passwordTokenToDelete);
+            verify(passwordResetTokenRepository, times(1)).deleteOne(eq(passwordTokenToDelete));
         }
     }
 }
