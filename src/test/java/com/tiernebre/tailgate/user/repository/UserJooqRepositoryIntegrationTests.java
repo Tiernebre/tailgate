@@ -60,7 +60,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         @Test
         @DisplayName("returns the correctly mapped saved entity")
         void returnsTheCorrectlyMappedSavedEntity() {
-            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
+            CreateUserRequest createUserRequest = generateValidUserRequest();
             UserEntity savedEntity = userJooqRepository.createOne(createUserRequest);
             assertAll(
                     () -> assertNotNull(savedEntity.getId()),
@@ -72,7 +72,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         @Test
         @DisplayName("persists a user entity onto the database")
         void persistsAnEntityOntoTheDatabase() {
-            UserEntity savedEntity = userJooqRepository.createOne(UserFactory.generateOneCreateUserRequest());
+            UserEntity savedEntity = userJooqRepository.createOne(generateValidUserRequest());
             assertTrue(userRecordPool.oneExistsWithIdAndEmail(savedEntity.getId(), savedEntity.getEmail()));
         }
 
@@ -112,6 +112,15 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
                     () -> assertTrue(CollectionUtils.isNotEmpty(foundSecurityQuestions))
             );
             assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
+        }
+
+        private CreateUserRequest generateValidUserRequest() {
+            List<SecurityQuestionsRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
+            Set<Long> securityQuestionIds = securityQuestionsCreated
+                    .stream()
+                    .map(SecurityQuestionsRecord::getId)
+                    .collect(Collectors.toSet());
+            return UserFactory.generateOneCreateUserRequest(securityQuestionIds);
         }
     }
 
