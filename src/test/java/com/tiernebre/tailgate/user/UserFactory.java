@@ -6,10 +6,7 @@ import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +26,7 @@ public class UserFactory {
     }
 
     public static CreateUserRequest generateOneCreateUserRequest() {
-        return generateOneCreateUserRequest(Collections.emptySet());
+        return generateOneCreateUserRequest(generateSecurityQuestionIds());
     }
 
     public static CreateUserRequest generateOneCreateUserRequest(Set<Long> securityQuestionIds) {
@@ -51,6 +48,18 @@ public class UserFactory {
 
     private static String generateEmail() {
         return String.format("test-user-%s@test.com", UUID.randomUUID().toString());
+    }
+
+    private static List<CreateUserSecurityQuestionRequest> generateSecurityQuestionRequests() {
+        return generateSecurityQuestionRequests(generateSecurityQuestionIds());
+    }
+
+    private static Set<Long> generateSecurityQuestionIds() {
+        Set<Long> ids = new HashSet<>();
+        for (int i = 0; i < 2; i++) {
+            ids.add(Integer.toUnsignedLong(i));
+        }
+        return ids;
     }
 
     private static List<CreateUserSecurityQuestionRequest> generateSecurityQuestionRequests(Set<Long> ids) {

@@ -1,14 +1,16 @@
 package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.user.UserFactory;
-import com.tiernebre.tailgate.user.repository.UserRepository;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
+import com.tiernebre.tailgate.user.repository.UserRepository;
 import com.tiernebre.tailgate.user.validator.UserValidator;
 import com.tiernebre.tailgate.validator.StringIsBlankException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,9 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.tiernebre.tailgate.user.service.UserServiceImpl.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,11 +57,24 @@ public class UserServiceImplTests {
         @DisplayName("returns the created User as a DTO")
         void testCreateOneReturnsProperly() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
-            String encryptedPassword = "abcd12345!WOW";
-            when(passwordEncoder.encode(createUserRequest.getPassword())).thenReturn(encryptedPassword);
-            CreateUserRequest encryptedUserRequest = createUserRequest.withPassword(encryptedPassword);
+            String hashedPassword = "abcd12345!WOW";
+            List<CreateUserSecurityQuestionRequest> hashedSecurityQuestions = new ArrayList<>();
+            assertTrue(CollectionUtils.isNotEmpty(createUserRequest.getSecurityQuestions()));
+            for (int i = 0; i < createUserRequest.getSecurityQuestions().size(); i++) {
+                CreateUserSecurityQuestionRequest originalRequest = createUserRequest.getSecurityQuestions().get(i);
+                String expectedAnswer = UUID.randomUUID().toString();
+                when(passwordEncoder.encode(originalRequest.getAnswer())).thenReturn(expectedAnswer);
+                hashedSecurityQuestions.add(CreateUserSecurityQuestionRequest.builder()
+                        .id(originalRequest.getId())
+                        .answer(expectedAnswer)
+                        .build());
+            }
+            when(passwordEncoder.encode(createUserRequest.getPassword())).thenReturn(hashedPassword);
+            CreateUserRequest hashedUserRequest = createUserRequest
+                    .withPassword(hashedPassword)
+                    .withSecurityQuestions(hashedSecurityQuestions);
             UserEntity entitySaved = UserFactory.generateOneEntity();
-            when(repository.createOne(eq(encryptedUserRequest))).thenReturn(entitySaved);
+            when(repository.createOne(eq(hashedUserRequest))).thenReturn(entitySaved);
             UserDto expectedUserCreated = UserFactory.generateOneDto();
             when(userConverter.convertFromEntity(eq(entitySaved))).thenReturn(expectedUserCreated);
             doNothing().when(userValidator).validate(eq(createUserRequest));

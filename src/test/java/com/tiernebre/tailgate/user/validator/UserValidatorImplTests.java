@@ -1,8 +1,10 @@
 package com.tiernebre.tailgate.user.validator;
 
+import com.tiernebre.tailgate.security_questions.SecurityQuestionService;
+import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
-import com.tiernebre.tailgate.user.UserFactory;
+import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,12 +37,20 @@ public class UserValidatorImplTests {
     @Mock
     private Validator validator;
 
+    @Mock
+    private SecurityQuestionService securityQuestionService;
+
+    @Before
+    public void setup() {
+        when(securityQuestionService.someDoNotExistWithIds(anySet())).thenReturn(false);
+    }
+
     @DisplayName("validate")
     @Nested
     public class ValidatorTests {
         @DisplayName("throws UserInvalidException if one error was found")
         @Test
-        void testValidateThrowsInvalidExceptionIfASingleErrorOccurs() throws InvalidUserException {
+        void testValidateThrowsInvalidExceptionIfASingleErrorOccurs() {
             when(userPasswordValidator.validate(anyString(), anyString())).thenReturn(Collections.emptySet());
             CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
             String property = "foo";
@@ -96,9 +105,9 @@ public class UserValidatorImplTests {
             assertEquals(expectedErrors, new ArrayList<>(thrownException.getErrors()));
         }
 
-        @DisplayName("does not throws UserInvalidException if no errors were found")
+        @DisplayName("does not throw UserInvalidException if no errors were found")
         @Test
-        void testValidateDoesNothingIfNoErrorsExist() throws InvalidUserException {
+        void testValidateDoesNothingIfNoErrorsExist() {
             when(userPasswordValidator.validate(anyString(), anyString())).thenReturn(Collections.emptySet());
             CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
             when(validator.validate(eq(entityToValidate))).thenReturn(Collections.emptySet());
@@ -109,7 +118,7 @@ public class UserValidatorImplTests {
 
         @DisplayName("throws UserInvalidException if errors were found from the password validator")
         @Test
-        void testValidateAccountsForPasswordErrors() throws InvalidUserException {
+        void testValidateAccountsForPasswordErrors() {
             CreateUserRequest entityToValidate = UserFactory.generateOneCreateUserRequest();
             when(validator.validate(eq(entityToValidate))).thenReturn(Collections.emptySet());
             String expectedPasswordError = "Expected Test Failure for Password.";

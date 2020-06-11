@@ -1,25 +1,26 @@
 package com.tiernebre.tailgate.user.service;
 
 
+import com.tiernebre.tailgate.jooq.tables.records.SecurityQuestionsRecord;
+import com.tiernebre.tailgate.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
+import com.tiernebre.tailgate.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
 import com.tiernebre.tailgate.user.validator.UserValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +36,9 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
     @Autowired
     private UserRecordPool userRecordPool;
 
+    @Autowired
+    private SecurityQuestionRecordPool securityQuestionRecordPool;
+
     @MockBean
     private UserValidator validator;
 
@@ -43,18 +47,37 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         doNothing().when(validator).validate(any());
     }
 
+    @AfterEach
+    public void cleanup() {
+        userRecordPool.deleteAll();
+        securityQuestionRecordPool.deleteAll();
+    }
+
     @Nested
     @DisplayName("createOne")
     public class CreateOneTests {
         @Test
         @DisplayName("fully persists a user with correct information")
         public void testCreateOneFullyPersists() throws InvalidUserException, UserAlreadyExistsException {
-            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
+            CreateUserRequest createUserRequest = generateValidUserRequest();
+            Set<String> expectedSecurityQuestionAnswers = createUserRequest
+                    .getSecurityQuestions()
+                    .stream()
+                    .map(CreateUserSecurityQuestionRequest::getAnswer)
+                    .collect(Collectors.toSet());
             UserDto createdUser = userService.createOne(createUserRequest);
             UsersRecord userFound = userRecordPool.findOneByIdAndEmail(createdUser.getId(), createdUser.getEmail());
+            Set<String> gottenSecurityQuestionAnswers = userRecordPool
+                    .getSecurityQuestionsForUserWithId(userFound.getId())
+                    .stream()
+                    .map(UserSecurityQuestionsRecord::getAnswer)
+                    .collect(Collectors.toSet());
+            Set<String> intersectionOfSecurityQuestionAnswers = new HashSet<>(expectedSecurityQuestionAnswers);
+            intersectionOfSecurityQuestionAnswers.retainAll(gottenSecurityQuestionAnswers);
             assertAll(
                 () -> assertNotEquals(createUserRequest.getPassword(), userFound.getPassword()),
-                () -> assertEquals(createUserRequest.getEmail(), userFound.getEmail())
+                () -> assertEquals(createUserRequest.getEmail(), userFound.getEmail()),
+                () -> assertTrue(intersectionOfSecurityQuestionAnswers.isEmpty())
             );
         }
     }
@@ -65,7 +88,7 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         @Test
         @DisplayName("fully retrieves a user by email and password that is legitimate")
         public void testCreateOneFullyPersists() throws InvalidUserException, UserAlreadyExistsException {
-            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
+            CreateUserRequest createUserRequest = generateValidUserRequest();
             UserDto createdUser = userService.createOne(createUserRequest);
             UserDto foundUser = userService.findOneByEmailAndPassword(createUserRequest.getEmail(), createUserRequest.getPassword()).orElse(null);
             assertNotNull(foundUser);
@@ -78,10 +101,19 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         @Test
         @DisplayName("returns empty if a user email is correct but the password is not")
         public void testCreateOneEnforcesPasswordMatching() throws InvalidUserException, UserAlreadyExistsException {
-            CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
+            CreateUserRequest createUserRequest = generateValidUserRequest();
             userService.createOne(createUserRequest);
             Optional<UserDto> foundUser = userService.findOneByEmailAndPassword(createUserRequest.getEmail(), createUserRequest.getPassword() + UUID.randomUUID().toString());
             assertTrue(foundUser.isEmpty());
         }
+    }
+
+    private CreateUserRequest generateValidUserRequest() {
+        List<SecurityQuestionsRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
+        Set<Long> securityQuestionIds = securityQuestionsCreated
+                .stream()
+                .map(SecurityQuestionsRecord::getId)
+                .collect(Collectors.toSet());
+        return UserFactory.generateOneCreateUserRequest(securityQuestionIds);
     }
 }

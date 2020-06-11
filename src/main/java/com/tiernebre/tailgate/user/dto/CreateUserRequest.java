@@ -5,7 +5,7 @@ import lombok.Value;
 import lombok.With;
 
 import javax.validation.constraints.*;
-import java.util.Collection;
+import java.util.List;
 
 import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 
@@ -29,5 +29,6 @@ public class CreateUserRequest {
             max = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
             message = NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE
     )
-    Collection<@NotNull(message = NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE) CreateUserSecurityQuestionRequest> securityQuestions;
+    @With
+    List<@NotNull(message = NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE) CreateUserSecurityQuestionRequest> securityQuestions;
 }
