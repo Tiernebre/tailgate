@@ -38,6 +38,8 @@ public class UserSecurityQuestionValidatorImplIntegrationTests extends SpringInt
                     CreateUserSecurityQuestionRequest.builder().id(null).build()
             );
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
                     .securityQuestions(securityQuestionRequests)
                     .build();
             Set<String> foundErrors = userSecurityQuestionValidator.validate(createUserRequest);
@@ -56,6 +58,8 @@ public class UserSecurityQuestionValidatorImplIntegrationTests extends SpringInt
                             .build()
             );
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
                     .securityQuestions(securityQuestionRequests)
                     .build();
             Set<String> foundErrors = userSecurityQuestionValidator.validate(createUserRequest);

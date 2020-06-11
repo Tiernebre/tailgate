@@ -48,6 +48,8 @@ public class UserSecurityQuestionsValidatorImplTests {
             List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(true);
@@ -61,6 +63,8 @@ public class UserSecurityQuestionsValidatorImplTests {
             List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
@@ -77,6 +81,8 @@ public class UserSecurityQuestionsValidatorImplTests {
             assertEquals(1, securityQuestionAnswers.size());
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
@@ -156,6 +162,8 @@ public class UserSecurityQuestionsValidatorImplTests {
             assertEquals(createUserSecurityQuestionRequests.size(), securityQuestionAnswers.size());
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
