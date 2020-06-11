@@ -92,7 +92,24 @@ public class UserSecurityQuestionsValidatorImplTests {
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
+                    .email(UUID.randomUUID().toString() + "@test.com")
                     .password(password)
+                    .build();
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
+            Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
+            assertTrue(errorsFound.contains(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION));
+        }
+
+        @Test
+        @DisplayName("does not allow security questions answers that contain the user email")
+        void doesNotAllowSecurityQuestionAnswersThatContainTheUserEmail() {
+            String email = UUID.randomUUID().toString() + "@test.com";
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(email);
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(createUserSecurityQuestionRequests)
+                    .email(email)
+                    .password(UUID.randomUUID().toString())
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
             Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);

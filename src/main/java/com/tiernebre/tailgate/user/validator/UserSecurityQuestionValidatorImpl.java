@@ -70,7 +70,8 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
         if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS) {
             foundErrors.add(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE);
         }
-        if (uniqueSecurityQuestionAnswers.contains(createUserRequest.getPassword())) {
+        Set<String> userInformation = Set.of(createUserRequest.getEmail(), createUserRequest.getPassword());
+        if (!Collections.disjoint(uniqueSecurityQuestionAnswers, userInformation)) {
             foundErrors.add(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION);
         }
         return foundErrors;
