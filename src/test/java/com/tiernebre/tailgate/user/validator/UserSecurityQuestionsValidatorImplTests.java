@@ -101,6 +101,22 @@ public class UserSecurityQuestionsValidatorImplTests {
         }
 
         @Test
+        @DisplayName("does not allow security questions answers that contain the user password case insensitively")
+        void doesNotAllowSecurityQuestionAnswersThatContainTheUserPasswordCaseInsensitively() {
+            String password = UUID.randomUUID().toString();
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(password.toUpperCase());
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(createUserSecurityQuestionRequests)
+                    .email(UUID.randomUUID().toString() + "@test.com")
+                    .password(password.toLowerCase())
+                    .build();
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
+            Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
+            assertTrue(errorsFound.contains(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION));
+        }
+
+        @Test
         @DisplayName("does not allow security questions answers that contain the user email")
         void doesNotAllowSecurityQuestionAnswersThatContainTheUserEmail() {
             String email = UUID.randomUUID().toString() + "@test.com";
@@ -109,6 +125,22 @@ public class UserSecurityQuestionsValidatorImplTests {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
                     .email(email)
+                    .password(UUID.randomUUID().toString())
+                    .build();
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
+            Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
+            assertTrue(errorsFound.contains(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION));
+        }
+
+        @Test
+        @DisplayName("does not allow security questions answers that contain the user email case insensitively")
+        void doesNotAllowSecurityQuestionAnswersThatContainTheUserEmailCaseInsensitively() {
+            String email = UUID.randomUUID().toString() + "@test.com";
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(email.toLowerCase());
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .securityQuestions(createUserSecurityQuestionRequests)
+                    .email(email.toUpperCase())
                     .password(UUID.randomUUID().toString())
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);

@@ -5,6 +5,7 @@ import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -66,11 +67,16 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
         Set<String> foundErrors = new HashSet<>();
         Set<String> uniqueSecurityQuestionAnswers = createUserRequest.getSecurityQuestions().stream()
                 .map(CreateUserSecurityQuestionRequest::getAnswer)
+                .filter(StringUtils::isNotBlank)
+                .map(String::toLowerCase)
                 .collect(Collectors.toSet());
         if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS) {
             foundErrors.add(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE);
         }
-        Set<String> userInformation = Set.of(createUserRequest.getEmail(), createUserRequest.getPassword());
+        Set<String> userInformation = Set.of(
+                createUserRequest.getEmail().toLowerCase(),
+                createUserRequest.getPassword().toLowerCase()
+        );
         if (!Collections.disjoint(uniqueSecurityQuestionAnswers, userInformation)) {
             foundErrors.add(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION);
         }
