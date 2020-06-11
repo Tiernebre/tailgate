@@ -14,10 +14,7 @@ import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
 import com.tiernebre.tailgate.user.validator.UserValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
@@ -48,6 +45,11 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
     @BeforeEach
     public void setup() throws InvalidUserException {
         doNothing().when(validator).validate(any());
+    }
+
+    @AfterEach
+    public void cleanup() {
+        securityQuestionRecordPool.deleteAll();
     }
 
     @Nested
