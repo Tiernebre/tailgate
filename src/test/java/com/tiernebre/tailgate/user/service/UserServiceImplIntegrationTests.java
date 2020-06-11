@@ -2,12 +2,14 @@ package com.tiernebre.tailgate.user.service;
 
 
 import com.tiernebre.tailgate.jooq.tables.records.SecurityQuestionsRecord;
+import com.tiernebre.tailgate.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
+import com.tiernebre.tailgate.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
@@ -20,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,11 +57,24 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         @DisplayName("fully persists a user with correct information")
         public void testCreateOneFullyPersists() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = generateValidUserRequest();
+            Set<String> expectedSecurityQuestionAnswers = createUserRequest
+                    .getSecurityQuestions()
+                    .stream()
+                    .map(CreateUserSecurityQuestionRequest::getAnswer)
+                    .collect(Collectors.toSet());
             UserDto createdUser = userService.createOne(createUserRequest);
             UsersRecord userFound = userRecordPool.findOneByIdAndEmail(createdUser.getId(), createdUser.getEmail());
+            Set<String> gottenSecurityQuestionAnswers = userRecordPool
+                    .getSecurityQuestionsForUserWithId(userFound.getId())
+                    .stream()
+                    .map(UserSecurityQuestionsRecord::getAnswer)
+                    .collect(Collectors.toSet());
+            Set<String> intersectionOfSecurityQuestionAnswers = new HashSet<>(expectedSecurityQuestionAnswers);
+            intersectionOfSecurityQuestionAnswers.retainAll(gottenSecurityQuestionAnswers);
             assertAll(
                 () -> assertNotEquals(createUserRequest.getPassword(), userFound.getPassword()),
-                () -> assertEquals(createUserRequest.getEmail(), userFound.getEmail())
+                () -> assertEquals(createUserRequest.getEmail(), userFound.getEmail()),
+                () -> assertTrue(intersectionOfSecurityQuestionAnswers.isEmpty())
             );
         }
     }
