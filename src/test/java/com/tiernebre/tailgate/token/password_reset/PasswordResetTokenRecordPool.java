@@ -5,11 +5,9 @@ import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.springframework.stereotype.Component;
 
 import static com.tiernebre.tailgate.jooq.Tables.PASSWORD_RESET_TOKENS;
-import static com.tiernebre.tailgate.jooq.Tables.USER_CONFIRMATION_TOKENS;
 
 
 @Component
@@ -24,14 +22,17 @@ public class PasswordResetTokenRecordPool {
     }
 
     public PasswordResetTokensRecord createAndSaveOneForUser(UsersRecord user) {
-        Record refreshTokensRecord = dslContext.insertInto(PASSWORD_RESET_TOKENS, PASSWORD_RESET_TOKENS.USER_ID)
-                .values(user.getId())
-                .returningResult(USER_CONFIRMATION_TOKENS.asterisk())
-                .fetchOne();
-        return refreshTokensRecord.into(PasswordResetTokensRecord.class);
+        PasswordResetTokensRecord passwordResetTokensRecord = dslContext.newRecord(PASSWORD_RESET_TOKENS);
+        passwordResetTokensRecord.setUserId(user.getId());
+        passwordResetTokensRecord.store();
+        return passwordResetTokensRecord.into(PasswordResetTokensRecord.class);
     }
 
     public PasswordResetTokensRecord getOneById(String id) {
-        return dslContext.selectFrom(PASSWORD_RESET_TOKENS).where(USER_CONFIRMATION_TOKENS.TOKEN.eq(id)).fetchOne();
+        return dslContext.selectFrom(PASSWORD_RESET_TOKENS).where(PASSWORD_RESET_TOKENS.TOKEN.eq(id)).fetchOne();
+    }
+
+    public void deleteAll() {
+        dslContext.deleteFrom(PASSWORD_RESET_TOKENS).execute();
     }
 }
