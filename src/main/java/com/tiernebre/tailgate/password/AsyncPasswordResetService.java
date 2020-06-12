@@ -5,6 +5,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * Asynchronous wrapper around the normal primary implementation of the
+ * password reset service.
+ */
 @Service
 @Primary
 @RequiredArgsConstructor
