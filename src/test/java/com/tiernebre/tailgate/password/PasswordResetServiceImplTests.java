@@ -38,9 +38,7 @@ public class PasswordResetServiceImplTests {
         @Test
         @DisplayName("sends off a delivery with the password reset token if the username provided in the request is legitimate")
         public void sendsOffADeliveryWithThePasswordResetTokenIfTheUsernameProvidedInTheRequestIsLegitimate() {
-            PasswordResetRequest passwordResetRequest = PasswordResetRequest.builder()
-                    .email(UUID.randomUUID().toString() + ".com")
-                    .build();
+            PasswordResetRequest passwordResetRequest = PasswordResetFactory.generateOneRequest();
             UserDto expectedUser = UserFactory.generateOneDto();
             when(userService.findOneByEmail(eq(passwordResetRequest.getEmail()))).thenReturn(Optional.of(expectedUser));
             String passwordResetToken = UUID.randomUUID().toString();
@@ -52,9 +50,7 @@ public class PasswordResetServiceImplTests {
         @Test
         @DisplayName("does not send off a delivery with the password reset token if the username provided in the request is illegitimate")
         public void doesNotSendOffADeliveryWithThePasswordResetTokenIfTheUsernameProvidedInTheRequestIsIllegitimate() {
-            PasswordResetRequest passwordResetRequest = PasswordResetRequest.builder()
-                    .email(UUID.randomUUID().toString() + ".com")
-                    .build();
+            PasswordResetRequest passwordResetRequest = PasswordResetFactory.generateOneRequest();
             when(userService.findOneByEmail(eq(passwordResetRequest.getEmail()))).thenReturn(Optional.empty());
             passwordResetService.createOne(passwordResetRequest);
             verify(passwordResetTokenService, times(0)).createOneForUser(any());
