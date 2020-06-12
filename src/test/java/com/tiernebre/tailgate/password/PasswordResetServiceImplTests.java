@@ -57,6 +57,7 @@ public class PasswordResetServiceImplTests {
                     .build();
             when(userService.findOneByEmail(eq(passwordResetRequest.getEmail()))).thenReturn(Optional.empty());
             passwordResetService.createOne(passwordResetRequest);
+            verify(passwordResetTokenService, times(0)).createOneForUser(any());
             verify(passwordResetTokenDeliveryService, times(0)).sendOne(any(), any());
         }
     }
