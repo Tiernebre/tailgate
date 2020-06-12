@@ -39,9 +39,8 @@ public class PasswordResetTokenEmailDeliveryServiceTests {
     public void setup() {
         when(tailgateEmailConfigurationProperties.getFrom()).thenReturn("Tailgate From");
         when(passwordResetEmailDeliveryConfigurationProperties.getSubject()).thenReturn("Reset Your Password");
-        String passwordResetTokenTag = "{{ passwordResetToken }}";
-        when(passwordResetEmailDeliveryConfigurationProperties.getPasswordResetTokenTag()).thenReturn(passwordResetTokenTag);
-        when(passwordResetEmailDeliveryConfigurationProperties.getMessage()).thenReturn("Please reset your password at ");
+        when(passwordResetEmailDeliveryConfigurationProperties.getPasswordResetTokenTag()).thenReturn(EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG);
+        when(passwordResetEmailDeliveryConfigurationProperties.getMessage()).thenReturn(EXPECTED_EMAIL_MESSAGE);
     }
 
     @Nested
