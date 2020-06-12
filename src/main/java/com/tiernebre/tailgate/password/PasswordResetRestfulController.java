@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/password-resets")
+@RequiredArgsConstructor
 public class PasswordResetRestfulController {
     private final PasswordResetService passwordResetService;
 
