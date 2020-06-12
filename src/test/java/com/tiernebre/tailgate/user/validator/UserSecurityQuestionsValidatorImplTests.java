@@ -171,6 +171,26 @@ public class UserSecurityQuestionsValidatorImplTests {
             assertFalse(errorsFound.contains(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
         }
 
+        @Test
+        @DisplayName("does not allow duplicate security question ids")
+        void doesNotAllowDuplicateSecurityQuestionIds() {
+            Long id = 1L;
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(id);
+            Set<Long> securityQuestionIds = createUserSecurityQuestionRequests
+                    .stream()
+                    .map(CreateUserSecurityQuestionRequest::getId)
+                    .collect(Collectors.toSet());
+            assertNotEquals(createUserSecurityQuestionRequests.size(), securityQuestionIds.size());
+            CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                    .email(UUID.randomUUID().toString())
+                    .password(UUID.randomUUID().toString())
+                    .securityQuestions(createUserSecurityQuestionRequests)
+                    .build();
+            when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
+            Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
+            assertTrue(errorsFound.contains(SAME_SECURITY_QUESTIONS_VALIDATION_MESSAGE));
+        }
+
         private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
             for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
@@ -183,6 +203,14 @@ public class UserSecurityQuestionsValidatorImplTests {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
             for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
                 securityQuestionRequests.add(generateValidSecurityQuestion(Integer.toUnsignedLong(i), answer));
+            }
+            return securityQuestionRequests;
+        }
+
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions(Long id) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
+            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+                securityQuestionRequests.add(generateValidSecurityQuestion(id, UUID.randomUUID().toString()));
             }
             return securityQuestionRequests;
         }

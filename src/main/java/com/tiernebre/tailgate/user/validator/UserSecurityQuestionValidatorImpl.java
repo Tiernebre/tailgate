@@ -70,6 +70,10 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
                 .filter(StringUtils::isNotBlank)
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
+        Set<Long> uniqueSecurityQuestionIds = createUserRequest.getSecurityQuestions().stream()
+                .map(CreateUserSecurityQuestionRequest::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
         if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS) {
             foundErrors.add(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE);
         }
@@ -79,6 +83,9 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
         );
         if (!Collections.disjoint(uniqueSecurityQuestionAnswers, userInformation)) {
             foundErrors.add(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION);
+        }
+        if (uniqueSecurityQuestionIds.size() != createUserRequest.getSecurityQuestions().size()) {
+            foundErrors.add(SAME_SECURITY_QUESTIONS_VALIDATION_MESSAGE);
         }
         return foundErrors;
     }
