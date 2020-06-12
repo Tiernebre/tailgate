@@ -36,8 +36,8 @@ public class PasswordResetServiceImplTests {
     @Nested
     public class CreateOneTests {
         @Test
-        @DisplayName("sends off an email with the password reset token if the username provided in the request is legitimate")
-        public void sendsOffAnEmailWithThePasswordResetTokenIfTheUsernameProvidedInTheRequestIsLegitimate() {
+        @DisplayName("sends off a delivery with the password reset token if the username provided in the request is legitimate")
+        public void sendsOffADeliveryWithThePasswordResetTokenIfTheUsernameProvidedInTheRequestIsLegitimate() {
             PasswordResetRequest passwordResetRequest = PasswordResetRequest.builder()
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
@@ -47,6 +47,17 @@ public class PasswordResetServiceImplTests {
             when(passwordResetTokenService.createOneForUser(eq(expectedUser))).thenReturn(passwordResetToken);
             passwordResetService.createOne(passwordResetRequest);
             verify(passwordResetTokenDeliveryService, times(1)).sendOne(eq(expectedUser), eq(passwordResetToken));
+        }
+
+        @Test
+        @DisplayName("does not send off a delivery with the password reset token if the username provided in the request is illegitimate")
+        public void doesNotSendOffADeliveryWithThePasswordResetTokenIfTheUsernameProvidedInTheRequestIsIllegitimate() {
+            PasswordResetRequest passwordResetRequest = PasswordResetRequest.builder()
+                    .email(UUID.randomUUID().toString() + ".com")
+                    .build();
+            when(userService.findOneByEmail(eq(passwordResetRequest.getEmail()))).thenReturn(Optional.empty());
+            passwordResetService.createOne(passwordResetRequest);
+            verify(passwordResetTokenDeliveryService, times(0)).sendOne(any(), any());
         }
     }
 }
