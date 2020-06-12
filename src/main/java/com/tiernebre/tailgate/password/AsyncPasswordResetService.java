@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 public class AsyncPasswordResetService implements PasswordResetService {
     private final PasswordResetService passwordResetService;
 
-    @Async
     @Override
+    @Async
     public void createOne(PasswordResetRequest passwordResetRequest) {
         passwordResetService.createOne(passwordResetRequest);
     }
