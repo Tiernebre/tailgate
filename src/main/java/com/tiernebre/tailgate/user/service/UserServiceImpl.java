@@ -53,6 +53,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserDto> findOneByEmail(String email) {
+        return repository.findOneByEmail(email)
+                .map(converter::convertFromEntity);
+    }
+
+    @Override
     public Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken) {
         StringValidator.requireNonBlank(refreshToken, REQUIRED_REFRESH_TOKEN_MESSAGE);
 
