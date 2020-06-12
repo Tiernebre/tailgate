@@ -12,6 +12,8 @@ public final class UserValidationConstants {
             "security question ID must not be null";
     public static final String NULL_SECURITY_QUESTION_ANSWER_VALIDATION_MESSAGE =
             "security question answer must not be a blank string or null";
+    public static final String SAME_SECURITY_QUESTIONS_VALIDATION_MESSAGE =
+            "duplicate security questions cannot be chosen, please ensure each of your chosen security questions is unique";
     public static final String SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE =
             "security questions must not have duplicated answers, please ensure each security question has a unique answer";
     public static final String SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION =
