@@ -208,5 +208,14 @@ public class UserServiceImplTests {
             assertTrue(gottenUser.isPresent());
             assertEquals(expectedUser, gottenUser.get());
         }
+
+        @Test
+        @DisplayName("returns an empty optional containing a mapped user if one exists")
+        void returnsAnEmptyOptionalIfNoUserWasFound() {
+            String email = UUID.randomUUID().toString() + ".com";
+            when(repository.findOneByEmail(eq(email))).thenReturn(Optional.empty());
+            Optional<UserDto> gottenUser = userService.findOneByEmail(email);
+            assertTrue(gottenUser.isEmpty());
+        }
     }
 }
