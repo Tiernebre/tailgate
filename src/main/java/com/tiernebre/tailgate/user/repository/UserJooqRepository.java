@@ -106,9 +106,4 @@ public class UserJooqRepository implements UserRepository {
                 .and(REFRESH_TOKENS.CREATED_AT.add(refreshTokenExpireWindowInMilliseconds).greaterThan(LocalDateTime.now()))
                 .fetchOptionalInto(UserEntity.class);
     }
-
-    @Override
-    public void updatePasswordForOneWithEmailAndNonExpiredPasswordResetToken(String password, String email, String passwordResetToken) {
-
-    }
 }

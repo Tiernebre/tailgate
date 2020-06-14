@@ -36,12 +36,4 @@ public interface UserRepository extends Repository<UserEntity, Long, CreateUserR
      *         is not expired and valid, or an empty optional if the refresh token is expired or invalid.
      */
     Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken);
-
-    /**
-     * Updates a user's password using a given reset token and a user email.
-     * @param password The password to update to.
-     * @param email The email of the user to update
-     * @param passwordResetToken The password reset token also tied to a password reset request.
-     */
-    void updatePasswordForOneWithEmailAndNonExpiredPasswordResetToken(String password, String email, String passwordResetToken);
 }
