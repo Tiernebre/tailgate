@@ -1,2 +1,2 @@
-java adopt-openjdk-14.0.1+7
+java azul-zulu-14.27.1-jdk14
 maven 3.6.3
