@@ -56,6 +56,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
             assertTrue(StringUtils.isNotBlank(foundEmail.getTo()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getSubject()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getText()));
+            assertTrue(foundEmail.getText().contains(passwordResetToken));
             assertEquals(tailgateEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
             assertEquals(userToResetPasswordFor.getEmail(), foundEmail.getTo());
             assertEquals(passwordResetEmailDeliveryConfigurationProperties.getSubject(), foundEmail.getSubject());

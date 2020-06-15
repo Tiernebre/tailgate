@@ -17,10 +17,9 @@ tailgate:
     email:
       subject: 'Reset your password on Tailgate'
       password-reset-token-tag: '{{ passwordResetToken }}'
-      message: 'Please go to https://tailgate.io/reset-password/${tailgate.user.confirmation.password-reset.passwordResetTokenTag}'
+      message: 'Please go to https://tailgate.io/reset-password/{{ passwordResetToken }}'
     token:
       expiration-window-in-minutes: 1
-
 
 spring:
   flyway:
