@@ -6,6 +6,7 @@ import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestExcepti
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -41,7 +42,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
         @NullSource
         @EmptySource
         @ValueSource(strings = { " " })
-        @ParameterizedTest(name ="validates that the email is not \"{0}\"")
+        @ParameterizedTest(name = "validates that the email is not \"{0}\"")
         void validatesThatTheEmailIsNotBlank(String email) {
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .email(email)
@@ -51,6 +52,19 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains("email must not be blank"));
+        }
+
+        @ParameterizedTest(name = "validates that the email cannot be {0}")
+        @ArgumentsSource(InvalidEmailArgumentsProvider.class)
+        void validatesThatTheEmailCannotBe(String email) {
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .email(email)
+                    .build();
+            Set<String> errorsCaught = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(errorsCaught.contains("email must be a well-formed email address"));
         }
     }
 }
