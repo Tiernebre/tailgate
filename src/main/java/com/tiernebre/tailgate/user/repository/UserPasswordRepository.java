@@ -9,7 +9,7 @@ public interface UserPasswordRepository {
      * @param password The password to update to.
      * @param email The email of the user to update
      * @param resetToken The password reset token also tied to a password reset request.
-     * @return true if the user was found and updated, false if no user was found with the criteria provided.
+     * @return true if the user was found and updated, false if no user was found and updated with the criteria provided.
      */
     boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, String resetToken);
 }
