@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
     @Autowired
@@ -38,7 +38,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             UsersRecord user = userRecordPool.createAndSaveOne();
             String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
             String password = UUID.randomUUID().toString();
-            userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, user.getEmail(), resetToken);
+            assertTrue(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, user.getEmail(), resetToken));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(user.getId(), user.getEmail());
             assertEquals(password, updatedUser.getPassword());
         }
@@ -49,7 +49,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             UsersRecord originalUser = userRecordPool.createAndSaveOne();
             String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(originalUser).getToken();
             String password = UUID.randomUUID().toString();
-            userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), resetToken);
+            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), resetToken));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
@@ -59,7 +59,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
         void doesNotUpdateAPasswordIfTheResetTokenDoesNotExistButTheEmailDoes() {
             UsersRecord originalUser = userRecordPool.createAndSaveOne();
             String password = UUID.randomUUID().toString();
-            userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), UUID.randomUUID().toString());
+            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), UUID.randomUUID().toString()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
@@ -69,7 +69,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
         void doesNotUpdateAPasswordIfTheResetTokenAndEmailDoNotExist() {
             UsersRecord originalUser = userRecordPool.createAndSaveOne();
             String password = UUID.randomUUID().toString();
-            userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), UUID.randomUUID().toString()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
@@ -87,7 +87,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             );
             resetToken.store();
             String password = UUID.randomUUID().toString();
-            userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), resetToken.getToken());
+            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), resetToken.getToken()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }

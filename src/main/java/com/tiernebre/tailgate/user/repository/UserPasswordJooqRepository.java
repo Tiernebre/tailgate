@@ -19,8 +19,8 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     private final PasswordResetTokenConfigurationProperties configurationProperties;
 
     @Override
-    public void updateOneWithEmailAndNonExpiredResetToken(String password, String email, String resetToken) {
-        dslContext
+    public boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, String resetToken) {
+        int numberOfUpdated = dslContext
                 .update(USERS)
                 .set(USERS.PASSWORD, password)
                 .from(PASSWORD_RESET_TOKENS)
@@ -33,5 +33,6 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                                 DatePart.MINUTE
                         ).greaterThan(LocalDateTime.now()))
                 .execute();
+        return numberOfUpdated == 1;
     }
 }
