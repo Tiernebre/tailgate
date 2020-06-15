@@ -17,6 +17,8 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class UserPasswordValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
+    private static final String VALID_EMAIL_VALIDATION_MESSAGE = "email must be a well-formed email address";
+
     @Autowired
     private UserPasswordValidatorImpl userPasswordValidator;
 
@@ -63,7 +65,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
-            assertTrue(errorsCaught.contains("email must be a well-formed email address"));
+            assertTrue(errorsCaught.contains(VALID_EMAIL_VALIDATION_MESSAGE));
         }
 
         @ParameterizedTest(name = "validates that the email can be {0}")
@@ -76,7 +78,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
-            assertFalse(errorsCaught.contains("email must be a well-formed email address"));
+            assertFalse(errorsCaught.contains(VALID_EMAIL_VALIDATION_MESSAGE));
         }
     }
 }
