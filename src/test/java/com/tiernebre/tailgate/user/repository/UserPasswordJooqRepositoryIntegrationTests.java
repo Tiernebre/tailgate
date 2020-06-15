@@ -44,6 +44,18 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
         }
 
         @Test
+        @DisplayName("does not update multiple user passwords on accident")
+        void doesNotUpdateMultipleUsersPasswordsOnAccident() {
+            UsersRecord oneUser = userRecordPool.createAndSaveOne();
+            UsersRecord anotherUser = userRecordPool.createAndSaveOne();
+            String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(oneUser).getToken();
+            String password = UUID.randomUUID().toString();
+            assertTrue(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, oneUser.getEmail(), resetToken));
+            UsersRecord updatedAnotherUser = userRecordPool.findOneByIdAndEmail(anotherUser.getId(), anotherUser.getEmail());
+            assertEquals(anotherUser.getPassword(), updatedAnotherUser.getPassword());
+        }
+
+        @Test
         @DisplayName("does not update a password if the email does not exist, but the token does")
         void doesNotUpdateAPasswordIfTheEmailDoesNotExistButTheTokenDoes() {
             UsersRecord originalUser = userRecordPool.createAndSaveOne();
