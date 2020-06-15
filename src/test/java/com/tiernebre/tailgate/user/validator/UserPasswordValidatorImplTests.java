@@ -29,11 +29,6 @@ public class UserPasswordValidatorImplTests {
     @Mock
     private Validator validator;
 
-    @BeforeEach
-    public void setup() {
-        when(validator.validate(any())).thenReturn(Collections.emptySet());
-    }
-
     @Nested
     @DisplayName("validate")
     public class ValidateTests {
@@ -81,6 +76,11 @@ public class UserPasswordValidatorImplTests {
     @Nested
     @DisplayName("validateUpdateRequest")
     public class ValidateUpdateRequestTests {
+        @BeforeEach
+        public void setup() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
+        }
+
         @DisplayName("adds an error if the new password and confirmation new password do not match")
         @Test
         void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {
@@ -100,32 +100,60 @@ public class UserPasswordValidatorImplTests {
         @Test
         void testValidateEnsurePasswordMustHaveNumericalDigitCharacters() {
             String password = "testPassword!";
-            Set<String> errors = userPasswordValidator.validate(password, password);
-            assertTrue(errors.contains("password must contain numerical digits (0-9)"));
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_CONTAIN_DIGITS_ERROR));
         }
 
         @DisplayName("adds an error if the password does not have uppercase alphabetical characters")
         @Test
         void testValidateEnsurePasswordMustHaveUppercaseAlphabeticalCharacters() {
             String password = "testpassword12345!";
-            Set<String> errors = userPasswordValidator.validate(password, password);
-            assertTrue(errors.contains("password must contain mixed uppercase and lowercase alphabetical characters (A-Z, a-z)"));
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
 
         @DisplayName("adds an error if the password does not have lowercase alphabetical characters")
         @Test
         void testValidateEnsurePasswordMustHaveLowercaseAlphabeticalCharacters() {
             String password = "TESTPASSWORD12345!";
-            Set<String> errors = userPasswordValidator.validate(password, password);
-            assertTrue(errors.contains("password must contain mixed uppercase and lowercase alphabetical characters (A-Z, a-z)"));
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
 
         @DisplayName("adds an error if the password does not have special characters")
         @Test
         void testValidateEnsurePasswordMustHaveSpecialCharacters() {
             String password = "TestPassword12345";
-            Set<String> errors = userPasswordValidator.validate(password, password);
-            assertTrue(errors.contains("password must contain non-digit and non-alphanumeric characters"));
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_SPECIAL_CHARACTERS_ERROR));
         }
     }
 }
