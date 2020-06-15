@@ -13,7 +13,7 @@ tailgate:
       email:
         subject: 'Confirm your account with Tailgate'
         confirmation-token-tag: '{{ confirmationToken }}'
-        message: 'Please go to https://tailgate.io/account/confirm/${tailgate.user.confirmation.email.confirmation-token-tag}'
+        message: 'Please go to https://tailgate.io/account/confirm/{{ confirmationToken }}'
   password-reset:
     email:
       subject: 'Reset your password on Tailgate'
