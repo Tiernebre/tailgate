@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 
 public interface UserPasswordService {
@@ -9,6 +10,8 @@ public interface UserPasswordService {
      * @param resetToken The reset token assigned from a forgotten password request.
      * @param updatePasswordRequest The request to handle a password reset.
      * @throws InvalidUpdatePasswordRequestException If the request to update a password is invalid.
+     * @throws InvalidPasswordResetTokenException If the password reset token provided is invalid.
      */
-    void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException;
+    void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest)
+            throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException;
 }

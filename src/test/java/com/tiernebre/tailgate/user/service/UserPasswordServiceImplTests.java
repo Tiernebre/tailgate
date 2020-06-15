@@ -1,12 +1,17 @@
 package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.user.validator.UserPasswordValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,6 +44,17 @@ public class UserPasswordServiceImplTests {
             assertThrows(
                     InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordService.updateOneUsingResetToken(UUID.randomUUID().toString(), resetTokenUpdatePasswordRequest)
+            );
+        }
+
+        @EmptySource
+        @NullSource
+        @ValueSource(strings = { " " })
+        @ParameterizedTest(name = "throws invalid error if the reset token is \"{0}\"")
+        void throwsInvalidErrorIfTheResetTokenIsBlank(String resetToken) {
+            assertThrows(
+                    InvalidPasswordResetTokenException.class,
+                    () -> userPasswordService.updateOneUsingResetToken(resetToken, ResetTokenUpdatePasswordRequest.builder().build())
             );
         }
     }
