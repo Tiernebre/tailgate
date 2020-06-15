@@ -51,7 +51,8 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         }
 
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
-        @ValueSource(strings = { "", " " })
+        @ValueSource(strings = { " " })
+        @EmptySource
         @NullSource
         void testThatBlankPasswordFails(String password) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
