@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.user.validator;
 
+import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,11 @@ public class UserPasswordValidatorImpl implements UserPasswordValidator {
         Set<String> errorsFound = new HashSet<>();
         validatePassword(errorsFound, password, confirmationPassword);
         return errorsFound;
+    }
+
+    @Override
+    public Set<String> validateUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) {
+        return null;
     }
 
     private void validatePassword(Set<String> errorsFound, String password, String confirmationPassword) {
