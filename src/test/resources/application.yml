@@ -11,13 +11,15 @@ tailgate:
     confirmation:
       email:
         subject: 'Confirm your account with Tailgate'
-        confirmationTokenTag: '{{ confirmationToken }}'
+        confirmation-token-tag: '{{ confirmationToken }}'
         message: 'Please go to https://tailgate.io/account/confirm/${tailgate.user.confirmation.email.confirmationTokenTag}'
   password-reset:
     email:
       subject: 'Reset your password on Tailgate'
-      passwordResetTokenTag: '{{ passwordResetToken }}'
+      password-reset-token-tag: '{{ passwordResetToken }}'
       message: 'Please go to https://tailgate.io/reset-password/${tailgate.user.confirmation.password-reset.passwordResetTokenTag}'
+    token:
+      expiration-window-in-minutes: 1
 
 
 spring:

@@ -1,7 +1,9 @@
 package com.tiernebre.tailgate.user.repository;
 
+import com.tiernebre.tailgate.jooq.tables.records.PasswordResetTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -22,6 +25,9 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
 
     @Autowired
     private PasswordResetTokenRecordPool passwordResetTokenRecordPool;
+
+    @Autowired
+    private PasswordResetTokenConfigurationProperties passwordResetTokenConfigurationProperties;
 
     @Nested
     @DisplayName("updateOneWithEmailAndNonExpiredResetToken")
@@ -64,6 +70,24 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             UsersRecord originalUser = userRecordPool.createAndSaveOne();
             String password = UUID.randomUUID().toString();
             userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
+            assertEquals(originalUser.getPassword(), updatedUser.getPassword());
+        }
+
+        @Test
+        @DisplayName("does not update a password if the reset token is expired")
+        void doesNotUpdateAPasswordIfTheResetTokenIsExpired() {
+            UsersRecord originalUser = userRecordPool.createAndSaveOne();
+            PasswordResetTokensRecord resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(originalUser);
+            resetToken.setCreatedAt(
+                    LocalDateTime
+                            .now()
+                            .minusMinutes(passwordResetTokenConfigurationProperties.getExpirationWindowInMinutes())
+                            .minusSeconds(1)
+            );
+            resetToken.store();
+            String password = UUID.randomUUID().toString();
+            userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), resetToken.getToken());
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
