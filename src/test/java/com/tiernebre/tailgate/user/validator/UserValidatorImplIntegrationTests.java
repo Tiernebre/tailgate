@@ -89,22 +89,8 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         }
 
         @ParameterizedTest(name = "validates that the email must not equal \"{0}\"")
-        @ValueSource(strings = {
-                "plainaddress",
-                "#@%^%#$@#$@#.com",
-                "@example.com",
-                "Joe Smith <email@example.com>",
-                "email.example.com",
-                "email@example@example.com",
-                ".email@example.com",
-                "email.@example.com",
-                "email..email@example.com",
-                "email@example.com (Joe Smith)",
-                "email@-example.com",
-                "email@example..com",
-                "Abc..123@example.com",
-        })
-        void testThatInvalidEmailFormatFails(String email) throws InvalidUserException {
+        @ArgumentsSource(InvalidEmailArgumentsProvider.class)
+        void testThatInvalidEmailFormatFails(String email) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(email)
                     .password(STRONG_PASSWORD)
