@@ -3,6 +3,7 @@ package com.tiernebre.tailgate.user.service;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
+import com.tiernebre.tailgate.user.exception.UserNotFoundForPasswordUpdateException;
 import com.tiernebre.tailgate.user.repository.UserPasswordRepository;
 import com.tiernebre.tailgate.user.validator.UserPasswordValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -64,7 +65,7 @@ public class UserPasswordServiceImplTests {
 
         @Test
         @DisplayName("updates password for a user")
-        void updatesPasswordForAUser() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException {
+        void updatesPasswordForAUser() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
             String resetToken = UUID.randomUUID().toString();
@@ -74,11 +75,39 @@ public class UserPasswordServiceImplTests {
                     .email(email)
                     .build();
             doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            when(repository.updateOneWithEmailAndNonExpiredResetToken(
+                    eq(newPassword),
+                    eq(email),
+                    eq(resetToken)
+            )).thenReturn(true);
             userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest);
             verify(repository, times(1)).updateOneWithEmailAndNonExpiredResetToken(
                     eq(newPassword),
                     eq(email),
                     eq(resetToken)
+            );
+        }
+
+        @Test
+        @DisplayName("throws not found error if the update did not occur")
+        void throwsNotFoundErrorIfUpdateDidNotOccur() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException {
+            String newPassword = UUID.randomUUID().toString();
+            String email = UUID.randomUUID().toString() + "@test.com";
+            String resetToken = UUID.randomUUID().toString();
+            ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(newPassword)
+                    .confirmationNewPassword(newPassword)
+                    .email(email)
+                    .build();
+            doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            when(repository.updateOneWithEmailAndNonExpiredResetToken(
+                    eq(newPassword),
+                    eq(email),
+                    eq(resetToken)
+            )).thenReturn(false);
+            assertThrows(
+                    UserNotFoundForPasswordUpdateException.class,
+                    () -> userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest)
             );
         }
     }
