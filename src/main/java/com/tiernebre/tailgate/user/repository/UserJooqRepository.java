@@ -7,16 +7,17 @@ import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.jooq.DatePart;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.tiernebre.tailgate.jooq.Tables.*;
+import static org.jooq.impl.DSL.localDateTimeAdd;
 
 @Repository
 @RequiredArgsConstructor
@@ -97,13 +98,18 @@ public class UserJooqRepository implements UserRepository {
 
     @Override
     public Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken) {
-        long refreshTokenExpireWindowInMilliseconds = TimeUnit.MINUTES.toMillis(refreshTokenConfigurationProperties.getExpirationWindowInMinutes());
         return dslContext.select(USERS.asterisk())
                 .from(USERS)
                 .join(REFRESH_TOKENS)
                 .on(USERS.ID.eq(REFRESH_TOKENS.USER_ID))
                 .where(REFRESH_TOKENS.TOKEN.eq(refreshToken))
-                .and(REFRESH_TOKENS.CREATED_AT.add(refreshTokenExpireWindowInMilliseconds).greaterThan(LocalDateTime.now()))
+                .and(
+                        localDateTimeAdd(
+                                REFRESH_TOKENS.CREATED_AT,
+                                refreshTokenConfigurationProperties.getExpirationWindowInMinutes(),
+                                DatePart.MINUTE
+                        ).greaterThan(LocalDateTime.now())
+                )
                 .fetchOptionalInto(UserEntity.class);
     }
 }

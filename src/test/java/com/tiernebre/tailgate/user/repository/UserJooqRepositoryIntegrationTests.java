@@ -20,14 +20,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -252,11 +249,13 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         void returnsAnEmptyOptionalForAnExpiredRefreshToken() {
             UsersRecord user = userRecordPool.createAndSaveOne();
             RefreshTokensRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
-            long expirationWindowInMilliseconds = TimeUnit.MINUTES.toMillis(refreshTokenConfigurationProperties.getExpirationWindowInMinutes());
-            Instant expiredInstant = Instant.now().minusMillis(expirationWindowInMilliseconds + 1);
-            refreshToken.setCreatedAt(LocalDateTime.ofInstant(expiredInstant, ZoneId.of("UTC")));
+            refreshToken.setCreatedAt(LocalDateTime
+                    .now()
+                    .minusMinutes(refreshTokenConfigurationProperties.getExpirationWindowInMinutes())
+                    .minusSeconds(1)
+            );
             refreshToken.store();
-            Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(UUID.randomUUID().toString());
+            Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(refreshToken.getToken());
             assertFalse(foundUser.isPresent());
         }
     }
