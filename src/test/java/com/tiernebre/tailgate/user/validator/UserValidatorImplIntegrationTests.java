@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -50,7 +51,8 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         }
 
         @ParameterizedTest(name = "validates that the password must not equal \"{0}\"")
-        @ValueSource(strings = { "", " " })
+        @ValueSource(strings = { " " })
+        @EmptySource
         @NullSource
         void testThatBlankPasswordFails(String password) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
@@ -88,22 +90,8 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         }
 
         @ParameterizedTest(name = "validates that the email must not equal \"{0}\"")
-        @ValueSource(strings = {
-                "plainaddress",
-                "#@%^%#$@#$@#.com",
-                "@example.com",
-                "Joe Smith <email@example.com>",
-                "email.example.com",
-                "email@example@example.com",
-                ".email@example.com",
-                "email.@example.com",
-                "email..email@example.com",
-                "email@example.com (Joe Smith)",
-                "email@-example.com",
-                "email@example..com",
-                "Abc..123@example.com",
-        })
-        void testThatInvalidEmailFormatFails(String email) throws InvalidUserException {
+        @ArgumentsSource(InvalidEmailArgumentsProvider.class)
+        void testThatInvalidEmailFormatFails(String email) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(email)
                     .password(STRONG_PASSWORD)
@@ -118,22 +106,7 @@ public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingS
         }
 
         @ParameterizedTest(name = "validates that the email can equal \"{0}\"")
-        @ValueSource(strings = {
-                "email@example.com",
-                "firstname.lastname@example.com",
-                "email@subdomain.example.com",
-                "firstname+lastname@example.com",
-                "email@123.123.123.123",
-                "email@[123.123.123.123]",
-                "\"email\"@example.com",
-                "1234567890@example.com",
-                "email@example-one.com",
-                "_______@example.com",
-                "email@example.name",
-                "email@example.museum",
-                "email@example.co.jp",
-                "firstname-lastname@example.com"
-        })
+        @ArgumentsSource(ValidEmailArgumentsProvider.class)
         void testThatValidEmailSucceeds(String email) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(email)

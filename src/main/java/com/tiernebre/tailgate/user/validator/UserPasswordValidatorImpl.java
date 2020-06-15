@@ -1,22 +1,44 @@
 package com.tiernebre.tailgate.user.validator;
 
+import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
+import com.tiernebre.tailgate.validator.BaseValidator;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Validator;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 
 @Component
-public class UserPasswordValidatorImpl implements UserPasswordValidator {
-    private static final String PASSWORD_MATCHES_ERROR = "password and confirmationPassword must equal each other";
-    private static final String PASSWORD_CONTAIN_DIGITS_ERROR = "password must contain numerical digits (0-9)";
-    private static final String PASSWORD_MIXED_CHARACTERS_ERROR = "password must contain mixed uppercase and lowercase alphabetical characters (A-Z, a-z)";
-    private static final String PASSWORD_SPECIAL_CHARACTERS_ERROR = "password must contain non-digit and non-alphanumeric characters";
-
+public class UserPasswordValidatorImpl extends BaseValidator implements UserPasswordValidator {
     private static final String DIGITS_REGEX = ".*\\d.*";
     private static final String SPECIAL_CHARACTERS_REGEX = "[^a-z0-9 ]";
+
+    @Autowired
+    public UserPasswordValidatorImpl(Validator validator) {
+        super(validator);
+    }
+
+    @Override
+    public void validateUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException {
+        Objects.requireNonNull(updatePasswordRequest, NULL_PASSWORD_UPDATE_REQUEST_ERROR);
+        Set<String> beanErrors = validateCommon(updatePasswordRequest);
+        Set<String> passwordErrors = validate(updatePasswordRequest.getNewPassword(), updatePasswordRequest.getConfirmationNewPassword());
+        Set<String> errors = Stream.concat(beanErrors.stream(), passwordErrors.stream()).collect(Collectors.toSet());
+        if (CollectionUtils.isNotEmpty(errors)) {
+            throw new InvalidUpdatePasswordRequestException(errors);
+        }
+    }
 
     @Override
     public Set<String> validate(String password, String confirmationPassword) {

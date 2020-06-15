@@ -18,6 +18,13 @@ public final class UserValidationConstants {
             "security questions must not have duplicated answers, please ensure each security question has a unique answer";
     public static final String SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION =
             "security question answers must not be the same as other user provided information";
+
+
     public static final int MINIMUM_PASSWORD_LENGTH = 8;
     public static final int MAXIMUM_PASSWORD_LENGTH = 71;
+    public static final String PASSWORD_MATCHES_ERROR = "password and confirmationPassword must equal each other";
+    public static final String PASSWORD_CONTAIN_DIGITS_ERROR = "password must contain numerical digits (0-9)";
+    public static final String PASSWORD_MIXED_CHARACTERS_ERROR = "password must contain mixed uppercase and lowercase alphabetical characters (A-Z, a-z)";
+    public static final String PASSWORD_SPECIAL_CHARACTERS_ERROR = "password must contain non-alphanumeric characters";
+    public static final String NULL_PASSWORD_UPDATE_REQUEST_ERROR = "The update password request to update must not be null";
 }

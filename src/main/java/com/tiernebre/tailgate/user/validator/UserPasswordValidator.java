@@ -1,5 +1,8 @@
 package com.tiernebre.tailgate.user.validator;
 
+import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
+
 import java.util.Set;
 
 /**
@@ -15,4 +18,12 @@ public interface UserPasswordValidator {
      * @return The error messages found when validating the password.
      */
     Set<String> validate(String password, String confirmationPassword);
+
+    /**
+     * Validates a password update request.
+     *
+     * @param updatePasswordRequest The request to validate
+     * @throws InvalidUpdatePasswordRequestException if the request was invalid.
+     */
+    void validateUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException;
 }
