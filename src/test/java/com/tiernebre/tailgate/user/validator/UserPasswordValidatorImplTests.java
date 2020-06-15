@@ -2,7 +2,6 @@ package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -76,14 +74,10 @@ public class UserPasswordValidatorImplTests {
     @Nested
     @DisplayName("validateUpdateRequest")
     public class ValidateUpdateRequestTests {
-        @BeforeEach
-        public void setup() {
-            when(validator.validate(any())).thenReturn(Collections.emptySet());
-        }
-
         @DisplayName("adds an error if the new password and confirmation new password do not match")
         @Test
         void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "testPassword12345!";
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(password)
@@ -99,6 +93,7 @@ public class UserPasswordValidatorImplTests {
         @DisplayName("adds an error if the password does not have numerical digit characters")
         @Test
         void testValidateEnsurePasswordMustHaveNumericalDigitCharacters() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "testPassword!";
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(password)
@@ -114,6 +109,7 @@ public class UserPasswordValidatorImplTests {
         @DisplayName("adds an error if the password does not have uppercase alphabetical characters")
         @Test
         void testValidateEnsurePasswordMustHaveUppercaseAlphabeticalCharacters() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "testpassword12345!";
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(password)
@@ -129,6 +125,7 @@ public class UserPasswordValidatorImplTests {
         @DisplayName("adds an error if the password does not have lowercase alphabetical characters")
         @Test
         void testValidateEnsurePasswordMustHaveLowercaseAlphabeticalCharacters() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "TESTPASSWORD12345!";
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(password)
@@ -154,6 +151,16 @@ public class UserPasswordValidatorImplTests {
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_SPECIAL_CHARACTERS_ERROR));
+        }
+
+        @DisplayName("does not allow a null update request")
+        @Test
+        void doesNotAllowANullUpdateRequest() {
+            String message = assertThrows(
+                    NullPointerException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(null)
+            ).getMessage();
+            assertEquals(NULL_PASSWORD_UPDATE_REQUEST_ERROR, message);
         }
     }
 }
