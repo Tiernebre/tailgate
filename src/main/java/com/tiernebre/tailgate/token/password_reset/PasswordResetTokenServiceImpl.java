@@ -2,6 +2,7 @@ package com.tiernebre.tailgate.token.password_reset;
 
 import com.tiernebre.tailgate.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,8 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     }
 
     @Override
-    public void deleteOne(String token) {
+    @Async
+    public void deleteOneAsynchronously(String token) {
         repository.deleteOne(token);
     }
 }

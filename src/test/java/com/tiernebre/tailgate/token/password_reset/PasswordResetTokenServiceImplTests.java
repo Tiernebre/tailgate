@@ -48,7 +48,7 @@ public class PasswordResetTokenServiceImplTests {
         @DisplayName("deletes the given token")
         public void deletesTheGivenToken() {
             String passwordTokenToDelete = UUID.randomUUID().toString();
-            passwordResetTokenService.deleteOne(passwordTokenToDelete);
+            passwordResetTokenService.deleteOneAsynchronously(passwordTokenToDelete);
             verify(passwordResetTokenRepository, times(1)).deleteOne(eq(passwordTokenToDelete));
         }
     }

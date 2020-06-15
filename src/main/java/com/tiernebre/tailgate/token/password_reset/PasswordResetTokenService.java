@@ -12,9 +12,9 @@ public interface PasswordResetTokenService {
     String createOneForUser(UserDto user);
 
     /**
-     * Deletes a password reset token.
+     * Deletes a password reset token asynchronously.
      *
      * @param token The password reset token to delete.
      */
-    void deleteOne(String token);
+    void deleteOneAsynchronously(String token);
 }

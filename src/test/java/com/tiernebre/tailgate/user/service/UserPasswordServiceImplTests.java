@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.user.service;
 
+import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
@@ -35,6 +36,9 @@ public class UserPasswordServiceImplTests {
 
     @Mock
     private UserPasswordRepository repository;
+
+    @Mock
+    private PasswordResetTokenService passwordResetTokenService;
 
     @Nested
     @DisplayName("updateOneUsingResetToken")
@@ -86,11 +90,12 @@ public class UserPasswordServiceImplTests {
                     eq(email),
                     eq(resetToken)
             );
+            verify(passwordResetTokenService, times(1)).deleteOneAsynchronously(resetToken);
         }
 
         @Test
         @DisplayName("throws not found error if the update did not occur")
-        void throwsNotFoundErrorIfUpdateDidNotOccur() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException {
+        void throwsNotFoundErrorIfUpdateDidNotOccur() throws InvalidUpdatePasswordRequestException {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
             String resetToken = UUID.randomUUID().toString();
