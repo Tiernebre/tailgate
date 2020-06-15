@@ -14,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class UserPasswordValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
     @Autowired
@@ -65,6 +64,19 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains("email must be a well-formed email address"));
+        }
+
+        @ParameterizedTest(name = "validates that the email can be {0}")
+        @ArgumentsSource(ValidEmailArgumentsProvider.class)
+        void validatesThatTheEmailCanBe(String email) {
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .email(email)
+                    .build();
+            Set<String> errorsCaught = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertFalse(errorsCaught.contains("email must be a well-formed email address"));
         }
     }
 }
