@@ -43,6 +43,9 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
         return dslContext
                 .select(USER_SECURITY_QUESTIONS.ANSWER)
                 .from(USER_SECURITY_QUESTIONS)
+                .join(USERS)
+                .on(USER_SECURITY_QUESTIONS.USER_ID.eq(USERS.ID))
+                .where(USERS.EMAIL.eq(email))
                 .fetchSet(USER_SECURITY_QUESTIONS.ANSWER);
     }
 }
