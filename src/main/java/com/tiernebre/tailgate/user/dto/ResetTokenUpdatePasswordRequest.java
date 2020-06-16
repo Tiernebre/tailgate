@@ -7,6 +7,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import java.util.Map;
+
 import static com.tiernebre.tailgate.user.validator.UserValidationConstants.MAXIMUM_PASSWORD_LENGTH;
 import static com.tiernebre.tailgate.user.validator.UserValidationConstants.MINIMUM_PASSWORD_LENGTH;
 
@@ -22,4 +24,6 @@ public class ResetTokenUpdatePasswordRequest {
     String newPassword;
 
     String confirmationNewPassword;
+
+    Map<Long, String> securityQuestionAnswers;
 }
