@@ -124,5 +124,30 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(user.getEmail(), resetToken);
             assertTrue(CollectionUtils.isNotEmpty(answers));
         }
+
+        @Test
+        @DisplayName("returns an empty set if the email is not legit")
+        void returnsAnEmptySetIfTheEmailIsNotLegit() {
+            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(UUID.randomUUID().toString(), resetToken);
+            assertTrue(CollectionUtils.isEmpty(answers));
+        }
+
+        @Test
+        @DisplayName("returns an empty set if the password reset token is not legit")
+        void returnsAnEmptySetIfThePasswordResetTokenIsNotLegit() {
+            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(user.getEmail(), UUID.randomUUID().toString());
+            assertTrue(CollectionUtils.isEmpty(answers));
+        }
+
+        @Test
+        @DisplayName("returns an empty set if the password reset token and email are not legit")
+        void returnsAnEmptySetIfThePasswordResetTokenAndEmailAreNotLegit() {
+            userRecordPool.createAndSaveOneWithSecurityQuestions();
+            Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            assertTrue(CollectionUtils.isEmpty(answers));
+        }
     }
 }
