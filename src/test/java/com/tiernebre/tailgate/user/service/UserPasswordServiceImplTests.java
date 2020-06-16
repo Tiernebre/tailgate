@@ -18,6 +18,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -39,6 +40,9 @@ public class UserPasswordServiceImplTests {
 
     @Mock
     private PasswordResetTokenService passwordResetTokenService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Nested
     @DisplayName("updateOneUsingResetToken")
@@ -79,14 +83,16 @@ public class UserPasswordServiceImplTests {
                     .email(email)
                     .build();
             doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            String hashedNewPassword = UUID.randomUUID().toString();
+            when(passwordEncoder.encode(eq(newPassword))).thenReturn(hashedNewPassword);
             when(repository.updateOneWithEmailAndNonExpiredResetToken(
-                    eq(newPassword),
+                    eq(hashedNewPassword),
                     eq(email),
                     eq(resetToken)
             )).thenReturn(true);
             userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest);
             verify(repository, times(1)).updateOneWithEmailAndNonExpiredResetToken(
-                    eq(newPassword),
+                    eq(hashedNewPassword),
                     eq(email),
                     eq(resetToken)
             );
@@ -105,8 +111,10 @@ public class UserPasswordServiceImplTests {
                     .email(email)
                     .build();
             doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            String hashedNewPassword = UUID.randomUUID().toString();
+            when(passwordEncoder.encode(eq(newPassword))).thenReturn(hashedNewPassword);
             when(repository.updateOneWithEmailAndNonExpiredResetToken(
-                    eq(newPassword),
+                    eq(hashedNewPassword),
                     eq(email),
                     eq(resetToken)
             )).thenReturn(false);
