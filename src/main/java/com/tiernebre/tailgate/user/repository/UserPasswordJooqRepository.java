@@ -2,6 +2,7 @@ package com.tiernebre.tailgate.user.repository;
 
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenConfigurationProperties;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
 import org.springframework.stereotype.Repository;
@@ -28,12 +29,7 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                 .from(PASSWORD_RESET_TOKENS)
                 .where(USERS.EMAIL.eq(email))
                 .and(PASSWORD_RESET_TOKENS.TOKEN.eq(resetToken))
-                .and(
-                        localDateTimeAdd(
-                                PASSWORD_RESET_TOKENS.CREATED_AT,
-                                configurationProperties.getExpirationWindowInMinutes(),
-                                DatePart.MINUTE
-                        ).greaterThan(LocalDateTime.now()))
+                .and(passwordResetTokenIsNotExpired())
                 .execute();
         return numberOfUpdated == 1;
     }
@@ -48,12 +44,15 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                 .join(PASSWORD_RESET_TOKENS)
                 .on(USERS.ID.eq(PASSWORD_RESET_TOKENS.USER_ID))
                 .where(USERS.EMAIL.eq(email))
-                .and(
-                        localDateTimeAdd(
-                                PASSWORD_RESET_TOKENS.CREATED_AT,
-                                configurationProperties.getExpirationWindowInMinutes(),
-                                DatePart.MINUTE
-                        ).greaterThan(LocalDateTime.now()))
+                .and(passwordResetTokenIsNotExpired())
                 .fetchSet(USER_SECURITY_QUESTIONS.ANSWER);
+    }
+
+    private Condition passwordResetTokenIsNotExpired() {
+        return localDateTimeAdd(
+                PASSWORD_RESET_TOKENS.CREATED_AT,
+                configurationProperties.getExpirationWindowInMinutes(),
+                DatePart.MINUTE
+        ).greaterThan(LocalDateTime.now());
     }
 }
