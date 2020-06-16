@@ -8,7 +8,7 @@ import org.jooq.DatePart;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Map;
 
 import static com.tiernebre.tailgate.jooq.Tables.USER_SECURITY_QUESTIONS;
 import static com.tiernebre.tailgate.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
@@ -35,9 +35,9 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     }
 
     @Override
-    public Set<String> getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(String email, String resetToken) {
+    public Map<Long, String> getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(String email, String resetToken) {
         return dslContext
-                .select(USER_SECURITY_QUESTIONS.ANSWER)
+                .select(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID, USER_SECURITY_QUESTIONS.ANSWER)
                 .from(USER_SECURITY_QUESTIONS)
                 .join(USERS)
                 .on(USER_SECURITY_QUESTIONS.USER_ID.eq(USERS.ID))
@@ -45,7 +45,7 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                 .on(USERS.ID.eq(PASSWORD_RESET_TOKENS.USER_ID))
                 .where(USERS.EMAIL.eq(email))
                 .and(passwordResetTokenIsNotExpired())
-                .fetchSet(USER_SECURITY_QUESTIONS.ANSWER);
+                .fetchMap(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID, USER_SECURITY_QUESTIONS.ANSWER);
     }
 
     private Condition passwordResetTokenIsNotExpired() {

@@ -1,6 +1,6 @@
 package com.tiernebre.tailgate.user.repository;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Manages passwords for a user.
@@ -19,7 +19,7 @@ public interface UserPasswordRepository {
      * Returns the security question answers tied to a given email and non expired reset password token.
      * @param email The email of the user who requested to reset the password.
      * @param resetToken The reset token assigned to that user's password reset request.
-     * @return the hashed security question answers.
+     * @return a map that uses a security question ID as a key, with the value being the answer.
      */
-    Set<String> getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(String email, String resetToken);
+    Map<Long, String> getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(String email, String resetToken);
 }
