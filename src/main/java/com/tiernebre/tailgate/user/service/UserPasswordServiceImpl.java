@@ -9,6 +9,7 @@ import com.tiernebre.tailgate.user.repository.UserPasswordRepository;
 import com.tiernebre.tailgate.user.validator.UserPasswordValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -19,6 +20,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     private final UserPasswordValidator validator;
     private final UserPasswordRepository repository;
     private final PasswordResetTokenService passwordResetTokenService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest)
@@ -26,7 +28,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
         validateResetToken(resetToken);
         validator.validateUpdateRequest(updatePasswordRequest);
         boolean updateOccurred = repository.updateOneWithEmailAndNonExpiredResetToken(
-                updatePasswordRequest.getNewPassword(),
+                passwordEncoder.encode(updatePasswordRequest.getNewPassword()),
                 updatePasswordRequest.getEmail(),
                 resetToken
         );
