@@ -108,7 +108,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             );
             resetToken.store();
             String password = UUID.randomUUID().toString();
-            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), resetToken.getToken()));
+            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), resetToken.getToken()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
@@ -147,6 +147,22 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
         void returnsAnEmptySetIfThePasswordResetTokenAndEmailAreNotLegit() {
             userRecordPool.createAndSaveOneWithSecurityQuestions();
             Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            assertTrue(CollectionUtils.isEmpty(answers));
+        }
+
+        @Test
+        @DisplayName("returns an empty set if the password reset token is expired")
+        void returnsAnEmptySetIfThePasswordResetTokenIsExpired() {
+            UsersRecord originalUser = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            PasswordResetTokensRecord resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(originalUser);
+            resetToken.setCreatedAt(
+                    LocalDateTime
+                            .now()
+                            .minusMinutes(passwordResetTokenConfigurationProperties.getExpirationWindowInMinutes())
+                            .minusSeconds(1)
+            );
+            resetToken.store();
+            Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(originalUser.getEmail(), resetToken.getToken());
             assertTrue(CollectionUtils.isEmpty(answers));
         }
     }
