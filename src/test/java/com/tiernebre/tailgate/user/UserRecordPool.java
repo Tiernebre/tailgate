@@ -50,6 +50,7 @@ public class UserRecordPool {
             userSecurityQuestionsRecord.setUserId(usersRecord.getId());
             userSecurityQuestionsRecord.setSecurityQuestionId(securityQuestions.get(i).getId());
             userSecurityQuestionsRecord.setAnswer(UUID.randomUUID().toString());
+            securityQuestionAnswers.add(userSecurityQuestionsRecord);
         }
         dslContext.batchStore(securityQuestionAnswers).execute();
         return usersRecord;
