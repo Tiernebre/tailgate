@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("password-reset-tokens")
 @RequiredArgsConstructor
-public class PasswordResetTokenController {
+public class PasswordResetTokenRestfulController {
     private final UserPasswordService userPasswordService;
 
     @PatchMapping("/{passwordResetToken}/password")
