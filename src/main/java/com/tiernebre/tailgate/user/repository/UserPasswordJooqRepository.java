@@ -45,7 +45,15 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                 .from(USER_SECURITY_QUESTIONS)
                 .join(USERS)
                 .on(USER_SECURITY_QUESTIONS.USER_ID.eq(USERS.ID))
+                .join(PASSWORD_RESET_TOKENS)
+                .on(USERS.ID.eq(PASSWORD_RESET_TOKENS.USER_ID))
                 .where(USERS.EMAIL.eq(email))
+                .and(
+                        localDateTimeAdd(
+                                PASSWORD_RESET_TOKENS.CREATED_AT,
+                                configurationProperties.getExpirationWindowInMinutes(),
+                                DatePart.MINUTE
+                        ).greaterThan(LocalDateTime.now()))
                 .fetchSet(USER_SECURITY_QUESTIONS.ANSWER);
     }
 }
