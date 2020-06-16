@@ -34,11 +34,7 @@ public class PasswordResetTokenRestfulControllerTests {
         @DisplayName("passes through the request and params properly")
         void passesThroughTheRequestAndParamsProperly() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException {
             String resetToken = UUID.randomUUID().toString();
-            ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
-                    .email(UUID.randomUUID().toString() + "@test.com")
-                    .newPassword(UUID.randomUUID().toString())
-                    .confirmationNewPassword(UUID.randomUUID().toString())
-                    .build();
+            ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequestFactory.generateOneDto();
             passwordResetTokenRestfulController.updatePasswordUsingResetToken(resetToken, resetTokenUpdatePasswordRequest);
             verify(userPasswordService, times(1)).updateOneUsingResetToken(eq(resetToken), eq(resetTokenUpdatePasswordRequest));
         }

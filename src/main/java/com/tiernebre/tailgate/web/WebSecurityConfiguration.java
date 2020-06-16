@@ -30,6 +30,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/password-resets")
                 .permitAll()
+                .antMatchers("/password-reset-tokens/**")
+                .permitAll()
                 .anyRequest().fullyAuthenticated()
                 .and()
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenProvider))

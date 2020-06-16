@@ -18,7 +18,7 @@ public class PasswordResetTokenRestfulController {
     @PatchMapping("/{passwordResetToken}/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePasswordUsingResetToken(
-            @RequestParam String passwordResetToken,
+            @PathVariable String passwordResetToken,
             @RequestBody ResetTokenUpdatePasswordRequest request
     ) throws UserNotFoundForPasswordUpdateException, InvalidPasswordResetTokenException, InvalidUpdatePasswordRequestException {
         userPasswordService.updateOneUsingResetToken(passwordResetToken, request);
