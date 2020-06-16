@@ -41,7 +41,8 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     @Override
     public Set<String> getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(String email, String resetToken) {
         return dslContext
-                .selectFrom(USER_SECURITY_QUESTIONS)
+                .select(USER_SECURITY_QUESTIONS.ANSWER)
+                .from(USER_SECURITY_QUESTIONS)
                 .fetchSet(USER_SECURITY_QUESTIONS.ANSWER);
     }
 }
