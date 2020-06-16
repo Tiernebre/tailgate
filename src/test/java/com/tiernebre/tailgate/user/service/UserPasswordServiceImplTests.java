@@ -141,9 +141,9 @@ public class UserPasswordServiceImplTests {
                 providedSecurityQuestionAnswers.put(i, plaintextAnswer);
                 lenient().when(passwordEncoder.matches(eq(plaintextAnswer.toLowerCase()), eq(originalHashedAnswer))).thenReturn(false);
             }
-            lenient().when(repository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(
-                    eq(email),
-                    eq(resetToken)
+            when(repository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(
+                    any(),
+                    any()
             )).thenReturn(expectedSecurityQuestionAnswers);
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(newPassword)
