@@ -7,6 +7,7 @@ import org.jooq.DatePart;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static com.tiernebre.tailgate.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
 import static com.tiernebre.tailgate.jooq.tables.Users.USERS;
@@ -34,5 +35,10 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                         ).greaterThan(LocalDateTime.now()))
                 .execute();
         return numberOfUpdated == 1;
+    }
+
+    @Override
+    public Set<String> getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(String email, String resetToken) {
+        return null;
     }
 }

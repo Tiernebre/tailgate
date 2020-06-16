@@ -6,6 +6,7 @@ import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.tailgate.user.UserRecordPool;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -109,6 +111,18 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), resetToken.getToken()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
+        }
+    }
+    @Nested
+    @DisplayName("getSecurityQuestionAnswersForEmailAndNonExpiredResetToken")
+    public class GetSecurityQuestionAnswersForEmailAndNonExpiredResetTokenTests {
+        @Test
+        @DisplayName("returns the security question answers if the email and reset token are legitimate")
+        void returnsTheSecurityQuestionAnswersIfTheEmailAndResetTokenAreLegitimate() {
+            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            Set<String> answers = userPasswordJooqRepository.getSecurityQuestionAnswersForEmailAndNonExpiredResetToken(user.getEmail(), resetToken);
+            assertTrue(CollectionUtils.isNotEmpty(answers));
         }
     }
 }
