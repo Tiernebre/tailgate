@@ -24,7 +24,7 @@ public class UserRestfulController {
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping("/confirmation/{confirmation-token}")
+    @RequestMapping("/confirmation/{confirmationToken}")
     public void confirmUser(@PathVariable String confirmationToken) throws UserNotFoundForConfirmationException {
         service.confirmOne(confirmationToken);
     }

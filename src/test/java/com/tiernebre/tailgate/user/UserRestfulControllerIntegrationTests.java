@@ -11,8 +11,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +57,20 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
                     .andExpect(jsonPath("$.id").value(expectedUser.getId()))
                     .andExpect(jsonPath("$.email").exists())
                     .andExpect(jsonPath("$.email").value(expectedUser.getEmail()));
+        }
+    }
+
+    @Nested
+    @DisplayName("PATCH /users/confirmation/{confirmationToken}")
+    public class PatchUsersConfirmationTests {
+        @Test
+        @DisplayName("returns with 204 NO CONTENT status if successful")
+        void returnsWith204NoContentStatusIfSuccessful() throws Exception {
+            String confirmationToken = UUID.randomUUID().toString();
+            doNothing().when(userService).confirmOne(eq(confirmationToken));
+            mockMvc.perform(
+                    patch("/users/confirmation/" + confirmationToken)
+            ).andExpect(status().isNoContent());
         }
     }
 }
