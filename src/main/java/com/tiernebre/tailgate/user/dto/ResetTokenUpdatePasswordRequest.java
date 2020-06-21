@@ -5,6 +5,7 @@ import lombok.Value;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.util.Map;
@@ -29,5 +30,5 @@ public class ResetTokenUpdatePasswordRequest {
             max = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
             message = NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE
     )
-    Map<Long, String> securityQuestionAnswers;
+    Map<Long, @NotNull(message = NULL_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE) String> securityQuestionAnswers;
 }

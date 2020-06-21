@@ -11,7 +11,9 @@ public final class UserValidationConstants {
                     NUMBER_OF_ALLOWED_SECURITY_QUESTIONS +
                     " entries";
     public static final String NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE =
-            "securityQuestions must not include null entries";
+            "security questions must not include null entries";
+    public static final String NULL_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE =
+            "security question answers must not include null entries";
     public static final String NULL_SECURITY_QUESTION_ID_VALIDATION_MESSAGE =
             "security question ID must not be null";
     public static final String NULL_SECURITY_QUESTION_ANSWER_VALIDATION_MESSAGE =

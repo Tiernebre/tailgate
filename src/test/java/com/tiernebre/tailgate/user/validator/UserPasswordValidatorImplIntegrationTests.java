@@ -5,6 +5,7 @@ import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EmptySource;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.tiernebre.tailgate.user.validator.UserValidationConstants.NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE;
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 import static org.junit.Assert.*;
 
 public class UserPasswordValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
@@ -106,6 +107,23 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains(NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
+        }
+
+        @Test
+        @DisplayName("validates that the security question answers cannot contain null entries")
+        void validatesThatTheSecurityQuestionAnswersCannotContainNullEntries() {
+            Map<Long, String> securityQuestionAnswers = new HashMap<>();
+            for (long i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+                securityQuestionAnswers.put(i, null);
+            }
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .securityQuestionAnswers(securityQuestionAnswers)
+                    .build();
+            Set<String> errorsCaught = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(errorsCaught.contains(NULL_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE));
         }
     }
 }
