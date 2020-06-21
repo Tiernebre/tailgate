@@ -20,7 +20,7 @@ tailgate:
       password-reset-token-tag: '{{ passwordResetToken }}'
       message: 'Please go to https://tailgate.io/reset-password/{{ passwordResetToken }}'
     token:
-      expiration-window-in-minutes: 1
+      expiration-window-in-minutes: 20
 
 spring:
   flyway:

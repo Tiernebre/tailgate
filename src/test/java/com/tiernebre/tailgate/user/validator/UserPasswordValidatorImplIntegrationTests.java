@@ -5,7 +5,6 @@ import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EmptySource;
@@ -123,12 +122,14 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
             assertTrue(errorsCaught.contains(EMPTY_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
         }
 
-        @Test
-        @DisplayName("validates that the security question answers cannot contain null entries")
-        void validatesThatTheSecurityQuestionAnswersCannotContainNullEntries() {
+        @ParameterizedTest(name = "validates that the security question answers cannot contain \"{0}\" entries")
+        @NullSource
+        @EmptySource
+        @ValueSource(strings = " ")
+        void validatesThatTheSecurityQuestionAnswersCannotContainBlankEntries(String entry) {
             Map<Long, String> securityQuestionAnswers = new HashMap<>();
             for (long i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
-                securityQuestionAnswers.put(i, null);
+                securityQuestionAnswers.put(i, entry);
             }
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .securityQuestionAnswers(securityQuestionAnswers)
@@ -137,7 +138,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
-            assertTrue(errorsCaught.contains(NULL_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE));
+            assertTrue(errorsCaught.contains(BLANK_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE));
         }
     }
 }

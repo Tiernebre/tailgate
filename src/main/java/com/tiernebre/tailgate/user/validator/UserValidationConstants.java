@@ -12,8 +12,8 @@ public final class UserValidationConstants {
                     " entries";
     public static final String NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE =
             "security questions must not include null entries";
-    public static final String NULL_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE =
-            "security question answers must not include null entries";
+    public static final String BLANK_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE =
+            "security question answers must not include blank entries";
     public static final String EMPTY_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE =
             "security question answers must not be empty";
     public static final String NULL_SECURITY_QUESTION_ID_VALIDATION_MESSAGE =
