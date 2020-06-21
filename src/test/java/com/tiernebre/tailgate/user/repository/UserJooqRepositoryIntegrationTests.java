@@ -280,6 +280,22 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         }
 
         @Test
+        @DisplayName("does not confirm multiple users on accident")
+        void doesNotConfirmMultipleUsersOnAccident() {
+            UsersRecord userToConfirm = userRecordPool.createAndSaveOne();
+            UsersRecord userToNotConfirm = userRecordPool.createAndSaveOne();
+            assertFalse(userToConfirm.getIsConfirmed());
+            assertFalse(userToNotConfirm.getIsConfirmed());
+            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(userToConfirm).getToken();
+            confirmationTokenRecordPool.createAndSaveOneForUser(userToNotConfirm);
+            userJooqRepository.confirmOne(confirmationToken);
+            userToConfirm.refresh();
+            userToNotConfirm.refresh();
+            assertTrue(userToConfirm.getIsConfirmed());
+            assertFalse(userToNotConfirm.getIsConfirmed());
+        }
+
+        @Test
         @DisplayName("returns true if a user was confirmed")
         void returnsTrueIfAUserWasConfirmed() {
             UsersRecord user = userRecordPool.createAndSaveOne();
