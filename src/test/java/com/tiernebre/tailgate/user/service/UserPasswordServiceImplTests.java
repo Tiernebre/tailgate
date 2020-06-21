@@ -20,8 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.assertThrows;
@@ -64,6 +66,32 @@ public class UserPasswordServiceImplTests {
             );
         }
 
+        @Test
+        @DisplayName("throws invalid error if security question answers are invalid")
+        void throwsInvalidErrorIfSecurityQuestionAnswersAreInvalid() throws InvalidUpdatePasswordRequestException, InvalidSecurityQuestionAnswerException {
+            String newPassword = UUID.randomUUID().toString();
+            String email = UUID.randomUUID().toString() + "@test.com";
+            String resetToken = UUID.randomUUID().toString();
+            Map<Long, String> securityQuestionAnswers = ImmutableMap.of(
+                    1L, UUID.randomUUID().toString(),
+                    2L, UUID.randomUUID().toString()
+            );
+            ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(newPassword)
+                    .confirmationNewPassword(newPassword)
+                    .email(email)
+                    .securityQuestionAnswers(securityQuestionAnswers)
+                    .build();
+            doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            doThrow(new InvalidSecurityQuestionAnswerException(Collections.emptySet()))
+                    .when(userSecurityQuestionsService)
+                    .validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
+            assertThrows(
+                    InvalidSecurityQuestionAnswerException.class,
+                    () -> userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest)
+            );
+        }
+
         @EmptySource
         @NullSource
         @ValueSource(strings = { " " })
@@ -81,12 +109,18 @@ public class UserPasswordServiceImplTests {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
             String resetToken = UUID.randomUUID().toString();
+            Map<Long, String> securityQuestionAnswers = ImmutableMap.of(
+                    1L, UUID.randomUUID().toString(),
+                    2L, UUID.randomUUID().toString()
+            );
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(newPassword)
                     .confirmationNewPassword(newPassword)
                     .email(email)
+                    .securityQuestionAnswers(securityQuestionAnswers)
                     .build();
             doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            doNothing().when(userSecurityQuestionsService).validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
             String hashedNewPassword = UUID.randomUUID().toString();
             when(passwordEncoder.encode(eq(newPassword))).thenReturn(hashedNewPassword);
             when(repository.updateOneWithEmailAndNonExpiredResetToken(
