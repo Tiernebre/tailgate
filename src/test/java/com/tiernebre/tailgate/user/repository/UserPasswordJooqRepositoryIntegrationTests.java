@@ -106,7 +106,7 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             );
             resetToken.store();
             String password = UUID.randomUUID().toString();
-            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, UUID.randomUUID().toString(), resetToken.getToken()));
+            assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), resetToken.getToken()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
