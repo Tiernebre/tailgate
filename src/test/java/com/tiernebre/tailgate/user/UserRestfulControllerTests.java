@@ -4,6 +4,7 @@ import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
+import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
 import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,9 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserRestfulControllerTests {
@@ -26,15 +29,28 @@ public class UserRestfulControllerTests {
     private UserRestfulController userRestfulController;
 
     @Nested
-    @DisplayName("createOne")
+    @DisplayName("createUser")
     public class CreateOneTests {
         @Test
-        void testItReturnsTheCreatedUser() throws InvalidUserException, UserAlreadyExistsException {
+        @DisplayName("returns the created user")
+        void returnsTheCreatedUser() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
             UserDto expectedUser = UserFactory.generateOneDto();
             when(userService.createOne(eq(createUserRequest))).thenReturn(expectedUser);
             UserDto createdUser = userRestfulController.createUser(createUserRequest);
             assertEquals(expectedUser, createdUser);
+        }
+    }
+
+    @Nested
+    @DisplayName("confirmUser")
+    public class ConfirmUserTests {
+        @Test
+        @DisplayName("passes along the correct information")
+        void passesAlongTheCorrectInformation() throws UserNotFoundForConfirmationException {
+            String confirmationToken = UUID.randomUUID().toString();
+            userRestfulController.confirmUser(confirmationToken);
+            verify(userService, times(1)).confirmOne(eq(confirmationToken));
         }
     }
 }
