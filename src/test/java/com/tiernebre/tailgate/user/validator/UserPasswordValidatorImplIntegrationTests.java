@@ -12,8 +12,12 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import static com.tiernebre.tailgate.user.validator.UserValidationConstants.NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE;
 import static org.junit.Assert.*;
 
 public class UserPasswordValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
@@ -79,6 +83,29 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertFalse(errorsCaught.contains(VALID_EMAIL_VALIDATION_MESSAGE));
+        }
+
+        @ParameterizedTest(name = "validates that the security question answers cannot have size {0}")
+        @ValueSource(longs = {
+                1L,
+                3L,
+                4L,
+                5L,
+                10L
+        })
+        void validatesThatTheSecurityQuestionAnswersCannotHaveSize(long size) {
+            Map<Long, String> securityQuestionAnswers = new HashMap<>();
+            for (long i = 0; i < size; i++) {
+                securityQuestionAnswers.put(i, UUID.randomUUID().toString());
+            }
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .securityQuestionAnswers(securityQuestionAnswers)
+                    .build();
+            Set<String> errorsCaught = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(errorsCaught.contains(NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
         }
     }
 }
