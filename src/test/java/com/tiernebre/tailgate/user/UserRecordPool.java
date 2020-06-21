@@ -33,6 +33,7 @@ public class UserRecordPool {
         UsersRecord usersRecord = dslContext.newRecord(USERS);
         usersRecord.setEmail(userEntity.getEmail());
         usersRecord.setPassword(userEntity.getPassword());
+        usersRecord.setIsConfirmed(false);
         usersRecord.store();
         return usersRecord;
     }

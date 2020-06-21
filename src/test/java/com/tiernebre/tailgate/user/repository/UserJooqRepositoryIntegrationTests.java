@@ -8,6 +8,7 @@ import com.tiernebre.tailgate.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenRecordPool;
+import com.tiernebre.tailgate.token.user_confirmation.UserConfirmationTokenRecordPool;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
@@ -44,6 +45,9 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
     @Autowired
     private SecurityQuestionRecordPool securityQuestionRecordPool;
+
+    @Autowired
+    private UserConfirmationTokenRecordPool confirmationTokenRecordPool;
 
     @AfterEach
     public void cleanup() {
@@ -258,6 +262,21 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             refreshToken.store();
             Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(refreshToken.getToken());
             assertFalse(foundUser.isPresent());
+        }
+    }
+
+    @Nested
+    @DisplayName("confirmOne")
+    public class ConfirmOneTests {
+        @Test
+        @DisplayName("confirms a user")
+        void setsAUserIsConfirmedToTrue() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            assertFalse(user.getIsConfirmed());
+            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            userJooqRepository.confirmOne(confirmationToken);
+            user.refresh();
+            assertTrue(user.getIsConfirmed());
         }
     }
 

@@ -116,6 +116,13 @@ public class UserJooqRepository implements UserRepository {
 
     @Override
     public boolean confirmOne(String confirmationToken) {
-        return false;
+        int numberOfConfirmedUsers = dslContext
+                .update(USERS)
+                .set(USERS.IS_CONFIRMED, true)
+                .from(USER_CONFIRMATION_TOKENS)
+                .where(USERS.ID.eq(USER_CONFIRMATION_TOKENS.USER_ID))
+                .and(USER_CONFIRMATION_TOKENS.TOKEN.eq(confirmationToken))
+                .execute();
+        return numberOfConfirmedUsers == 1;
     }
 }
