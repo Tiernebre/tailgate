@@ -28,5 +28,5 @@ public class ResetTokenUpdatePasswordRequest {
             message = NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE
     )
     @NotEmpty(message = EMPTY_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE)
-    Map<Long, @NotNull(message = NULL_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE) String> securityQuestionAnswers;
+    Map<Long, @NotBlank(message = BLANK_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE) String> securityQuestionAnswers;
 }
