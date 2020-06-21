@@ -22,12 +22,12 @@ public class UserSecurityQuestionsServiceImpl implements UserSecurityQuestionsSe
             Map<Long, String> answersToValidate
     ) throws InvalidSecurityQuestionAnswerException {
         Map<Long, String> foundAnswers = repository.getAnswersForEmailAndResetToken(email, resetToken);
-        boolean allAnswersAreValid = answersToValidate
+        boolean allAnswersAreValid = foundAnswers
                 .entrySet()
                 .stream()
-                .allMatch(providedAnswer -> {
-                    String answerToValidateAgainst = foundAnswers.get(providedAnswer.getKey());
-                    return passwordEncoder.matches(providedAnswer.getValue(), answerToValidateAgainst);
+                .allMatch(foundAnswer -> {
+                    String providedAnswer = answersToValidate.get(foundAnswer.getKey());
+                    return passwordEncoder.matches(providedAnswer, foundAnswer.getValue());
                 });
         if (!allAnswersAreValid) {
             throw new InvalidSecurityQuestionAnswerException(Collections.singleton("Incorrect Security Question Answer"));
