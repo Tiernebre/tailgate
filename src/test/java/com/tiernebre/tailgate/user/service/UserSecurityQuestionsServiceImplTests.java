@@ -80,5 +80,30 @@ public class UserSecurityQuestionsServiceImplTests {
                     )
             );
         }
+
+        @Test
+        @DisplayName("throws an invalid error if some provided answers do not match the found ones")
+        void throwsAnInvalidErrorIfSomeProvidedAnswersDoNotMatchTheFoundOnes() {
+            String resetToken = UUID.randomUUID().toString();
+            String email = UUID.randomUUID().toString();
+            Map<Long, String> foundAnswers = new HashMap<>();
+            Map<Long, String> providedAnswers = new HashMap<>();
+            for (long i = 0; i < 2; i++) {
+                String foundAnswer = UUID.randomUUID().toString();
+                String providedAnswer = UUID.randomUUID().toString();
+                foundAnswers.put(i, foundAnswer);
+                providedAnswers.put(i, providedAnswer);
+                boolean matches = i % 2 == 0;
+                when(passwordEncoder.matches(anyString(), anyString())).thenReturn(matches);
+            }
+            when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
+            assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
+                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                            email,
+                            resetToken,
+                            providedAnswers
+                    )
+            );
+        }
     }
 }
