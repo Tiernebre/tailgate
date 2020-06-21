@@ -278,6 +278,21 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             user.refresh();
             assertTrue(user.getIsConfirmed());
         }
+
+        @Test
+        @DisplayName("returns true if a user was confirmed")
+        void returnsTrueIfAUserWasConfirmed() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            assertFalse(user.getIsConfirmed());
+            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            assertTrue(userJooqRepository.confirmOne(confirmationToken));
+        }
+
+        @Test
+        @DisplayName("returns false if a user was not confirmed")
+        void returnsFalseIfAUserWasNotConfirmed() {
+            assertFalse(userJooqRepository.confirmOne(UUID.randomUUID().toString()));
+        }
     }
 
     private void assertThatUsersRecordEqualsEntity(UsersRecord usersRecord, UserEntity userEntity) {
