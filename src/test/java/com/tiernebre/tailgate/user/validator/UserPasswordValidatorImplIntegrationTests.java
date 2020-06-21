@@ -109,6 +109,20 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
             assertTrue(errorsCaught.contains(NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
         }
 
+        @ParameterizedTest(name = "validates that the security question answers cannot have size {0}")
+        @EmptySource
+        @NullSource
+        void validatesThatTheSecurityQuestionAnswersCannotBeEmpty(Map<Long, String> securityQuestionAnswers) {
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .securityQuestionAnswers(securityQuestionAnswers)
+                    .build();
+            Set<String> errorsCaught = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(errorsCaught.contains(EMPTY_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
+        }
+
         @Test
         @DisplayName("validates that the security question answers cannot contain null entries")
         void validatesThatTheSecurityQuestionAnswersCannotContainNullEntries() {
