@@ -3,6 +3,7 @@ package com.tiernebre.tailgate.user;
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
 import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,8 +15,7 @@ import org.springframework.http.MediaType;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -71,6 +71,16 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
             mockMvc.perform(
                     patch("/users/confirmation/" + confirmationToken)
             ).andExpect(status().isNoContent());
+        }
+
+        @Test
+        @DisplayName("returns with 404 NOT FOUND status if user was not confirmed")
+        void returnsWith404NotFoundStatusIfUserWasNotConfirmed() throws Exception {
+            String confirmationToken = UUID.randomUUID().toString();
+            doThrow(new UserNotFoundForConfirmationException()).when(userService).confirmOne(eq(confirmationToken));
+            mockMvc.perform(
+                    patch("/users/confirmation/" + confirmationToken)
+            ).andExpect(status().isNotFound());
         }
     }
 }
