@@ -8,13 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 public class GlobalControllerExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleAnyException(Exception e) {
-        log.error("Caught unhandled exception: ", e);
-    }
-
     @ExceptionHandler(InvalidException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
