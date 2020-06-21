@@ -13,8 +13,8 @@ import java.util.Set;
 
 @Component
 public class UserValidatorImpl extends BaseValidator implements UserValidator {
-    static final String NULL_CREATE_USER_REQUEST_ERROR_MESSAGE = "The request to create a user must not be null.";
-    static final String NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE = "Some of the security question ids provided do not exist.";
+    static final String NULL_CREATE_USER_REQUEST_ERROR_MESSAGE = "the request to create a user must not be null.";
+    static final String NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE = "some of the security question ids provided do not exist.";
 
     private final UserPasswordValidator passwordValidator;
     private final UserSecurityQuestionValidator securityQuestionValidator;
