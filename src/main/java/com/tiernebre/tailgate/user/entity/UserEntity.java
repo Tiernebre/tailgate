@@ -12,4 +12,5 @@ public class UserEntity {
     String email;
     String password;
     Instant createdAt;
+    boolean isConfirmed;
 }

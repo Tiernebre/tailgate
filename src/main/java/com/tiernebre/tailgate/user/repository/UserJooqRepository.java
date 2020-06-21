@@ -30,7 +30,8 @@ public class UserJooqRepository implements UserRepository {
         return dslContext.transactionResult(configuration -> {
             DSLContext transactionContext = DSL.using(configuration);
             UsersRecord usersRecord = transactionContext.newRecord(USERS, createUserRequest);
-            usersRecord.store();
+            usersRecord.insert();
+            usersRecord.refresh();
             UserEntity userEntity = usersRecord.into(UserEntity.class);
 
             List<UserSecurityQuestionsRecord> securityQuestionsToCreate = createUserRequest

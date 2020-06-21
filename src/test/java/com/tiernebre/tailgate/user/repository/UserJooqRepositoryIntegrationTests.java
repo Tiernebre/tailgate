@@ -62,7 +62,8 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             assertAll(
                     () -> assertNotNull(savedEntity.getId()),
                     () -> assertEquals(createUserRequest.getEmail(), savedEntity.getEmail()),
-                    () -> assertEquals(createUserRequest.getPassword(), savedEntity.getPassword())
+                    () -> assertEquals(createUserRequest.getPassword(), savedEntity.getPassword()),
+                    () -> assertFalse(savedEntity.isConfirmed())
             );
         }
 
