@@ -33,14 +33,15 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     {
         validateResetToken(resetToken);
         validator.validateUpdateRequest(updatePasswordRequest);
+        String email = updatePasswordRequest.getEmail();
         userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
-                updatePasswordRequest.getEmail(),
+                email,
                 resetToken,
                 updatePasswordRequest.getSecurityQuestionAnswers()
         );
         boolean updateOccurred = repository.updateOneWithEmailAndNonExpiredResetToken(
                 passwordEncoder.encode(updatePasswordRequest.getNewPassword()),
-                updatePasswordRequest.getEmail(),
+                email,
                 resetToken
         );
         if (updateOccurred) {
