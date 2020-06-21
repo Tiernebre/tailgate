@@ -36,4 +36,11 @@ public interface UserRepository extends Repository<UserEntity, Long, CreateUserR
      *         is not expired and valid, or an empty optional if the refresh token is expired or invalid.
      */
     Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken);
+
+    /**
+     * Confirms a user.
+     * @param confirmationToken The confirmation token tied to a user to confirm.
+     * @return true if there was a user confirmed, false if no user was found.
+     */
+    boolean confirmOne(String confirmationToken);
 }

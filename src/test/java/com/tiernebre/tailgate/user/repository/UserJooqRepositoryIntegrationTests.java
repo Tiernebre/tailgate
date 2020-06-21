@@ -8,6 +8,7 @@ import com.tiernebre.tailgate.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenRecordPool;
+import com.tiernebre.tailgate.token.user_confirmation.UserConfirmationTokenRecordPool;
 import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.UserRecordPool;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
@@ -45,6 +46,9 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
     @Autowired
     private SecurityQuestionRecordPool securityQuestionRecordPool;
 
+    @Autowired
+    private UserConfirmationTokenRecordPool confirmationTokenRecordPool;
+
     @AfterEach
     public void cleanup() {
         userRecordPool.deleteAll();
@@ -62,7 +66,8 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             assertAll(
                     () -> assertNotNull(savedEntity.getId()),
                     () -> assertEquals(createUserRequest.getEmail(), savedEntity.getEmail()),
-                    () -> assertEquals(createUserRequest.getPassword(), savedEntity.getPassword())
+                    () -> assertEquals(createUserRequest.getPassword(), savedEntity.getPassword()),
+                    () -> assertFalse(savedEntity.isConfirmed())
             );
         }
 
@@ -257,6 +262,52 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             refreshToken.store();
             Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(refreshToken.getToken());
             assertFalse(foundUser.isPresent());
+        }
+    }
+
+    @Nested
+    @DisplayName("confirmOne")
+    public class ConfirmOneTests {
+        @Test
+        @DisplayName("confirms a user")
+        void setsAUserIsConfirmedToTrue() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            assertFalse(user.getIsConfirmed());
+            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            userJooqRepository.confirmOne(confirmationToken);
+            user.refresh();
+            assertTrue(user.getIsConfirmed());
+        }
+
+        @Test
+        @DisplayName("does not confirm multiple users on accident")
+        void doesNotConfirmMultipleUsersOnAccident() {
+            UsersRecord userToConfirm = userRecordPool.createAndSaveOne();
+            UsersRecord userToNotConfirm = userRecordPool.createAndSaveOne();
+            assertFalse(userToConfirm.getIsConfirmed());
+            assertFalse(userToNotConfirm.getIsConfirmed());
+            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(userToConfirm).getToken();
+            confirmationTokenRecordPool.createAndSaveOneForUser(userToNotConfirm);
+            userJooqRepository.confirmOne(confirmationToken);
+            userToConfirm.refresh();
+            userToNotConfirm.refresh();
+            assertTrue(userToConfirm.getIsConfirmed());
+            assertFalse(userToNotConfirm.getIsConfirmed());
+        }
+
+        @Test
+        @DisplayName("returns true if a user was confirmed")
+        void returnsTrueIfAUserWasConfirmed() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            assertFalse(user.getIsConfirmed());
+            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            assertTrue(userJooqRepository.confirmOne(confirmationToken));
+        }
+
+        @Test
+        @DisplayName("returns false if a user was not confirmed")
+        void returnsFalseIfAUserWasNotConfirmed() {
+            assertFalse(userJooqRepository.confirmOne(UUID.randomUUID().toString()));
         }
     }
 

@@ -30,7 +30,8 @@ public class UserJooqRepository implements UserRepository {
         return dslContext.transactionResult(configuration -> {
             DSLContext transactionContext = DSL.using(configuration);
             UsersRecord usersRecord = transactionContext.newRecord(USERS, createUserRequest);
-            usersRecord.store();
+            usersRecord.insert();
+            usersRecord.refresh();
             UserEntity userEntity = usersRecord.into(UserEntity.class);
 
             List<UserSecurityQuestionsRecord> securityQuestionsToCreate = createUserRequest
@@ -111,5 +112,17 @@ public class UserJooqRepository implements UserRepository {
                         ).greaterThan(LocalDateTime.now())
                 )
                 .fetchOptionalInto(UserEntity.class);
+    }
+
+    @Override
+    public boolean confirmOne(String confirmationToken) {
+        int numberOfConfirmedUsers = dslContext
+                .update(USERS)
+                .set(USERS.IS_CONFIRMED, true)
+                .from(USER_CONFIRMATION_TOKENS)
+                .where(USERS.ID.eq(USER_CONFIRMATION_TOKENS.USER_ID))
+                .and(USER_CONFIRMATION_TOKENS.TOKEN.eq(confirmationToken))
+                .execute();
+        return numberOfConfirmedUsers == 1;
     }
 }
