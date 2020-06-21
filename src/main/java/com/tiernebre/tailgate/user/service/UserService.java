@@ -38,4 +38,10 @@ public interface UserService {
      *         refresh token is expired or invalid.
      */
     Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken);
+
+    /**
+     * Confirms a user given a confirmation token.
+     * @param confirmationToken The token to confirm a user.
+     */
+    void confirmOne(String confirmationToken);
 }
