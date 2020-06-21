@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.user.service;
 
+import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.repository.UserSecurityQuestionsRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -52,6 +55,30 @@ public class UserSecurityQuestionsServiceImplTests {
                     resetToken,
                     providedAnswers
             ));
+        }
+
+        @Test
+        @DisplayName("throws an invalid error if all provided answers do not match the found ones")
+        void throwsAnInvalidErrorIfAllProvidedAnswersDoNotMatchTheFoundOnes() {
+            String resetToken = UUID.randomUUID().toString();
+            String email = UUID.randomUUID().toString();
+            Map<Long, String> foundAnswers = new HashMap<>();
+            Map<Long, String> providedAnswers = new HashMap<>();
+            for (long i = 0; i < 2; i++) {
+                String foundAnswer = UUID.randomUUID().toString();
+                String providedAnswer = UUID.randomUUID().toString();
+                foundAnswers.put(i, foundAnswer);
+                providedAnswers.put(i, providedAnswer);
+            }
+            when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+            when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
+            assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
+                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                            email,
+                            resetToken,
+                            providedAnswers
+                    )
+            );
         }
     }
 }
