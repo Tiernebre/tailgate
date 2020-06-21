@@ -3,6 +3,7 @@ package com.tiernebre.tailgate.user.service;
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
+import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForPasswordUpdateException;
 import com.tiernebre.tailgate.user.repository.UserPasswordRepository;
@@ -21,12 +22,22 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     private final UserPasswordRepository repository;
     private final PasswordResetTokenService passwordResetTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final UserSecurityQuestionsService userSecurityQuestionsService;
 
     @Override
-    public void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest)
-            throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException {
+    public void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest) throws
+            InvalidUpdatePasswordRequestException,
+            InvalidPasswordResetTokenException,
+            UserNotFoundForPasswordUpdateException,
+            InvalidSecurityQuestionAnswerException
+    {
         validateResetToken(resetToken);
         validator.validateUpdateRequest(updatePasswordRequest);
+        userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                updatePasswordRequest.getEmail(),
+                resetToken,
+                updatePasswordRequest.getSecurityQuestionAnswers()
+        );
         boolean updateOccurred = repository.updateOneWithEmailAndNonExpiredResetToken(
                 passwordEncoder.encode(updatePasswordRequest.getNewPassword()),
                 updatePasswordRequest.getEmail(),

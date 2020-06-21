@@ -3,6 +3,7 @@ package com.tiernebre.tailgate.user.service;
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
+import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForPasswordUpdateException;
 import com.tiernebre.tailgate.user.repository.UserPasswordRepository;
@@ -21,8 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.assertThrows;
@@ -45,6 +44,9 @@ public class UserPasswordServiceImplTests {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private UserSecurityQuestionsService userSecurityQuestionsService;
 
     @Nested
     @DisplayName("updateOneUsingResetToken")
@@ -75,7 +77,7 @@ public class UserPasswordServiceImplTests {
 
         @Test
         @DisplayName("updates password for a user")
-        void updatesPasswordForAUser() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException {
+        void updatesPasswordForAUser() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException, InvalidSecurityQuestionAnswerException {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
             String resetToken = UUID.randomUUID().toString();
@@ -122,34 +124,6 @@ public class UserPasswordServiceImplTests {
             )).thenReturn(false);
             assertThrows(
                     UserNotFoundForPasswordUpdateException.class,
-                    () -> userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest)
-            );
-        }
-
-        @Test
-        @DisplayName("throws not found error if the update did not occur")
-        void throwsInvalidErrorIfAnAnswerDoesNotMatchWithAFoundOne() throws InvalidUpdatePasswordRequestException {
-            String newPassword = UUID.randomUUID().toString();
-            String email = UUID.randomUUID().toString() + "@test.com";
-            String resetToken = UUID.randomUUID().toString();
-            Map<Long, String> expectedSecurityQuestionAnswers = new HashMap<>();
-            Map<Long, String> providedSecurityQuestionAnswers = new HashMap<>();
-            for (long i = 0; i < 2; i++) {
-                String originalHashedAnswer = UUID.randomUUID().toString();
-                expectedSecurityQuestionAnswers.put(i, originalHashedAnswer);
-                String plaintextAnswer = UUID.randomUUID().toString();
-                providedSecurityQuestionAnswers.put(i, plaintextAnswer);
-                lenient().when(passwordEncoder.matches(eq(plaintextAnswer.toLowerCase()), eq(originalHashedAnswer))).thenReturn(false);
-            }
-            ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
-                    .newPassword(newPassword)
-                    .confirmationNewPassword(newPassword)
-                    .email(email)
-                    .securityQuestionAnswers(providedSecurityQuestionAnswers)
-                    .build();
-            doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
-            assertThrows(
-                    InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest)
             );
         }

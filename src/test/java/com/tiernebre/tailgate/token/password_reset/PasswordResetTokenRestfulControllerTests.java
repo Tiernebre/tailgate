@@ -2,6 +2,7 @@ package com.tiernebre.tailgate.token.password_reset;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
+import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForPasswordUpdateException;
 import com.tiernebre.tailgate.user.service.UserPasswordService;
@@ -32,7 +33,7 @@ public class PasswordResetTokenRestfulControllerTests {
     class UpdatePasswordUsingResetTokenTests {
         @Test
         @DisplayName("passes through the request and params properly")
-        void passesThroughTheRequestAndParamsProperly() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException {
+        void passesThroughTheRequestAndParamsProperly() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException, InvalidSecurityQuestionAnswerException {
             String resetToken = UUID.randomUUID().toString();
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequestFactory.generateOneDto();
             passwordResetTokenRestfulController.updatePasswordUsingResetToken(resetToken, resetTokenUpdatePasswordRequest);

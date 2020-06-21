@@ -2,6 +2,7 @@ package com.tiernebre.tailgate.token.password_reset;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
+import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForPasswordUpdateException;
 import com.tiernebre.tailgate.user.service.UserPasswordService;
@@ -20,7 +21,7 @@ public class PasswordResetTokenRestfulController {
     public void updatePasswordUsingResetToken(
             @PathVariable String passwordResetToken,
             @RequestBody ResetTokenUpdatePasswordRequest request
-    ) throws UserNotFoundForPasswordUpdateException, InvalidPasswordResetTokenException, InvalidUpdatePasswordRequestException {
+    ) throws UserNotFoundForPasswordUpdateException, InvalidPasswordResetTokenException, InvalidUpdatePasswordRequestException, InvalidSecurityQuestionAnswerException {
         userPasswordService.updateOneUsingResetToken(passwordResetToken, request);
     }
 }
