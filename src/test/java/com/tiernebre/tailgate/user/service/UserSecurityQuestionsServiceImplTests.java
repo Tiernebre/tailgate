@@ -6,6 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -147,6 +151,30 @@ public class UserSecurityQuestionsServiceImplTests {
                     providedAnswers.put(i, providedAnswer);
                     when(passwordEncoder.matches(providedAnswer, foundAnswer)).thenReturn(true);
                 }
+            }
+            when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
+            assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
+                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                            email,
+                            resetToken,
+                            providedAnswers
+                    )
+            );
+        }
+
+        @ParameterizedTest(name = "throws an invalid error if a provided answer was {0}")
+        @EmptySource
+        @NullSource
+        @ValueSource(strings = " ")
+        void throwsAnInvalidErrorIfAProvidedAnswerWas(String providedAnswer) {
+            String resetToken = UUID.randomUUID().toString();
+            String email = UUID.randomUUID().toString();
+            Map<Long, String> foundAnswers = new HashMap<>();
+            Map<Long, String> providedAnswers = new HashMap<>();
+            for (long i = 0; i < 2; i++) {
+                String foundAnswer = UUID.randomUUID().toString();
+                foundAnswers.put(i, foundAnswer);
+                providedAnswers.put(i, providedAnswer);
             }
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
             assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
