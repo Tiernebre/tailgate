@@ -3,6 +3,7 @@ package com.tiernebre.tailgate.user.service;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.repository.UserSecurityQuestionsRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class UserSecurityQuestionsServiceImpl implements UserSecurityQuestionsSe
                 .stream()
                 .allMatch(foundAnswer -> {
                     String providedAnswer = answersToValidate.get(foundAnswer.getKey());
-                    return passwordEncoder.matches(providedAnswer, foundAnswer.getValue());
+                    return StringUtils.isNotBlank(providedAnswer) && passwordEncoder.matches(providedAnswer, foundAnswer.getValue());
                 });
         if (!allAnswersAreValid) {
             throw new InvalidSecurityQuestionAnswerException(Collections.singleton("Incorrect Security Question Answer"));

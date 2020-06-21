@@ -107,8 +107,8 @@ public class UserSecurityQuestionsServiceImplTests {
         }
 
         @Test
-        @DisplayName("ignores extra provided answers that do not match to found answers")
-        void throwsAnInvalidErrorIfProvidedAnswersIncludedTooFewAnswers() {
+        @DisplayName("ignores extra provided answers that do not match the found answers")
+        void ignoresExtraProvidedAnswersThatDoNotMatchTheFoundAnswers() {
             String resetToken = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
@@ -130,6 +130,32 @@ public class UserSecurityQuestionsServiceImplTests {
                     )
             );
             verify(passwordEncoder, times(foundAnswers.size())).matches(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("throws an invalid error if a provided answer was missing for an assigned security question")
+        void throwsAnInvalidErrorIfAProvidedAnswerWasMissingForAnAssignedSecurityQuestion() {
+            String resetToken = UUID.randomUUID().toString();
+            String email = UUID.randomUUID().toString();
+            Map<Long, String> foundAnswers = new HashMap<>();
+            Map<Long, String> providedAnswers = new HashMap<>();
+            for (long i = 0; i < 2; i++) {
+                String foundAnswer = UUID.randomUUID().toString();
+                foundAnswers.put(i, foundAnswer);
+                if (i % 2 == 0) {
+                    String providedAnswer = UUID.randomUUID().toString();
+                    providedAnswers.put(i, providedAnswer);
+                    when(passwordEncoder.matches(providedAnswer, foundAnswer)).thenReturn(true);
+                }
+            }
+            when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
+            assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
+                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                            email,
+                            resetToken,
+                            providedAnswers
+                    )
+            );
         }
     }
 }
