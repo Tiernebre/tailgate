@@ -7,6 +7,7 @@ import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.entity.UserEntity;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
+import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
 import com.tiernebre.tailgate.user.repository.UserRepository;
 import com.tiernebre.tailgate.user.validator.UserValidator;
 import com.tiernebre.tailgate.validator.StringIsBlankException;
@@ -216,6 +217,26 @@ public class UserServiceImplTests {
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.empty());
             Optional<UserDto> gottenUser = userService.findOneByEmail(email);
             assertTrue(gottenUser.isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("confirmOne")
+    public class ConfirmOneTests {
+        @Test
+        @DisplayName("throws a not found error if the user was not confirmed")
+        void throwsANotFoundErrorIfTheUserWasNotConfirmed() {
+            String confirmationToken = UUID.randomUUID().toString();
+            when(repository.confirmOne(eq(confirmationToken))).thenReturn(false);
+            assertThrows(UserNotFoundForConfirmationException.class, () -> userService.confirmOne(confirmationToken));
+        }
+
+        @Test
+        @DisplayName("does not throw an error if a user was confirmed")
+        void doesNotThrowAnErrorIfAUserWasConfirmed() {
+            String confirmationToken = UUID.randomUUID().toString();
+            when(repository.confirmOne(eq(confirmationToken))).thenReturn(true);
+            assertDoesNotThrow(() -> userService.confirmOne(confirmationToken));
         }
     }
 }

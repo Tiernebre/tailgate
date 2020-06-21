@@ -4,6 +4,7 @@ import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
+import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
 
 import java.util.Optional;
 
@@ -43,5 +44,5 @@ public interface UserService {
      * Confirms a user given a confirmation token.
      * @param confirmationToken The token to confirm a user.
      */
-    void confirmOne(String confirmationToken);
+    void confirmOne(String confirmationToken) throws UserNotFoundForConfirmationException;
 }
