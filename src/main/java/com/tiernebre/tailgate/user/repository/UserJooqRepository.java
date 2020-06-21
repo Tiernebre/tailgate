@@ -113,4 +113,9 @@ public class UserJooqRepository implements UserRepository {
                 )
                 .fetchOptionalInto(UserEntity.class);
     }
+
+    @Override
+    public boolean confirmOne(String confirmationToken) {
+        return false;
+    }
 }
