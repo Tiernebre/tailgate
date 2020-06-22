@@ -52,7 +52,7 @@ public class UserEmailConfirmationServiceTests {
             when(configurationProperties.getMessage()).thenReturn(message);
             when(configurationProperties.getConfirmationTokenTag()).thenReturn(confirmationTokenTag);
             UserDto user = UserFactory.generateOneDto();
-            when(tokenService.createOneForUser(eq(user))).thenReturn(confirmationToken);
+            when(tokenService.findOrGenerateForUser(eq(user))).thenReturn(confirmationToken);
             userEmailConfirmationService.sendOne(user);
             String expectedFormattedTextMessage = message.replace(confirmationTokenTag, confirmationToken);
             SimpleMailMessage expectedEmailSent = new SimpleMailMessage();

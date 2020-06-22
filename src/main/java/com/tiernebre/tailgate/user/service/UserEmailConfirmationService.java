@@ -30,7 +30,7 @@ public class UserEmailConfirmationService implements UserConfirmationService {
     private String getText(UserDto user) {
         String originalMessage = configurationProperties.getMessage();
         String tagToReplace = configurationProperties.getConfirmationTokenTag();
-        String confirmationToken = tokenService.createOneForUser(user);
+        String confirmationToken = tokenService.findOrGenerateForUser(user);
         return originalMessage.replace(tagToReplace, confirmationToken);
     }
 }
