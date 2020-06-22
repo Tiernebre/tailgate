@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -11,5 +12,6 @@ import org.springframework.hateoas.RepresentationModel;
 public class UserDto extends RepresentationModel<UserDto> {
     Long id;
     String email;
+    @JsonIgnore
     boolean isConfirmed;
 }
