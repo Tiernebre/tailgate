@@ -106,6 +106,7 @@ public class JwtTokenProviderTests {
                     .withIssuer(ISSUER)
                     .withSubject(expectedUser.getId().toString())
                     .withClaim(EMAIL_CLAIM, expectedUser.getEmail())
+                    .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
                     .sign(ALGORITHM);
             UserDto foundUser = jwtTokenProvider.validateOne(testToken);
             assertEquals(expectedUser, foundUser);

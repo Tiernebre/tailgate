@@ -60,6 +60,7 @@ public class JwtTokenProvider implements AccessTokenProvider {
         return UserDto.builder()
                 .id(Long.parseLong(decodedJWT.getSubject()))
                 .email(decodedJWT.getClaim(EMAIL_CLAIM).asString())
+                .isConfirmed(decodedJWT.getClaim(IS_CONFIRMED_CLAIM).asBoolean())
                 .build();
     }
 
