@@ -2,6 +2,8 @@ package com.tiernebre.tailgate.token.user_confirmation;
 
 import com.tiernebre.tailgate.user.dto.UserDto;
 
+import java.util.Optional;
+
 public interface UserConfirmationTokenRepository {
     /**
      * Creates a confirmation token for a provided user.
@@ -17,4 +19,12 @@ public interface UserConfirmationTokenRepository {
      * @param token The confirmation token to delete.
      */
     void deleteOne(String token);
+
+    /**
+     * Gets a confirmation token for a provided user.
+     *
+     * @param user The user to find a confirmation token for.
+     * @return A filled optional if found, otherwise an empty optional if not found.
+     */
+    Optional<UserConfirmationTokenEntity> findOneForUser(UserDto user);
 }

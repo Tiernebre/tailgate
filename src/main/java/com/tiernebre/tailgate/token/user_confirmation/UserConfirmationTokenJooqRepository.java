@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static com.tiernebre.tailgate.jooq.Tables.USER_CONFIRMATION_TOKENS;
 
 @Repository
@@ -28,5 +30,13 @@ public class UserConfirmationTokenJooqRepository implements UserConfirmationToke
                 .deleteFrom(USER_CONFIRMATION_TOKENS)
                 .where(USER_CONFIRMATION_TOKENS.TOKEN.eq(token))
                 .execute();
+    }
+
+    @Override
+    public Optional<UserConfirmationTokenEntity> findOneForUser(UserDto user) {
+        return dslContext
+                .selectFrom(USER_CONFIRMATION_TOKENS)
+                .where(USER_CONFIRMATION_TOKENS.USER_ID.eq(user.getId()))
+                .fetchOptionalInto(UserConfirmationTokenEntity.class);
     }
 }
