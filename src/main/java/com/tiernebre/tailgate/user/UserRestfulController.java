@@ -1,6 +1,5 @@
 package com.tiernebre.tailgate.user;
 
-import com.tiernebre.tailgate.authentication.AllowPublicCalls;
 import com.tiernebre.tailgate.authentication.IsAuthenticated;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
@@ -21,14 +20,12 @@ public class UserRestfulController {
     private final UserService service;
     private final UserConfirmationService confirmationService;
 
-    @AllowPublicCalls
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@RequestBody CreateUserRequest createRequest) throws InvalidUserException, UserAlreadyExistsException {
         return service.createOne(createRequest);
     }
 
-    @AllowPublicCalls
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/confirmation/{confirmationToken}")
