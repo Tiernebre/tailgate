@@ -9,6 +9,7 @@ import com.tiernebre.tailgate.user.service.UserConfirmationService;
 import com.tiernebre.tailgate.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class UserRestfulController {
     private final UserService service;
     private final UserConfirmationService confirmationService;
 
+    @PreAuthorize("permitAll()")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@RequestBody CreateUserRequest createRequest) throws InvalidUserException, UserAlreadyExistsException {
