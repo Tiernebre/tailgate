@@ -13,4 +13,12 @@ public class UserConfirmationTokenServiceImpl implements UserConfirmationTokenSe
     public String createOneForUser(UserDto user) {
         return repository.createOneForUser(user).getToken();
     }
+
+    @Override
+    public String findOrGenerateForUser(UserDto user) {
+        return repository
+                .findOneForUser(user)
+                .map(UserConfirmationTokenEntity::getToken)
+                .orElseGet(() -> createOneForUser(user));
+    }
 }

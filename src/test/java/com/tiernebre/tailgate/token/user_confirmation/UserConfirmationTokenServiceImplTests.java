@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -32,12 +33,30 @@ public class UserConfirmationTokenServiceImplTests {
         public void returnsTheCreatedUserConfirmationToken() {
             UserDto user = UserFactory.generateOneDto();
             String expectedConfirmationToken = UUID.randomUUID().toString();
-            when(userConfirmationTokenRepository.createOneForUser(eq(user))).thenReturn(UserConfirmationTokenEntity.builder()
+            when(userConfirmationTokenRepository.createOneForUser(eq(user))).thenReturn(
+                    UserConfirmationTokenEntity.builder()
                     .token(expectedConfirmationToken)
                     .build()
             );
             String gottenConfirmationToken = userConfirmationTokenService.createOneForUser(user);
             assertEquals(expectedConfirmationToken, gottenConfirmationToken);
+        }
+    }
+
+    @Nested
+    @DisplayName("findOrGenerateForUser")
+    public class FindOrGenerateForUserTests {
+        @Test
+        @DisplayName("returns the found confirmation token if it exists")
+        public void returnsTheCreatedUserConfirmationToken() {
+            UserDto user = UserFactory.generateOneDto();
+            String expectedConfirmationToken = UUID.randomUUID().toString();
+            UserConfirmationTokenEntity userConfirmationTokenEntity = UserConfirmationTokenEntity.builder()
+                            .token(expectedConfirmationToken)
+                            .build();
+            when(userConfirmationTokenRepository.findOneForUser(eq(user))).thenReturn(Optional.of(userConfirmationTokenEntity));
+            String tokenGotten = userConfirmationTokenService.findOrGenerateForUser(user);
+            assertEquals(expectedConfirmationToken, tokenGotten);
         }
     }
 }
