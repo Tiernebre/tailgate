@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
  * Generator of easy-to-utilize mock test data for User related data POJOs.
  */
 public class UserFactory {
+    // This is a static, global singleton user that's user whenever @WithMockUser is used,
+    // to allow for easy mock argument match handling.
+    public static final UserDto CUSTOM_AUTHENTICATED_USER = generateOneDto();
+
     public static UserEntity generateOneEntity() {
         return generateOneEntity(null);
     }

@@ -5,6 +5,7 @@ import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
 import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
+import com.tiernebre.tailgate.user.service.UserConfirmationService;
 import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +25,9 @@ import static org.mockito.Mockito.*;
 public class UserRestfulControllerTests {
     @Mock
     private UserService userService;
+
+    @Mock
+    private UserConfirmationService userConfirmationService;
 
     @InjectMocks
     private UserRestfulController userRestfulController;
@@ -51,6 +55,18 @@ public class UserRestfulControllerTests {
             String confirmationToken = UUID.randomUUID().toString();
             userRestfulController.confirmUser(confirmationToken);
             verify(userService, times(1)).confirmOne(eq(confirmationToken));
+        }
+    }
+
+    @Nested
+    @DisplayName("sendConfirmationTokenForAuthenticatedUser")
+    public class SendConfirmationTokenForAuthenticatedUserTests {
+        @Test
+        @DisplayName("passes along the correct information")
+        void passesAlongTheCorrectInformation() {
+            UserDto user = UserFactory.generateOneDto();
+            userRestfulController.sendConfirmationTokenForAuthenticatedUser(user);
+            verify(userConfirmationService, times(1)).sendOne(eq(user));
         }
     }
 }

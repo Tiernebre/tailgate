@@ -12,9 +12,12 @@ public interface UserConfirmationTokenService {
     String createOneForUser(UserDto user);
 
     /**
-     * Deletes a confirmation token.
+     * Tries to find a confirmation token for a user. If for some
+     * reason a confirmation token does not exist for a user, it
+     * generates a brand new one and uses that instead.
      *
-     * @param token The confirmation token to delete.
+     * @param user The user to either find or create a new confirmation token for.
+     * @return The found or generated confirmation token.
      */
-    void deleteOne(String token);
+    String findOrGenerateForUser(UserDto user);
 }

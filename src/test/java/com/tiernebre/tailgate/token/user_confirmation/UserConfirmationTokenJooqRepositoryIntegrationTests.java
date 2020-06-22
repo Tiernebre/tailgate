@@ -3,13 +3,15 @@ package com.tiernebre.tailgate.token.user_confirmation;
 import com.tiernebre.tailgate.jooq.tables.records.UserConfirmationTokensRecord;
 import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
-import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.UserRecordPool;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -31,11 +33,11 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
         public void returnsTheCreatedInviteTokenForAUser() {
             UsersRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
-            UserConfirmationTokenEntity refreshTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
-            assertNotNull(refreshTokenEntity.getToken());
-            assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
-            assertNotNull(refreshTokenEntity.getCreatedAt());
-            assertEquals(user.getId(), refreshTokenEntity.getUserId());
+            UserConfirmationTokenEntity confirmationTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
+            assertNotNull(confirmationTokenEntity.getToken());
+            assertTrue(StringUtils.isNotBlank(confirmationTokenEntity.getToken()));
+            assertNotNull(confirmationTokenEntity.getCreatedAt());
+            assertEquals(user.getId(), confirmationTokenEntity.getUserId());
         }
 
         @Test
@@ -49,24 +51,17 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
     }
 
     @Nested
-    @DisplayName("deleteOne")
-    public class deleteOneTests {
+    @DisplayName("findOneForUserTests")
+    public class FindOneForUserTests {
         @Test
-        @DisplayName("deletes the given invite token value")
-        public void deletesTheGivenInviteTokenValue() {
-            UserConfirmationTokensRecord userConfirmationTokensRecord = userConfirmationTokenRecordPool.createAndSaveOne();
-            userConfirmationTokenJooqRepository.deleteOne(userConfirmationTokensRecord.getToken());
-            assertNull(userConfirmationTokenRecordPool.getOneById(userConfirmationTokensRecord.getToken()));
-        }
-
-        @Test
-        @DisplayName("does not delete multiple invite tokens accidentally")
-        public void doesNotDeleteMultipleInviteTokensAccidentally() {
-            UserConfirmationTokensRecord userConfirmationTokensRecordToDelete = userConfirmationTokenRecordPool.createAndSaveOne();
-            UserConfirmationTokensRecord otherUserConfirmationToken = userConfirmationTokenRecordPool.createAndSaveOne();
-            userConfirmationTokenJooqRepository.deleteOne(userConfirmationTokensRecordToDelete.getToken());
-            assertNull(userConfirmationTokenRecordPool.getOneById(userConfirmationTokensRecordToDelete.getToken()));
-            assertNotNull(userConfirmationTokenRecordPool.getOneById(otherUserConfirmationToken.getToken()));
+        @DisplayName("returns an optional containing the found confirmation token if it exists")
+        public void returnsAnOptionalContainingTheFoundConfirmationTokenIfItExists() {
+            UsersRecord userRecord = userRecordPool.createAndSaveOne();
+            UserConfirmationTokensRecord confirmationToken = userConfirmationTokenRecordPool.createAndSaveOneForUser(userRecord);
+            UserDto user = UserDto.builder().id(userRecord.getId()).build();
+            Optional<UserConfirmationTokenEntity> foundConfirmationToken = userConfirmationTokenJooqRepository.findOneForUser(user);
+            assertTrue(foundConfirmationToken.isPresent());
+            assertEquals(confirmationToken.getToken(), foundConfirmationToken.get().getToken());
         }
     }
 }

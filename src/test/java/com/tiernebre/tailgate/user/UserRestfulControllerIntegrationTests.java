@@ -1,9 +1,11 @@
 package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
+import com.tiernebre.tailgate.test.WithMockCustomUser;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
+import com.tiernebre.tailgate.user.service.UserConfirmationService;
 import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserRestfulControllerIntegrationTests extends WebControllerIntegrationTestSuite {
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private UserConfirmationService userConfirmationService;
 
     @DisplayName("POST /users")
     @Nested
@@ -81,6 +86,20 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
             mockMvc.perform(
                     patch("/users/confirmation/" + confirmationToken)
             ).andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /users/me/confirmation-token")
+    public class PostMyConfirmationTokenTests {
+        @Test
+        @DisplayName("returns with 204 NO CONTENT status if successful")
+        @WithMockCustomUser
+        void returnsWith204NoContentStatusIfSuccessful() throws Exception {
+            doNothing().when(userConfirmationService).sendOne(UserFactory.CUSTOM_AUTHENTICATED_USER);
+            mockMvc.perform(
+                    post("/users/me/confirmation-token")
+            ).andExpect(status().isNoContent());
         }
     }
 }
