@@ -11,4 +11,5 @@ import org.springframework.hateoas.RepresentationModel;
 public class UserDto extends RepresentationModel<UserDto> {
     Long id;
     String email;
+    boolean isConfirmed;
 }
