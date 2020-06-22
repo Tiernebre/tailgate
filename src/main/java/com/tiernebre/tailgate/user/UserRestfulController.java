@@ -1,5 +1,7 @@
 package com.tiernebre.tailgate.user;
 
+import com.tiernebre.tailgate.authentication.AllowPublicCalls;
+import com.tiernebre.tailgate.authentication.IsAuthenticated;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
@@ -9,7 +11,6 @@ import com.tiernebre.tailgate.user.service.UserConfirmationService;
 import com.tiernebre.tailgate.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,14 @@ public class UserRestfulController {
     private final UserService service;
     private final UserConfirmationService confirmationService;
 
-    @PreAuthorize("permitAll()")
+    @AllowPublicCalls
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@RequestBody CreateUserRequest createRequest) throws InvalidUserException, UserAlreadyExistsException {
         return service.createOne(createRequest);
     }
 
+    @AllowPublicCalls
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/confirmation/{confirmationToken}")
@@ -34,6 +36,7 @@ public class UserRestfulController {
         service.confirmOne(confirmationToken);
     }
 
+    @IsAuthenticated
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/me/confirmation-token")
