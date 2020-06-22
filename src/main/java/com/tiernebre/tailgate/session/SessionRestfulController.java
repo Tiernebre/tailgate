@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.session;
 
+import com.tiernebre.tailgate.authentication.IsAuthenticated;
 import com.tiernebre.tailgate.token.access.GenerateAccessTokenException;
 import com.tiernebre.tailgate.token.refresh.RefreshTokenConfigurationProperties;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SessionRestfulController {
         return createdSession;
     }
 
+    @IsAuthenticated
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionDto refreshOne(

@@ -4,7 +4,6 @@ import com.tiernebre.tailgate.authentication.JwtAuthorizationFilter;
 import com.tiernebre.tailgate.token.access.AccessTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,22 +19,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .antMatcher("/**")
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users")
-                .permitAll()
-                .antMatchers(HttpMethod.PATCH, "/users/confirmation/**")
-                .permitAll()
-                .antMatchers(HttpMethod.POST, "/sessions")
-                .permitAll()
-                .antMatchers("/security-questions")
-                .permitAll()
-                .antMatchers("/password-resets")
-                .permitAll()
-                .antMatchers("/password-reset-tokens/**")
-                .permitAll()
-                .anyRequest().fullyAuthenticated()
-                .and()
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenProvider))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

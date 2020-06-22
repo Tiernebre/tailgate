@@ -1,5 +1,6 @@
 package com.tiernebre.tailgate.user;
 
+import com.tiernebre.tailgate.authentication.IsAuthenticated;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidUserException;
@@ -32,6 +33,7 @@ public class UserRestfulController {
         service.confirmOne(confirmationToken);
     }
 
+    @IsAuthenticated
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/me/confirmation-token")
