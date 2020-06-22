@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class JwtTokenProvider implements AccessTokenProvider {
     static final String ISSUER = "tailgate";
     static final String EMAIL_CLAIM = "email";
+    static final String IS_CONFIRMED_CLAIM = "isConfirmed";
     static final String NULL_USER_ERROR_MESSAGE = "The user to generate a JWT token from must not be null.";
 
     private final Algorithm algorithm;
@@ -38,6 +39,7 @@ public class JwtTokenProvider implements AccessTokenProvider {
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
+                    .withClaim(IS_CONFIRMED_CLAIM, user.isConfirmed())
                     .withExpiresAt(generateExpiresAt())
                     .sign(algorithm);
         } catch (Exception exception){
@@ -58,6 +60,7 @@ public class JwtTokenProvider implements AccessTokenProvider {
         return UserDto.builder()
                 .id(Long.parseLong(decodedJWT.getSubject()))
                 .email(decodedJWT.getClaim(EMAIL_CLAIM).asString())
+                .isConfirmed(decodedJWT.getClaim(IS_CONFIRMED_CLAIM).asBoolean())
                 .build();
     }
 

@@ -18,6 +18,7 @@ public class UserConverterImpl extends ConverterImpl<UserDto, UserEntity> implem
         return UserDto.builder()
                 .id(entity.getId())
                 .email(entity.getEmail())
+                .isConfirmed(entity.isConfirmed())
                 .build();
     }
 

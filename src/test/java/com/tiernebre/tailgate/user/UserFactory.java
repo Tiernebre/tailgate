@@ -43,6 +43,7 @@ public class UserFactory {
         return UserDto.builder()
                 .id(1L)
                 .email(generateEmail())
+                .isConfirmed(true)
                 .build();
     }
 
