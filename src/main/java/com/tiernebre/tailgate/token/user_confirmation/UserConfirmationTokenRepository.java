@@ -14,13 +14,6 @@ public interface UserConfirmationTokenRepository {
     UserConfirmationTokenEntity createOneForUser(UserDto user);
 
     /**
-     * Deletes a confirmation token.
-     *
-     * @param token The confirmation token to delete.
-     */
-    void deleteOne(String token);
-
-    /**
      * Gets a confirmation token for a provided user.
      *
      * @param user The user to find a confirmation token for.

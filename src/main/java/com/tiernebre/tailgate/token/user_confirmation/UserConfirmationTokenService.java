@@ -10,11 +10,4 @@ public interface UserConfirmationTokenService {
      * @return The created confirmation token.
      */
     String createOneForUser(UserDto user);
-
-    /**
-     * Deletes a confirmation token.
-     *
-     * @param token The confirmation token to delete.
-     */
-    void deleteOne(String token);
 }

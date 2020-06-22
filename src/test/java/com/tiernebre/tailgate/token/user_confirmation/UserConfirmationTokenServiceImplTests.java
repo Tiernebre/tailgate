@@ -40,16 +40,4 @@ public class UserConfirmationTokenServiceImplTests {
             assertEquals(expectedConfirmationToken, gottenConfirmationToken);
         }
     }
-
-    @Nested
-    @DisplayName("deleteOne")
-    public class DeleteOneTests {
-        @Test
-        @DisplayName("deletes the given token")
-        public void deletesTheGivenToken() {
-            String confirmationTokenToDelete = UUID.randomUUID().toString();
-            userConfirmationTokenService.deleteOne(confirmationTokenToDelete);
-            verify(userConfirmationTokenRepository, times(1)).deleteOne(eq(confirmationTokenToDelete));
-        }
-    }
 }

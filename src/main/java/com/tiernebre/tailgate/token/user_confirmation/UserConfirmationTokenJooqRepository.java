@@ -25,14 +25,6 @@ public class UserConfirmationTokenJooqRepository implements UserConfirmationToke
     }
 
     @Override
-    public void deleteOne(String token) {
-        dslContext
-                .deleteFrom(USER_CONFIRMATION_TOKENS)
-                .where(USER_CONFIRMATION_TOKENS.TOKEN.eq(token))
-                .execute();
-    }
-
-    @Override
     public Optional<UserConfirmationTokenEntity> findOneForUser(UserDto user) {
         return dslContext
                 .selectFrom(USER_CONFIRMATION_TOKENS)

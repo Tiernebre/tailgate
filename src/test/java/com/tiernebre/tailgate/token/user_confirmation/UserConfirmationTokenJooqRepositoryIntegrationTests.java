@@ -51,28 +51,6 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
     }
 
     @Nested
-    @DisplayName("deleteOne")
-    public class deleteOneTests {
-        @Test
-        @DisplayName("deletes the given invite token value")
-        public void deletesTheGivenInviteTokenValue() {
-            UserConfirmationTokensRecord userConfirmationTokensRecord = userConfirmationTokenRecordPool.createAndSaveOne();
-            userConfirmationTokenJooqRepository.deleteOne(userConfirmationTokensRecord.getToken());
-            assertNull(userConfirmationTokenRecordPool.getOneById(userConfirmationTokensRecord.getToken()));
-        }
-
-        @Test
-        @DisplayName("does not delete multiple invite tokens accidentally")
-        public void doesNotDeleteMultipleInviteTokensAccidentally() {
-            UserConfirmationTokensRecord userConfirmationTokensRecordToDelete = userConfirmationTokenRecordPool.createAndSaveOne();
-            UserConfirmationTokensRecord otherUserConfirmationToken = userConfirmationTokenRecordPool.createAndSaveOne();
-            userConfirmationTokenJooqRepository.deleteOne(userConfirmationTokensRecordToDelete.getToken());
-            assertNull(userConfirmationTokenRecordPool.getOneById(userConfirmationTokensRecordToDelete.getToken()));
-            assertNotNull(userConfirmationTokenRecordPool.getOneById(otherUserConfirmationToken.getToken()));
-        }
-    }
-
-    @Nested
     @DisplayName("findOneForUserTests")
     public class FindOneForUserTests {
         @Test
