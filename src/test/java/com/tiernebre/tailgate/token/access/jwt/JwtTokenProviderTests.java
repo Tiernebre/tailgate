@@ -51,6 +51,7 @@ public class JwtTokenProviderTests {
     @Nested
     @DisplayName("generateOne")
     public class GenerateOneTests {
+
         @Test
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateAccessTokenException {
@@ -68,13 +69,14 @@ public class JwtTokenProviderTests {
                     () -> assertEquals(ISSUER, decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
                     () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim(EMAIL_CLAIM).asString()),
+                    () -> assertEquals(userDTO.isConfirmed(), decodedJWT.getClaim(IS_CONFIRMED_CLAIM).asBoolean()),
                     () -> assertEquals(expectedExpiresAt, decodedJWT.getExpiresAt())
             );
         }
 
         @Test
         @DisplayName("throws a GenerateTokenException if the JWT token completely failed to sign")
-        void throwsGenerateTokenExceptionIfTokenCannotBeSigned() throws GenerateAccessTokenException {
+        void throwsGenerateTokenExceptionIfTokenCannotBeSigned() {
             when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
                     null,
@@ -87,7 +89,7 @@ public class JwtTokenProviderTests {
 
         @Test
         @DisplayName("throws a NullPointerException if the user passed in is null with a helpful message")
-        void throwsNullPointerExceptionIfTheUserPassedInIsNullWithAHelpfulMessage() throws GenerateAccessTokenException {
+        void throwsNullPointerExceptionIfTheUserPassedInIsNullWithAHelpfulMessage() {
             NullPointerException thrownException = assertThrows(NullPointerException.class, () -> jwtTokenProvider.generateOne(null));
             assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
         }
