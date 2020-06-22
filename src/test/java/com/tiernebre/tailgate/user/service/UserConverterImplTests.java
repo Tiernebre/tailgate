@@ -28,7 +28,8 @@ public class UserConverterImplTests {
             UserEntity userEntity = userConverter.convertFromDto(userDTO);
             assertAll(
                     () -> assertEquals(userDTO.getId(), userEntity.getId()),
-                    () -> assertEquals(userDTO.getEmail(), userDTO.getEmail())
+                    () -> assertEquals(userDTO.getEmail(), userDTO.getEmail()),
+                    () -> assertEquals(userDTO.isConfirmed(), userDTO.isConfirmed())
             );
         }
     }
@@ -43,7 +44,8 @@ public class UserConverterImplTests {
             UserDto userDTO = userConverter.convertFromEntity(userEntity);
             assertAll(
                     () -> assertEquals(userEntity.getId(), userDTO.getId()),
-                    () -> assertEquals(userEntity.getEmail(), userDTO.getEmail())
+                    () -> assertEquals(userEntity.getEmail(), userDTO.getEmail()),
+                    () -> assertEquals(userEntity.isConfirmed(), userDTO.isConfirmed())
             );
         }
     }
