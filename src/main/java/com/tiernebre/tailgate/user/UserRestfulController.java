@@ -1,6 +1,5 @@
 package com.tiernebre.tailgate.user;
 
-import com.tiernebre.tailgate.authentication.AuthenticatedUserService;
 import com.tiernebre.tailgate.token.user_confirmation.UserConfirmationTokenService;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
@@ -10,6 +9,7 @@ import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationExceptio
 import com.tiernebre.tailgate.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,8 +35,7 @@ public class UserRestfulController {
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/me/confirmation-token")
-    public void sendConfirmationTokenForAuthenticatedUser() {
-        UserDto currentUser = AuthenticatedUserService.getCurrentAuthenticatedUser();
-        userConfirmationTokenService.createOneForUser(currentUser);
+    public void sendConfirmationTokenForAuthenticatedUser(@AuthenticationPrincipal UserDto authenticatedUser) {
+        // userConfirmationTokenService.createOneForUser(currentUser);
     }
 }
