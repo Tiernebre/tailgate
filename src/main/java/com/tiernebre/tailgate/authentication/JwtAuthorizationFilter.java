@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private static final String TOKEN_PREFIX = "Bearer ";
@@ -50,6 +51,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(String token) {
         UserDto user = tokenProvider.validateOne(token.replace(TOKEN_PREFIX, ""));
-        return new UsernamePasswordAuthenticationToken(user, null);
+        return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
     }
 }
