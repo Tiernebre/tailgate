@@ -27,8 +27,8 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
     private UserPasswordValidatorImpl userPasswordValidator;
 
     @Nested
-    @DisplayName("validateUpdateRequest")
-    class ValidateUpdateRequestTests {
+    @DisplayName("validateResetTokenUpdateRequest")
+    class ValidateResetTokenUpdateRequestTests {
         @NullSource
         @EmptySource
         @ValueSource(strings = { " " })
