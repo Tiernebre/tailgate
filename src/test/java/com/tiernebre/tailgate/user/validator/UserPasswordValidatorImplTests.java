@@ -73,8 +73,8 @@ public class UserPasswordValidatorImplTests {
     }
 
     @Nested
-    @DisplayName("validateResetTokenUpdateRequest")
-    public class ValidateResetTokenUpdateRequestTests {
+    @DisplayName("validateUpdateRequest (ResetTokenUpdatePasswordRequest)")
+    public class ValidateUpdateRequestResetTokenTests {
         @DisplayName("adds an error if the new password and confirmation new password do not match")
         @Test
         void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {
@@ -86,7 +86,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MATCHES_ERROR));
         }
@@ -102,7 +102,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_CONTAIN_DIGITS_ERROR));
         }
@@ -118,7 +118,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
@@ -134,7 +134,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
@@ -149,7 +149,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_SPECIAL_CHARACTERS_ERROR));
         }
@@ -159,15 +159,15 @@ public class UserPasswordValidatorImplTests {
         void doesNotAllowANullUpdateRequest() {
             String message = assertThrows(
                     NullPointerException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(null)
+                    () -> userPasswordValidator.validateUpdateRequest(null)
             ).getMessage();
             assertEquals(NULL_PASSWORD_UPDATE_REQUEST_ERROR, message);
         }
     }
 
     @Nested
-    @DisplayName("validateUpdateRequest")
-    public class ValidateUpdateRequestTests {
+    @DisplayName("validateUpdateRequest (UserUpdatePasswordRequest)")
+    public class ValidateUpdateRequestUserUpdateTests {
         @DisplayName("adds an error if the new password and confirmation new password do not match")
         @Test
         void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {

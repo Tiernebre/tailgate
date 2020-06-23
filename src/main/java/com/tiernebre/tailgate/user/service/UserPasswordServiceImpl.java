@@ -34,7 +34,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
             InvalidSecurityQuestionAnswerException
     {
         validateResetToken(resetToken);
-        validator.validateResetTokenUpdateRequest(updatePasswordRequest);
+        validator.validateUpdateRequest(updatePasswordRequest);
         String email = updatePasswordRequest.getEmail();
         userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
                 email,
