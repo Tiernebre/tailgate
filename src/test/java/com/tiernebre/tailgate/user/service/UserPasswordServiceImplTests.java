@@ -1,7 +1,11 @@
 package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
+import com.tiernebre.tailgate.user.UpdatePasswordRequestFactory;
+import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
@@ -24,6 +28,7 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertThrows;
@@ -159,6 +164,22 @@ public class UserPasswordServiceImplTests {
             assertThrows(
                     UserNotFoundForPasswordUpdateException.class,
                     () -> userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("updateOneForUser")
+    public class UpdateOneForUserTests {
+        @Test
+        @DisplayName("throws a not found error if an old password was not found for the provided user")
+        void throwsANotFoundErrorIfAnOldPasswordWasNotFoundForTheProvidedUser() {
+            UserDto user = UserFactory.generateOneDto();
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.empty());
+            assertThrows(
+                UserNotFoundForPasswordUpdateException.class,
+                () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
         }
     }
