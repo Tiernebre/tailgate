@@ -34,6 +34,7 @@ import java.util.UUID;
 import static com.tiernebre.tailgate.user.service.UserPasswordServiceImpl.REQUIRED_USER_VALIDATION_MESSAGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -223,6 +224,18 @@ public class UserPasswordServiceImplTests {
                     InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
+        }
+
+        @Test
+        @DisplayName("updates a valid users password with a valid request")
+        void updatesAValidUsersPasswordWithAValidRequest() {
+            UserDto user = UserFactory.generateOneDto();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            String oldHashedPassword =  UUID.randomUUID().toString();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
+            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(true);
+            assertDoesNotThrow(() -> userPasswordService.updateOneForUser(user, updatePasswordRequest));
         }
     }
 }
