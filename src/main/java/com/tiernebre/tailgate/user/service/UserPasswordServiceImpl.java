@@ -2,6 +2,8 @@ package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
@@ -49,6 +51,11 @@ public class UserPasswordServiceImpl implements UserPasswordService {
         } else {
             throw new UserNotFoundForPasswordUpdateException();
         }
+    }
+
+    @Override
+    public void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) {
+
     }
 
     private void validateResetToken(String resetToken) throws InvalidPasswordResetTokenException {
