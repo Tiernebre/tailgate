@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
-import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
@@ -33,7 +33,7 @@ public interface UserPasswordService {
      * to properly update.
      *
      * @param userDto The user to update a password for.
-     * @param updatePasswordRequest The details about the password update to perform.
+     * @param userUpdatePasswordRequest The details about the password update to perform.
      */
-    void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException;
+    void updateOneForUser(UserDto userDto, UserUpdatePasswordRequest userUpdatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException;
 }

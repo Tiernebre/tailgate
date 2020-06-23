@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
-import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,10 +42,10 @@ public class UserPasswordValidatorImpl extends BaseValidator implements UserPass
     }
 
     @Override
-    public void validateUpdateRequest(UpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException {
-        Objects.requireNonNull(updatePasswordRequest, NULL_PASSWORD_UPDATE_REQUEST_ERROR);
-        Set<String> beanErrors = validateCommon(updatePasswordRequest);
-        Set<String> passwordErrors = validate(updatePasswordRequest.getNewPassword(), updatePasswordRequest.getConfirmationNewPassword());
+    public void validateUpdateRequest(UserUpdatePasswordRequest userUpdatePasswordRequest) throws InvalidUpdatePasswordRequestException {
+        Objects.requireNonNull(userUpdatePasswordRequest, NULL_PASSWORD_UPDATE_REQUEST_ERROR);
+        Set<String> beanErrors = validateCommon(userUpdatePasswordRequest);
+        Set<String> passwordErrors = validate(userUpdatePasswordRequest.getNewPassword(), userUpdatePasswordRequest.getConfirmationNewPassword());
         Set<String> errors = Stream.concat(beanErrors.stream(), passwordErrors.stream()).collect(Collectors.toSet());
         if (CollectionUtils.isNotEmpty(errors)) {
             throw new InvalidUpdatePasswordRequestException(errors);

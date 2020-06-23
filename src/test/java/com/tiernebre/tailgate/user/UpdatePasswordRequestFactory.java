@@ -1,13 +1,13 @@
 package com.tiernebre.tailgate.user;
 
-import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
 
 import java.util.UUID;
 
 public class UpdatePasswordRequestFactory {
-    public static UpdatePasswordRequest generateOne() {
+    public static UserUpdatePasswordRequest generateOne() {
         String newPassword = UUID.randomUUID().toString();
-        return UpdatePasswordRequest.builder()
+        return UserUpdatePasswordRequest.builder()
                 .oldPassword(UUID.randomUUID().toString())
                 .newPassword(newPassword)
                 .confirmationNewPassword(newPassword)

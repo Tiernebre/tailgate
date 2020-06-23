@@ -2,7 +2,7 @@ package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
-import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
@@ -54,10 +54,10 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     }
 
     @Override
-    public void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
+    public void updateOneForUser(UserDto userDto, UserUpdatePasswordRequest userUpdatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
         Long userId = userDto.getId();
-        validateProvidedOldPassword(userId, updatePasswordRequest.getOldPassword());
-        boolean passwordUpdated = repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
+        validateProvidedOldPassword(userId, userUpdatePasswordRequest.getOldPassword());
+        boolean passwordUpdated = repository.updateOneForId(userId, userUpdatePasswordRequest.getNewPassword());
         if (!passwordUpdated) {
             throw new UserNotFoundForPasswordUpdateException();
         }

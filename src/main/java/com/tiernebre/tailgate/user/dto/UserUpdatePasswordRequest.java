@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class UpdatePasswordRequest {
+public class UserUpdatePasswordRequest {
     String oldPassword;
     String newPassword;
     String confirmationNewPassword;
