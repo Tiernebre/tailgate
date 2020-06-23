@@ -1,7 +1,11 @@
 package com.tiernebre.tailgate.user.service;
 
 import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenService;
+import com.tiernebre.tailgate.user.UpdatePasswordRequestFactory;
+import com.tiernebre.tailgate.user.UserFactory;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserDto;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
@@ -24,9 +28,13 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.tiernebre.tailgate.user.service.UserPasswordServiceImpl.REQUIRED_USER_VALIDATION_MESSAGE;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -160,6 +168,74 @@ public class UserPasswordServiceImplTests {
                     UserNotFoundForPasswordUpdateException.class,
                     () -> userPasswordService.updateOneUsingResetToken(resetToken, resetTokenUpdatePasswordRequest)
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("updateOneForUser")
+    public class UpdateOneForUserTests {
+        @Test
+        @DisplayName("does not allow a null user")
+        void doesNotAllowANullUser() {
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            NullPointerException thrown = assertThrows(
+                    NullPointerException.class,
+                    () -> userPasswordService.updateOneForUser(null, updatePasswordRequest)
+            );
+            assertEquals(REQUIRED_USER_VALIDATION_MESSAGE, thrown.getMessage());
+        }
+
+        @Test
+        @DisplayName("throws a not found error if an old password was not found for the provided user")
+        void throwsANotFoundErrorIfAnOldPasswordWasNotFoundForTheProvidedUser() {
+            UserDto user = UserFactory.generateOneDto();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.empty());
+            assertThrows(
+                UserNotFoundForPasswordUpdateException.class,
+                () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
+            );
+        }
+
+        @Test
+        @DisplayName("throws a not found error if a password update did not occur")
+        void throwsANotFoundErrorIfAPasswordUpdateDidNotOccur() {
+            UserDto user = UserFactory.generateOneDto();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            String oldHashedPassword =  UUID.randomUUID().toString();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
+            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(false);
+            assertThrows(
+                    UserNotFoundForPasswordUpdateException.class,
+                    () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
+            );
+        }
+
+        @Test
+        @DisplayName("throws an invalid error if a password update contained the incorrect old password")
+        void throwsAnInvalidErrorIfAPasswordUpdateContainedTheIncorrectOldPassword() {
+            UserDto user = UserFactory.generateOneDto();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            String oldHashedPassword =  UUID.randomUUID().toString();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(false);
+            assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
+            );
+        }
+
+        @Test
+        @DisplayName("updates a valid users password with a valid request")
+        void updatesAValidUsersPasswordWithAValidRequest() {
+            UserDto user = UserFactory.generateOneDto();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            String oldHashedPassword =  UUID.randomUUID().toString();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
+            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(true);
+            assertDoesNotThrow(() -> userPasswordService.updateOneForUser(user, updatePasswordRequest));
         }
     }
 }

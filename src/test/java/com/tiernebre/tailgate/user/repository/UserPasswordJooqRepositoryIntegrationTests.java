@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -109,6 +110,54 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             assertFalse(userPasswordJooqRepository.updateOneWithEmailAndNonExpiredResetToken(password, originalUser.getEmail(), resetToken.getToken()));
             UsersRecord updatedUser = userRecordPool.findOneByIdAndEmail(originalUser.getId(), originalUser.getEmail());
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
+        }
+    }
+
+    @Nested
+    @DisplayName("updateOneForId")
+    public class UpdateOneForId {
+        @Test
+        @DisplayName("updates a password for a provided id")
+        void updatesAPasswordForAProvidedId() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            String newPassword = UUID.randomUUID().toString();
+            userPasswordJooqRepository.updateOneForId(user.getId(), newPassword);
+            user.refresh();
+            assertEquals(newPassword, user.getPassword());
+        }
+
+        @Test
+        @DisplayName("returns true if a password was updated")
+        void returnsTrueIfAPasswordWasUpdated() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            String newPassword = UUID.randomUUID().toString();
+            assertTrue(userPasswordJooqRepository.updateOneForId(user.getId(), newPassword));
+        }
+
+        @Test
+        @DisplayName("returns false if a password was not updated")
+        void returnsFalseIfAPasswordWasNotUpdated() {
+            assertFalse(userPasswordJooqRepository.updateOneForId(Long.MAX_VALUE, UUID.randomUUID().toString()));
+        }
+    }
+
+    @Nested
+    @DisplayName("findOneForId")
+    public class FindOneForId {
+        @Test
+        @DisplayName("returns an optional containing a given user's password")
+        void returnsAnOptionalContainingAGivenUsersPassword() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            Optional<String> foundPassword = userPasswordJooqRepository.findOneForId(user.getId());
+            assertTrue(foundPassword.isPresent());
+            assertEquals(user.getPassword(), foundPassword.get());
+        }
+
+        @Test
+        @DisplayName("returns an empty optional for a non-valid user")
+        void returnsAnEmptyOptionalForANonValidUser() {
+            Optional<String> foundPassword = userPasswordJooqRepository.findOneForId(Long.MAX_VALUE);
+            assertTrue(foundPassword.isEmpty());
         }
     }
 }
