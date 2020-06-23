@@ -39,7 +39,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains("newPassword must not be blank"));
         }
@@ -54,7 +54,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains("email must not be blank"));
         }
@@ -67,7 +67,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains(VALID_EMAIL_VALIDATION_MESSAGE));
         }
@@ -80,7 +80,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertFalse(errorsCaught.contains(VALID_EMAIL_VALIDATION_MESSAGE));
         }
@@ -103,7 +103,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains(NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
         }
@@ -117,7 +117,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains(EMPTY_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE));
         }
@@ -136,7 +136,7 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     .build();
             Set<String> errorsCaught = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains(BLANK_SECURITY_QUESTION_ANSWERS_ENTRIES_VALIDATION_MESSAGE));
         }

@@ -72,8 +72,8 @@ public class UserPasswordValidatorImplTests {
     }
 
     @Nested
-    @DisplayName("validateUpdateRequest")
-    public class ValidateUpdateRequestTests {
+    @DisplayName("validateResetTokenUpdateRequest")
+    public class ValidateResetTokenUpdateRequestTests {
         @DisplayName("adds an error if the new password and confirmation new password do not match")
         @Test
         void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {
@@ -85,7 +85,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MATCHES_ERROR));
         }
@@ -101,7 +101,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_CONTAIN_DIGITS_ERROR));
         }
@@ -117,7 +117,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
@@ -133,7 +133,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
@@ -148,7 +148,7 @@ public class UserPasswordValidatorImplTests {
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_SPECIAL_CHARACTERS_ERROR));
         }
@@ -158,7 +158,7 @@ public class UserPasswordValidatorImplTests {
         void doesNotAllowANullUpdateRequest() {
             String message = assertThrows(
                     NullPointerException.class,
-                    () -> userPasswordValidator.validateUpdateRequest(null)
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(null)
             ).getMessage();
             assertEquals(NULL_PASSWORD_UPDATE_REQUEST_ERROR, message);
         }

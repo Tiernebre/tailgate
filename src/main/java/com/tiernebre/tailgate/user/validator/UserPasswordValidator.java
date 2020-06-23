@@ -25,5 +25,5 @@ public interface UserPasswordValidator {
      * @param updatePasswordRequest The request to validate
      * @throws InvalidUpdatePasswordRequestException if the request was invalid.
      */
-    void validateUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException;
+    void validateResetTokenUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException;
 }

@@ -30,7 +30,7 @@ public class UserPasswordValidatorImpl extends BaseValidator implements UserPass
     }
 
     @Override
-    public void validateUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException {
+    public void validateResetTokenUpdateRequest(ResetTokenUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException {
         Objects.requireNonNull(updatePasswordRequest, NULL_PASSWORD_UPDATE_REQUEST_ERROR);
         Set<String> beanErrors = validateCommon(updatePasswordRequest);
         Set<String> passwordErrors = validate(updatePasswordRequest.getNewPassword(), updatePasswordRequest.getConfirmationNewPassword());

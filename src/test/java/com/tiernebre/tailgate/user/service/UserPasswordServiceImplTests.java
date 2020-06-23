@@ -64,7 +64,7 @@ public class UserPasswordServiceImplTests {
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder().build();
             doThrow(new InvalidUpdatePasswordRequestException(Collections.emptySet()))
                     .when(validator)
-                    .validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+                    .validateResetTokenUpdateRequest(eq(resetTokenUpdatePasswordRequest));
             assertThrows(
                     InvalidUpdatePasswordRequestException.class,
                     () -> userPasswordService.updateOneUsingResetToken(UUID.randomUUID().toString(), resetTokenUpdatePasswordRequest)
@@ -87,7 +87,7 @@ public class UserPasswordServiceImplTests {
                     .email(email)
                     .securityQuestionAnswers(securityQuestionAnswers)
                     .build();
-            doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            doNothing().when(validator).validateResetTokenUpdateRequest(eq(resetTokenUpdatePasswordRequest));
             doThrow(new InvalidSecurityQuestionAnswerException(Collections.emptySet()))
                     .when(userSecurityQuestionsService)
                     .validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
@@ -124,7 +124,7 @@ public class UserPasswordServiceImplTests {
                     .email(email)
                     .securityQuestionAnswers(securityQuestionAnswers)
                     .build();
-            doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            doNothing().when(validator).validateResetTokenUpdateRequest(eq(resetTokenUpdatePasswordRequest));
             doNothing().when(userSecurityQuestionsService).validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
             String hashedNewPassword = UUID.randomUUID().toString();
             when(passwordEncoder.encode(eq(newPassword))).thenReturn(hashedNewPassword);
@@ -153,7 +153,7 @@ public class UserPasswordServiceImplTests {
                     .confirmationNewPassword(newPassword)
                     .email(email)
                     .build();
-            doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
+            doNothing().when(validator).validateResetTokenUpdateRequest(eq(resetTokenUpdatePasswordRequest));
             String hashedNewPassword = UUID.randomUUID().toString();
             when(passwordEncoder.encode(eq(newPassword))).thenReturn(hashedNewPassword);
             when(repository.updateOneWithEmailAndNonExpiredResetToken(
