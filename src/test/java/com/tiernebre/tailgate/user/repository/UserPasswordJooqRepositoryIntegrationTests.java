@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -137,6 +138,19 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
         @DisplayName("returns false if a password was not updated")
         void returnsFalseIfAPasswordWasNotUpdated() {
             assertFalse(userPasswordJooqRepository.updateOneForId(Long.MAX_VALUE, UUID.randomUUID().toString()));
+        }
+    }
+
+    @Nested
+    @DisplayName("findOneForId")
+    public class FindOneForId {
+        @Test
+        @DisplayName("returns an optional containing a given user's password")
+        void updatesAPasswordForAProvidedId() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            Optional<String> foundPassword = userPasswordJooqRepository.findOneForId(user.getId());
+            assertTrue(foundPassword.isPresent());
+            assertEquals(user.getPassword(), foundPassword.get());
         }
     }
 }

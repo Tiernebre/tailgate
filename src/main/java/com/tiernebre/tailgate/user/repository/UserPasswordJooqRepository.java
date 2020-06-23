@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static com.tiernebre.tailgate.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
 import static com.tiernebre.tailgate.jooq.tables.Users.USERS;
 
@@ -34,5 +36,14 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                 .where(USERS.ID.eq(id))
                 .execute();
         return numberOfUpdated == 1;
+    }
+
+    @Override
+    public Optional<String> findOneForId(Long id) {
+        return dslContext
+                .select(USERS.PASSWORD)
+                .from(USERS)
+                .where(USERS.ID.eq(id))
+                .fetchOptional(USERS.PASSWORD);
     }
 }
