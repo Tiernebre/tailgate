@@ -124,5 +124,19 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             user.refresh();
             assertEquals(newPassword, user.getPassword());
         }
+
+        @Test
+        @DisplayName("returns true if a password was updated")
+        void returnsTrueIfAPasswordWasUpdated() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            String newPassword = UUID.randomUUID().toString();
+            assertTrue(userPasswordJooqRepository.updateOneForId(user.getId(), newPassword));
+        }
+
+        @Test
+        @DisplayName("returns false if a password was not updated")
+        void returnsFalseIfAPasswordWasNotUpdated() {
+            assertFalse(userPasswordJooqRepository.updateOneForId(Long.MAX_VALUE, UUID.randomUUID().toString()));
+        }
     }
 }
