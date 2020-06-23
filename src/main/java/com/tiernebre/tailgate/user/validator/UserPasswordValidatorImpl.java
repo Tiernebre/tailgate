@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.tailgate.validator.BaseValidator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,6 +39,11 @@ public class UserPasswordValidatorImpl extends BaseValidator implements UserPass
         if (CollectionUtils.isNotEmpty(errors)) {
             throw new InvalidUpdatePasswordRequestException(errors);
         }
+    }
+
+    @Override
+    public void validateUpdateRequest(UpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException {
+
     }
 
     @Override

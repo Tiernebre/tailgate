@@ -163,4 +163,97 @@ public class UserPasswordValidatorImplTests {
             assertEquals(NULL_PASSWORD_UPDATE_REQUEST_ERROR, message);
         }
     }
+
+    @Nested
+    @DisplayName("validateUpdateRequest")
+    public class ValidateUpdateRequestTests {
+        @DisplayName("adds an error if the new password and confirmation new password do not match")
+        @Test
+        void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
+            String password = "testPassword12345!";
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password + "!")
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_MATCHES_ERROR));
+        }
+
+        @DisplayName("adds an error if the password does not have numerical digit characters")
+        @Test
+        void testValidateEnsurePasswordMustHaveNumericalDigitCharacters() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
+            String password = "testPassword!";
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_CONTAIN_DIGITS_ERROR));
+        }
+
+        @DisplayName("adds an error if the password does not have uppercase alphabetical characters")
+        @Test
+        void testValidateEnsurePasswordMustHaveUppercaseAlphabeticalCharacters() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
+            String password = "testpassword12345!";
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
+        }
+
+        @DisplayName("adds an error if the password does not have lowercase alphabetical characters")
+        @Test
+        void testValidateEnsurePasswordMustHaveLowercaseAlphabeticalCharacters() {
+            when(validator.validate(any())).thenReturn(Collections.emptySet());
+            String password = "TESTPASSWORD12345!";
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
+        }
+
+        @DisplayName("adds an error if the password does not have special characters")
+        @Test
+        void testValidateEnsurePasswordMustHaveSpecialCharacters() {
+            String password = "TestPassword12345";
+            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+                    .newPassword(password)
+                    .confirmationNewPassword(password)
+                    .build();
+            Set<String> passwordErrors = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+            ).getErrors();
+            assertTrue(passwordErrors.contains(PASSWORD_SPECIAL_CHARACTERS_ERROR));
+        }
+
+        @DisplayName("does not allow a null update request")
+        @Test
+        void doesNotAllowANullUpdateRequest() {
+            String message = assertThrows(
+                    NullPointerException.class,
+                    () -> userPasswordValidator.validateResetTokenUpdateRequest(null)
+            ).getMessage();
+            assertEquals(NULL_PASSWORD_UPDATE_REQUEST_ERROR, message);
+        }
+    }
 }
