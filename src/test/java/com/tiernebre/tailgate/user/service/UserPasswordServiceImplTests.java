@@ -182,5 +182,20 @@ public class UserPasswordServiceImplTests {
                 () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
         }
+
+        @Test
+        @DisplayName("throws a not found error if a password update did not occur")
+        void throwsANotFoundErrorIfAPasswordUpdateDidNotOccur() {
+            UserDto user = UserFactory.generateOneDto();
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            String oldHashedPassword =  UUID.randomUUID().toString();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
+            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(false);
+            assertThrows(
+                    UserNotFoundForPasswordUpdateException.class,
+                    () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
+            );
+        }
     }
 }

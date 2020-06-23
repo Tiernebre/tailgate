@@ -61,7 +61,10 @@ public class UserPasswordServiceImpl implements UserPasswordService {
                 .orElseThrow(UserNotFoundForPasswordUpdateException::new);
         boolean passwordMatches = passwordEncoder.matches(updatePasswordRequest.getOldPassword(), foundOldHashedPassword);
         if (passwordMatches) {
-            repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
+            boolean passwordUpdated = repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
+            if (!passwordUpdated) {
+                throw new UserNotFoundForPasswordUpdateException();
+            }
         }
     }
 
