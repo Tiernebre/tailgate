@@ -197,5 +197,19 @@ public class UserPasswordServiceImplTests {
                     () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
         }
+
+        @Test
+        @DisplayName("throws an invalid error if a password update contained the incorrect old password")
+        void throwsAnInvalidErrorIfAPasswordUpdateContainedTheIncorrectOldPassword() {
+            UserDto user = UserFactory.generateOneDto();
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            String oldHashedPassword =  UUID.randomUUID().toString();
+            when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(false);
+            assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
+            );
+        }
     }
 }

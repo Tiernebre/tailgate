@@ -54,7 +54,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     }
 
     @Override
-    public void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException {
+    public void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
         Long userId = userDto.getId();
         String foundOldHashedPassword = repository
                 .findOneForId(userId)
@@ -65,6 +65,8 @@ public class UserPasswordServiceImpl implements UserPasswordService {
             if (!passwordUpdated) {
                 throw new UserNotFoundForPasswordUpdateException();
             }
+        } else {
+            throw new InvalidUpdatePasswordRequestException(Collections.singleton("The password update contained invalid information."));
         }
     }
 
