@@ -35,5 +35,5 @@ public interface UserPasswordService {
      * @param userDto The user to update a password for.
      * @param updatePasswordRequest The details about the password update to perform.
      */
-    void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest);
+    void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException;
 }

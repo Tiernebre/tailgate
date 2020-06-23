@@ -54,8 +54,15 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     }
 
     @Override
-    public void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) {
-
+    public void updateOneForUser(UserDto userDto, UpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException {
+        Long userId = userDto.getId();
+        String foundOldHashedPassword = repository
+                .findOneForId(userId)
+                .orElseThrow(UserNotFoundForPasswordUpdateException::new);
+        boolean passwordMatches = passwordEncoder.matches(updatePasswordRequest.getOldPassword(), foundOldHashedPassword);
+        if (passwordMatches) {
+            repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
+        }
     }
 
     private void validateResetToken(String resetToken) throws InvalidPasswordResetTokenException {
