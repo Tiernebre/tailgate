@@ -2,6 +2,7 @@ package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.test.SpringIntegrationTestingSuite;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,8 +28,8 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
     private UserPasswordValidatorImpl userPasswordValidator;
 
     @Nested
-    @DisplayName("validateResetTokenUpdateRequest")
-    class ValidateResetTokenUpdateRequestTests {
+    @DisplayName("validateUpdateRequest")
+    class ValidateUpdateRequest {
         @NullSource
         @EmptySource
         @ValueSource(strings = { " " })
@@ -57,6 +58,21 @@ public class UserPasswordValidatorImplIntegrationTests extends SpringIntegration
                     () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(errorsCaught.contains("email must not be blank"));
+        }
+
+        @NullSource
+        @EmptySource
+        @ValueSource(strings = { " " })
+        @ParameterizedTest(name = "validates that the old password for user update requests is not \"{0}\"")
+        void validatesThatTheOldPasswordIsNotBlank(String oldPassword) {
+            UserUpdatePasswordRequest userUpdatePasswordRequest = UserUpdatePasswordRequest.builder()
+                    .oldPassword(oldPassword)
+                    .build();
+            Set<String> errorsCaught = assertThrows(
+                    InvalidUpdatePasswordRequestException.class,
+                    () -> userPasswordValidator.validateUpdateRequest(userUpdatePasswordRequest)
+            ).getErrors();
+            assertTrue(errorsCaught.contains(REQUIRED_OLD_PASSWORD_VALIDATION_MESSAGE));
         }
 
         @ParameterizedTest(name = "validates that the email cannot be {0}")

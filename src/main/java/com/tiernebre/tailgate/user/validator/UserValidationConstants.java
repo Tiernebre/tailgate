@@ -27,6 +27,9 @@ public final class UserValidationConstants {
     public static final String SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION =
             "security question answers must not be the same as other user provided information";
 
+    public static final String REQUIRED_OLD_PASSWORD_VALIDATION_MESSAGE =
+            "the old password must be provided and be non-empty";
+
     public static final int MINIMUM_PASSWORD_LENGTH = 8;
     public static final int MAXIMUM_PASSWORD_LENGTH = 71;
     public static final String PASSWORD_MATCHES_ERROR = "password and confirmation password must equal each other";
