@@ -146,11 +146,18 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
     public class FindOneForId {
         @Test
         @DisplayName("returns an optional containing a given user's password")
-        void updatesAPasswordForAProvidedId() {
+        void returnsAnOptionalContainingAGivenUsersPassword() {
             UsersRecord user = userRecordPool.createAndSaveOne();
             Optional<String> foundPassword = userPasswordJooqRepository.findOneForId(user.getId());
             assertTrue(foundPassword.isPresent());
             assertEquals(user.getPassword(), foundPassword.get());
+        }
+
+        @Test
+        @DisplayName("returns an empty optional for a non-valid user")
+        void returnsAnEmptyOptionalForANonValidUser() {
+            Optional<String> foundPassword = userPasswordJooqRepository.findOneForId(Long.MAX_VALUE);
+            assertTrue(foundPassword.isEmpty());
         }
     }
 }
