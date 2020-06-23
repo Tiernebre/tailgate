@@ -25,4 +25,14 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
                 .execute();
         return numberOfUpdated == 1;
     }
+
+    @Override
+    public boolean updateOneForId(Long id, String password) {
+        int numberOfUpdated = dslContext
+                .update(USERS)
+                .set(USERS.PASSWORD, password)
+                .where(USERS.ID.eq(id))
+                .execute();
+        return numberOfUpdated == 1;
+    }
 }

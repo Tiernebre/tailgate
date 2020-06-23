@@ -12,4 +12,11 @@ public interface UserPasswordRepository {
      * @return true if the user was found and updated, false if no user was found and updated with the criteria provided.
      */
     boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, String resetToken);
+
+    /**
+     * Updates a user's password using a given user id.
+     * @param id the id of the user to update.
+     * @return true if the user was found and updated, false if no user was found and updated with the criteria provided.
+     */
+    boolean updateOneForId(Long id, String password);
 }

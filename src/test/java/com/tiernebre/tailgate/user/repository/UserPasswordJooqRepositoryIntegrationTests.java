@@ -111,4 +111,18 @@ public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrat
             assertEquals(originalUser.getPassword(), updatedUser.getPassword());
         }
     }
+
+    @Nested
+    @DisplayName("updateOneForId")
+    public class UpdateOneForId {
+        @Test
+        @DisplayName("updates a password for a provided id")
+        void updatesAPasswordForAProvidedId() {
+            UsersRecord user = userRecordPool.createAndSaveOne();
+            String newPassword = UUID.randomUUID().toString();
+            userPasswordJooqRepository.updateOneForId(user.getId(), newPassword);
+            user.refresh();
+            assertEquals(newPassword, user.getPassword());
+        }
+    }
 }
