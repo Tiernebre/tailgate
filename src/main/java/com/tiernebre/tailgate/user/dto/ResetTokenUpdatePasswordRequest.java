@@ -1,7 +1,7 @@
 package com.tiernebre.tailgate.user.dto;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.*;
 
@@ -9,18 +9,24 @@ import java.util.Map;
 
 import static com.tiernebre.tailgate.user.validator.UserValidationConstants.*;
 
-@Value
-@Builder
-public class ResetTokenUpdatePasswordRequest {
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public class ResetTokenUpdatePasswordRequest extends UpdatePasswordRequest {
+    @Builder
+    public ResetTokenUpdatePasswordRequest(
+            String email,
+            Map<Long, String> securityQuestionAnswers,
+            String newPassword,
+            String confirmationNewPassword
+    ) {
+        super(newPassword, confirmationNewPassword);
+        this.email = email;
+        this.securityQuestionAnswers = securityQuestionAnswers;
+    }
+
     @NotBlank
     @Email
     String email;
-
-    @NotBlank
-    @Size(min = MINIMUM_PASSWORD_LENGTH, max = MAXIMUM_PASSWORD_LENGTH)
-    String newPassword;
-
-    String confirmationNewPassword;
 
     @Size(
             min = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
