@@ -54,10 +54,10 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     }
 
     @Override
-    public void updateOneForUser(UserDto userDto, UserUpdatePasswordRequest userUpdatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
+    public void updateOneForUser(UserDto userDto, UserUpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
         Long userId = userDto.getId();
-        validateProvidedOldPassword(userId, userUpdatePasswordRequest.getOldPassword());
-        boolean passwordUpdated = repository.updateOneForId(userId, userUpdatePasswordRequest.getNewPassword());
+        validateProvidedOldPassword(userId, updatePasswordRequest.getOldPassword());
+        boolean passwordUpdated = repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
         if (!passwordUpdated) {
             throw new UserNotFoundForPasswordUpdateException();
         }

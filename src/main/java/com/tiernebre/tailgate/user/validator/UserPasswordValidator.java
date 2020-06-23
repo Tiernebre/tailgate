@@ -31,8 +31,8 @@ public interface UserPasswordValidator {
     /**
      * Validates a password update request for a provided user flow.
      *
-     * @param userUpdatePasswordRequest The request to validate
+     * @param updatePasswordRequest The request to validate
      * @throws InvalidUpdatePasswordRequestException if the request was invalid.
      */
-    void validateUpdateRequest(UserUpdatePasswordRequest userUpdatePasswordRequest) throws InvalidUpdatePasswordRequestException;
+    void validateUpdateRequest(UserUpdatePasswordRequest updatePasswordRequest) throws InvalidUpdatePasswordRequestException;
 }

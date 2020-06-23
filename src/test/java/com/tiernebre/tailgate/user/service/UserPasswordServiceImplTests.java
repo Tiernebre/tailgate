@@ -175,11 +175,11 @@ public class UserPasswordServiceImplTests {
         @DisplayName("throws a not found error if an old password was not found for the provided user")
         void throwsANotFoundErrorIfAnOldPasswordWasNotFoundForTheProvidedUser() {
             UserDto user = UserFactory.generateOneDto();
-            UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.empty());
             assertThrows(
                 UserNotFoundForPasswordUpdateException.class,
-                () -> userPasswordService.updateOneForUser(user, userUpdatePasswordRequest)
+                () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
         }
 
@@ -187,14 +187,14 @@ public class UserPasswordServiceImplTests {
         @DisplayName("throws a not found error if a password update did not occur")
         void throwsANotFoundErrorIfAPasswordUpdateDidNotOccur() {
             UserDto user = UserFactory.generateOneDto();
-            UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             String oldHashedPassword =  UUID.randomUUID().toString();
             when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
-            when(passwordEncoder.matches(eq(userUpdatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
-            when(repository.updateOneForId(eq(user.getId()), eq(userUpdatePasswordRequest.getNewPassword()))).thenReturn(false);
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
+            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(false);
             assertThrows(
                     UserNotFoundForPasswordUpdateException.class,
-                    () -> userPasswordService.updateOneForUser(user, userUpdatePasswordRequest)
+                    () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
         }
 
@@ -202,13 +202,13 @@ public class UserPasswordServiceImplTests {
         @DisplayName("throws an invalid error if a password update contained the incorrect old password")
         void throwsAnInvalidErrorIfAPasswordUpdateContainedTheIncorrectOldPassword() {
             UserDto user = UserFactory.generateOneDto();
-            UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             String oldHashedPassword =  UUID.randomUUID().toString();
             when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
-            when(passwordEncoder.matches(eq(userUpdatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(false);
+            when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(false);
             assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordService.updateOneForUser(user, userUpdatePasswordRequest)
+                    () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
             );
         }
     }
