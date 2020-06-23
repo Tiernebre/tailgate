@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.tiernebre.tailgate.user.service.UserPasswordServiceImpl.REQUIRED_USER_VALIDATION_MESSAGE;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -171,6 +173,17 @@ public class UserPasswordServiceImplTests {
     @Nested
     @DisplayName("updateOneForUser")
     public class UpdateOneForUserTests {
+        @Test
+        @DisplayName("does not allow a null user")
+        void doesNotAllowANullUser() {
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            NullPointerException thrown = assertThrows(
+                    NullPointerException.class,
+                    () -> userPasswordService.updateOneForUser(null, updatePasswordRequest)
+            );
+            assertEquals(REQUIRED_USER_VALIDATION_MESSAGE, thrown.getMessage());
+        }
+
         @Test
         @DisplayName("throws a not found error if an old password was not found for the provided user")
         void throwsANotFoundErrorIfAnOldPasswordWasNotFoundForTheProvidedUser() {

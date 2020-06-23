@@ -16,10 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UserPasswordServiceImpl implements UserPasswordService {
+    static final String REQUIRED_USER_VALIDATION_MESSAGE = "The user must be provided for a password update.";
+
     private final UserPasswordValidator validator;
     private final UserPasswordRepository repository;
     private final PasswordResetTokenService passwordResetTokenService;
@@ -55,6 +58,8 @@ public class UserPasswordServiceImpl implements UserPasswordService {
 
     @Override
     public void updateOneForUser(UserDto userDto, UserUpdatePasswordRequest updatePasswordRequest) throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
+        Objects.requireNonNull(userDto, REQUIRED_USER_VALIDATION_MESSAGE);
+        validator.validateUpdateRequest(updatePasswordRequest);
         Long userId = userDto.getId();
         validateProvidedOldPassword(userId, updatePasswordRequest.getOldPassword());
         boolean passwordUpdated = repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
