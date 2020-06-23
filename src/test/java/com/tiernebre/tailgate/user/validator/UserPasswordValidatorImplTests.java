@@ -1,6 +1,7 @@
 package com.tiernebre.tailgate.user.validator;
 
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.dto.UpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidUpdatePasswordRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -172,13 +173,13 @@ public class UserPasswordValidatorImplTests {
         void testValidateEnsurePasswordAndConfirmationPasswordAreEqual() {
             when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "testPassword12345!";
-            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
                     .newPassword(password)
                     .confirmationNewPassword(password + "!")
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MATCHES_ERROR));
         }
@@ -188,13 +189,13 @@ public class UserPasswordValidatorImplTests {
         void testValidateEnsurePasswordMustHaveNumericalDigitCharacters() {
             when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "testPassword!";
-            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
                     .newPassword(password)
                     .confirmationNewPassword(password)
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_CONTAIN_DIGITS_ERROR));
         }
@@ -204,13 +205,13 @@ public class UserPasswordValidatorImplTests {
         void testValidateEnsurePasswordMustHaveUppercaseAlphabeticalCharacters() {
             when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "testpassword12345!";
-            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
                     .newPassword(password)
                     .confirmationNewPassword(password)
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
@@ -220,13 +221,13 @@ public class UserPasswordValidatorImplTests {
         void testValidateEnsurePasswordMustHaveLowercaseAlphabeticalCharacters() {
             when(validator.validate(any())).thenReturn(Collections.emptySet());
             String password = "TESTPASSWORD12345!";
-            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
                     .newPassword(password)
                     .confirmationNewPassword(password)
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_MIXED_CHARACTERS_ERROR));
         }
@@ -235,13 +236,13 @@ public class UserPasswordValidatorImplTests {
         @Test
         void testValidateEnsurePasswordMustHaveSpecialCharacters() {
             String password = "TestPassword12345";
-            ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
+            UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
                     .newPassword(password)
                     .confirmationNewPassword(password)
                     .build();
             Set<String> passwordErrors = assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(updatePasswordRequest)
+                    () -> userPasswordValidator.validateUpdateRequest(updatePasswordRequest)
             ).getErrors();
             assertTrue(passwordErrors.contains(PASSWORD_SPECIAL_CHARACTERS_ERROR));
         }
@@ -251,7 +252,7 @@ public class UserPasswordValidatorImplTests {
         void doesNotAllowANullUpdateRequest() {
             String message = assertThrows(
                     NullPointerException.class,
-                    () -> userPasswordValidator.validateResetTokenUpdateRequest(null)
+                    () -> userPasswordValidator.validateUpdateRequest(null)
             ).getMessage();
             assertEquals(NULL_PASSWORD_UPDATE_REQUEST_ERROR, message);
         }

@@ -33,5 +33,5 @@ public final class UserValidationConstants {
     public static final String PASSWORD_CONTAIN_DIGITS_ERROR = "password must contain numerical digits (0-9)";
     public static final String PASSWORD_MIXED_CHARACTERS_ERROR = "password must contain mixed uppercase and lowercase alphabetical characters (A-Z, a-z)";
     public static final String PASSWORD_SPECIAL_CHARACTERS_ERROR = "password must contain non-alphanumeric characters";
-    public static final String NULL_PASSWORD_UPDATE_REQUEST_ERROR = "The update password request to update must not be null";
+    public static final String NULL_PASSWORD_UPDATE_REQUEST_ERROR = "The update password request must not be null";
 }
