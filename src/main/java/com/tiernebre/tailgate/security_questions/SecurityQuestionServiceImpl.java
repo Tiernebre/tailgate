@@ -22,6 +22,11 @@ public class SecurityQuestionServiceImpl implements SecurityQuestionService {
         return !allExistWithIds(ids);
     }
 
+    @Override
+    public List<SecurityQuestionDto> getAllForPasswordResetToken(String passwordResetToken) {
+        return converter.createFromEntities(repository.getAllForPasswordResetToken(passwordResetToken));
+    }
+
     private boolean allExistWithIds(Set<Long> ids) {
         return repository.allExistWithIds(ids);
     }
