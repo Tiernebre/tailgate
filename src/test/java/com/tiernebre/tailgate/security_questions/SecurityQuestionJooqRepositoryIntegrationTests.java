@@ -14,6 +14,7 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -130,6 +131,13 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
             String passwordResetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(usersRecord).getToken();
             List<SecurityQuestionEntity> foundSecurityQuestions = securityQuestionJooqRepository.getAllForPasswordResetToken(passwordResetToken);
             assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
+        }
+
+        @Test
+        @DisplayName("returns an empty list for an invalid reset token")
+        void returnsAnEmptyListForAnInvalidResetToken() {
+            List<SecurityQuestionEntity> foundSecurityQuestions = securityQuestionJooqRepository.getAllForPasswordResetToken(UUID.randomUUID().toString());
+            assertTrue(foundSecurityQuestions.isEmpty());
         }
     }
 }
