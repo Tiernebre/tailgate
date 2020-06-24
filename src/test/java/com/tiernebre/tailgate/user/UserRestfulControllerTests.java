@@ -2,10 +2,10 @@ package com.tiernebre.tailgate.user;
 
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
-import com.tiernebre.tailgate.user.exception.InvalidUserException;
-import com.tiernebre.tailgate.user.exception.UserAlreadyExistsException;
-import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
+import com.tiernebre.tailgate.user.exception.*;
 import com.tiernebre.tailgate.user.service.UserConfirmationService;
+import com.tiernebre.tailgate.user.service.UserPasswordService;
 import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,6 +28,9 @@ public class UserRestfulControllerTests {
 
     @Mock
     private UserConfirmationService userConfirmationService;
+
+    @Mock
+    private UserPasswordService passwordService;
 
     @InjectMocks
     private UserRestfulController userRestfulController;
@@ -67,6 +70,19 @@ public class UserRestfulControllerTests {
             UserDto user = UserFactory.generateOneDto();
             userRestfulController.sendConfirmationTokenForAuthenticatedUser(user);
             verify(userConfirmationService, times(1)).sendOne(eq(user));
+        }
+    }
+
+    @Nested
+    @DisplayName("updatePasswordForCurrentUser")
+    public class UpdatePasswordForCurrentUserTests {
+        @Test
+        @DisplayName("passes along the correct information")
+        void passesAlongTheCorrectInformation() throws UserNotFoundForPasswordUpdateException, InvalidUpdatePasswordRequestException {
+            UserDto user = UserFactory.generateOneDto();
+            UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            userRestfulController.updatePasswordForCurrentUser(user, updatePasswordRequest);
+            verify(passwordService, times(1)).updateOneForUser(eq(user), eq(updatePasswordRequest));
         }
     }
 }
