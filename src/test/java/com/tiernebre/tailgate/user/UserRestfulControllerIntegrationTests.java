@@ -106,6 +106,14 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
                     post("/users/me/confirmation-token")
             ).andExpect(status().isNoContent());
         }
+
+        @Test
+        @DisplayName("returns with 403 FORBIDDEN status if no user is authenticated")
+        void returnsWith403ForbiddenIfNoUserIsAuthenticated() throws Exception {
+            mockMvc.perform(
+                    post("/users/me/confirmation-token")
+            ).andExpect(status().isForbidden());
+        }
     }
 
     @Nested
