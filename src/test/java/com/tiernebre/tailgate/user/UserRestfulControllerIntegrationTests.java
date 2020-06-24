@@ -123,5 +123,16 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
                             .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isNoContent());
         }
+
+        @Test
+        @DisplayName("returns with 403 FORBIDDEN status if there is no user provided")
+        void returnsWith403ForbiddenIfThereIsNoUserProvided() throws Exception {
+            UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            mockMvc.perform(
+                    post("/users/me/password")
+                            .content(objectMapper.writeValueAsString(userUpdatePasswordRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isForbidden());
+        }
     }
 }
