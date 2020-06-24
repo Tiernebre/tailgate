@@ -17,4 +17,15 @@ public interface SecurityQuestionService {
      *         true if at least one of the ids does not match up to a security question
      */
     boolean someDoNotExistWithIds(Set<Long> ids);
+
+    /**
+     * Returns the security questions tied to a password reset token.
+     *
+     * Useful for providing a list of questions for a user to answer in order to
+     * reset their password.
+     *
+     * @param passwordResetToken The password reset token to find questions for.
+     * @return The found security questions.
+     */
+    List<SecurityQuestionDto> getAllForPasswordResetToken(String passwordResetToken);
 }

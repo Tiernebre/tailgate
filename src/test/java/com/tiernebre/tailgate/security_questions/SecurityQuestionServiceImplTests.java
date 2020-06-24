@@ -12,6 +12,7 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableSet;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -66,6 +67,22 @@ public class SecurityQuestionServiceImplTests {
             Set<Long> ids = ImmutableSet.of(1L, 5L, 12L);
             when(securityQuestionRepository.allExistWithIds(eq(ids))).thenReturn(false);
             assertTrue(securityQuestionService.someDoNotExistWithIds(ids));
+        }
+    }
+
+    @Nested
+    @DisplayName("getAllForPasswordResetToken")
+    public class GetAllForPasswordResetToken {
+        @Test
+        @DisplayName("returns the found security questions from a given password reset token converted to DTOs")
+        public void returnsTheFoundSecurityQuestionsFromAGivenPasswordResetTokenConvertedToDtos() {
+            List<SecurityQuestionEntity> entities = SecurityQuestionFactory.generateManyEntities();
+            String passwordResetToken = UUID.randomUUID().toString();
+            List<SecurityQuestionDto> expectedDtos = SecurityQuestionFactory.generateMultipleDtos();
+            when(securityQuestionRepository.getAllForPasswordResetToken(eq(passwordResetToken))).thenReturn(entities);
+            when(securityQuestionConverter.createFromEntities(eq(entities))).thenReturn(expectedDtos);
+            List<SecurityQuestionDto> foundDtos = securityQuestionService.getAllForPasswordResetToken(passwordResetToken);
+            assertEquals(expectedDtos, foundDtos);
         }
     }
 }

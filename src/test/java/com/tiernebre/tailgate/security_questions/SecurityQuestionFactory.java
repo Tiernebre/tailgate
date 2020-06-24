@@ -22,6 +22,14 @@ public class SecurityQuestionFactory {
         return securityQuestions;
     }
 
+    public static List<SecurityQuestionEntity> generateManyEntities() {
+        List<SecurityQuestionEntity> entities = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            entities.add(generateOneEntity());
+        }
+        return entities;
+    }
+
     public static SecurityQuestionEntity generateOneEntity() {
         return SecurityQuestionEntity.builder()
                 .id(new Random().nextLong())

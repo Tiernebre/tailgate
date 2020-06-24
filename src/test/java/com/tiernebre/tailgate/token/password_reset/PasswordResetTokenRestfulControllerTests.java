@@ -1,5 +1,8 @@
 package com.tiernebre.tailgate.token.password_reset;
 
+import com.tiernebre.tailgate.security_questions.SecurityQuestionDto;
+import com.tiernebre.tailgate.security_questions.SecurityQuestionFactory;
+import com.tiernebre.tailgate.security_questions.SecurityQuestionService;
 import com.tiernebre.tailgate.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.tailgate.user.exception.InvalidSecurityQuestionAnswerException;
@@ -14,11 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PasswordResetTokenRestfulControllerTests {
@@ -27,6 +31,9 @@ public class PasswordResetTokenRestfulControllerTests {
 
     @Mock
     private UserPasswordService userPasswordService;
+
+    @Mock
+    private SecurityQuestionService securityQuestionService;
 
     @Nested
     @DisplayName("updatePasswordUsingResetToken")
@@ -38,6 +45,20 @@ public class PasswordResetTokenRestfulControllerTests {
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequestFactory.generateOneDto();
             passwordResetTokenRestfulController.updatePasswordUsingResetToken(resetToken, resetTokenUpdatePasswordRequest);
             verify(userPasswordService, times(1)).updateOneUsingResetToken(eq(resetToken), eq(resetTokenUpdatePasswordRequest));
+        }
+    }
+
+    @Nested
+    @DisplayName("getSecurityQuestionsForPasswordResetToken")
+    class GetSecurityQuestionsForPasswordResetTokenTests {
+        @Test
+        @DisplayName("returns the found security questions")
+        void returnsTheFoundSecurityQuestions() {
+            String resetToken = UUID.randomUUID().toString();
+            List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
+            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
+            List<SecurityQuestionDto> gottenSecurityQuestions = passwordResetTokenRestfulController.getSecurityQuestionsForPasswordResetToken(resetToken);
+            assertEquals(expectedSecurityQuestions, gottenSecurityQuestions);
         }
     }
 }
