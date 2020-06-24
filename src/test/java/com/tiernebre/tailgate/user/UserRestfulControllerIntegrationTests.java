@@ -118,7 +118,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
             UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             doNothing().when(passwordService).updateOneForUser(eq(UserFactory.CUSTOM_AUTHENTICATED_USER), eq(userUpdatePasswordRequest));
             mockMvc.perform(
-                    post("/users/me/confirmation-token")
+                    post("/users/me/password")
                             .content(objectMapper.writeValueAsString(userUpdatePasswordRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isNoContent());
