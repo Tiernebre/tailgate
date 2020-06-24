@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Set;
 
+import static com.tiernebre.tailgate.jooq.Tables.*;
 import static com.tiernebre.tailgate.jooq.tables.SecurityQuestions.SECURITY_QUESTIONS;
 
 @Repository
@@ -28,6 +29,21 @@ public class SecurityQuestionJooqRepository implements SecurityQuestionRepositor
     public boolean allExistWithIds(Set<Long> ids) {
         int numberOfFoundSecurityQuestions = getCountForAllWithIds(ids);
         return numberOfFoundSecurityQuestions > 0 && numberOfFoundSecurityQuestions == ids.size();
+    }
+
+    @Override
+    public List<SecurityQuestionEntity> getAllForPasswordResetToken(String passwordResetToken) {
+        return dslContext
+                .select(SECURITY_QUESTIONS.asterisk())
+                .from(SECURITY_QUESTIONS)
+                .join(USER_SECURITY_QUESTIONS)
+                .on(SECURITY_QUESTIONS.ID.eq(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID))
+                .join(USERS)
+                .on(USER_SECURITY_QUESTIONS.USER_ID.eq(USERS.ID))
+                .join(PASSWORD_RESET_TOKENS)
+                .on(PASSWORD_RESET_TOKENS.USER_ID.eq(USERS.ID))
+                .where(PASSWORD_RESET_TOKENS.TOKEN.eq(passwordResetToken))
+                .fetchInto(SecurityQuestionEntity.class);
     }
 
     private int getCountForAllWithIds(Set<Long> ids) {

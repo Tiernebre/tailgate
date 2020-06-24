@@ -1,7 +1,10 @@
 package com.tiernebre.tailgate.security_questions;
 
 import com.tiernebre.tailgate.jooq.tables.records.SecurityQuestionsRecord;
+import com.tiernebre.tailgate.jooq.tables.records.UsersRecord;
 import com.tiernebre.tailgate.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.tailgate.token.password_reset.PasswordResetTokenRecordPool;
+import com.tiernebre.tailgate.user.UserRecordPool;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -22,6 +25,12 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
     @Autowired
     private SecurityQuestionJooqRepository securityQuestionJooqRepository;
 
+    @Autowired
+    private UserRecordPool userRecordPool;
+
+    @Autowired
+    private PasswordResetTokenRecordPool passwordResetTokenRecordPool;
+
     @BeforeEach
     public void setup() {
         recordPool.deleteAll();
@@ -29,6 +38,8 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
 
     @AfterEach
     public void cleanup() {
+        passwordResetTokenRecordPool.deleteAll();
+        userRecordPool.deleteAll();
         recordPool.deleteAll();
     }
 
@@ -101,6 +112,24 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
             Set<Long> ids = recordPool.createMultiple().stream().map(SecurityQuestionsRecord::getId).collect(Collectors.toSet());
             ids.add(Long.MAX_VALUE);
             assertFalse(securityQuestionJooqRepository.allExistWithIds(ids));
+        }
+    }
+
+    @Nested
+    @DisplayName("getAllForPasswordResetToken")
+    class GetAllForPasswordResetToken {
+        @Test
+        @DisplayName("returns the security questions tied to a given password reset token")
+        void returnsTheSecurityQuestionsTiedToAGivenPasswordResetToken() {
+            UsersRecord usersRecord = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            List<SecurityQuestionsRecord> securityQuestions = recordPool.getSecurityQuestionsForUser(usersRecord);
+            List<SecurityQuestionEntity> expectedSecurityQuestions = securityQuestions
+                    .stream()
+                    .map(securityQuestionsRecord -> securityQuestionsRecord.into(SecurityQuestionEntity.class))
+                    .collect(Collectors.toList());
+            String passwordResetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(usersRecord).getToken();
+            List<SecurityQuestionEntity> foundSecurityQuestions = securityQuestionJooqRepository.getAllForPasswordResetToken(passwordResetToken);
+            assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
         }
     }
 }

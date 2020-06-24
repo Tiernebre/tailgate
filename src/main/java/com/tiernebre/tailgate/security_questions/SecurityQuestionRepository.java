@@ -17,4 +17,6 @@ public interface SecurityQuestionRepository {
      *         false if at least one of the ids does not match up to a security question
      */
     boolean allExistWithIds(Set<Long> ids);
+
+    List<SecurityQuestionEntity> getAllForPasswordResetToken(String passwordResetToken);
 }
