@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = PasswordResetTokenRestfulController.class)
@@ -60,6 +61,26 @@ public class PasswordResetTokenRestfulControllerIntegrationTests extends WebCont
             List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
             when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
             mockMvc.perform(get(uri)).andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("returns with the security questions properly formatted in JSON")
+        void returnsWithTheSecurityQuestionsProperlyFormattedInJson() throws Exception {
+            String resetToken = UUID.randomUUID().toString();
+            String uri = String.format("/password-reset-tokens/%s/security-questions", resetToken);
+            List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
+            SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestions.get(0);
+            SecurityQuestionDto secondSecurityQuestionDto = expectedSecurityQuestions.get(1);
+            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
+            mockMvc.perform(get(uri))
+                    .andExpect(jsonPath("$[0].id").exists())
+                    .andExpect(jsonPath("$[0].id").value(firstSecurityQuestionDto.getId()))
+                    .andExpect(jsonPath("$[0].question").exists())
+                    .andExpect(jsonPath("$[0].question").value(firstSecurityQuestionDto.getQuestion()))
+                    .andExpect(jsonPath("$[1].id").exists())
+                    .andExpect(jsonPath("$[1].id").value(secondSecurityQuestionDto.getId()))
+                    .andExpect(jsonPath("$[1].question").exists())
+                    .andExpect(jsonPath("$[1].question").value(secondSecurityQuestionDto.getQuestion()));
         }
     }
 }
