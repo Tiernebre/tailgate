@@ -4,8 +4,10 @@ import com.tiernebre.tailgate.test.WebControllerIntegrationTestSuite;
 import com.tiernebre.tailgate.test.WithMockCustomUser;
 import com.tiernebre.tailgate.user.dto.CreateUserRequest;
 import com.tiernebre.tailgate.user.dto.UserDto;
+import com.tiernebre.tailgate.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.tailgate.user.exception.UserNotFoundForConfirmationException;
 import com.tiernebre.tailgate.user.service.UserConfirmationService;
+import com.tiernebre.tailgate.user.service.UserPasswordService;
 import com.tiernebre.tailgate.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +32,9 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
 
     @MockBean
     private UserConfirmationService userConfirmationService;
+
+    @MockBean
+    private UserPasswordService passwordService;
 
     @DisplayName("POST /users")
     @Nested
@@ -99,6 +104,23 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
             doNothing().when(userConfirmationService).sendOne(UserFactory.CUSTOM_AUTHENTICATED_USER);
             mockMvc.perform(
                     post("/users/me/confirmation-token")
+            ).andExpect(status().isNoContent());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /users/me/password")
+    public class PostMyPasswordTests {
+        @Test
+        @DisplayName("returns with 204 NO CONTENT status if successful")
+        @WithMockCustomUser
+        void returnsWith204NoContentStatusIfSuccessful() throws Exception {
+            UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
+            doNothing().when(passwordService).updateOneForUser(eq(UserFactory.CUSTOM_AUTHENTICATED_USER), eq(userUpdatePasswordRequest));
+            mockMvc.perform(
+                    post("/users/me/confirmation-token")
+                            .content(objectMapper.writeValueAsString(userUpdatePasswordRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isNoContent());
         }
     }
