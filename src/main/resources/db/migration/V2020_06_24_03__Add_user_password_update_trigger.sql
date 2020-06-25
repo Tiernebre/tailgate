@@ -9,7 +9,9 @@ BEGIN
 
 	RETURN NEW;
 END;
-$BODY$;
+$BODY$
+
+LANGUAGE plpgsql VOLATILE;
 
 CREATE TRIGGER user_password_changes
   BEFORE UPDATE
