@@ -26,7 +26,7 @@ public abstract class EmailIntegrationTestSuite extends SpringIntegrationTesting
             ZONE_BLITZ_MAILHOG_CONTAINER.start();
             int dynamicallyAllocatedSmtpPort = ZONE_BLITZ_MAILHOG_CONTAINER.getMappedPort(ZONE_BLITZ_MAILHOG_CONTAINER.getSmtpPort());
             int dynamicallyAllocatedApiPort = ZONE_BLITZ_MAILHOG_CONTAINER.getMappedPort(ZONE_BLITZ_MAILHOG_CONTAINER.getApiPort());
-            configurableApplicationContext.getEnvironment().getSystemProperties().put("tailgate.email.port", dynamicallyAllocatedSmtpPort);
+            configurableApplicationContext.getEnvironment().getSystemProperties().put("zone-blitz.email.port", dynamicallyAllocatedSmtpPort);
             configurableApplicationContext.getEnvironment().getSystemProperties().put("mailhog.port", dynamicallyAllocatedApiPort);
         }
     }

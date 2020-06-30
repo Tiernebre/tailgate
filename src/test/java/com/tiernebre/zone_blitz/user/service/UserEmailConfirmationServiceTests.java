@@ -42,9 +42,9 @@ public class UserEmailConfirmationServiceTests {
         @Test
         @DisplayName("sends off a formatted email from the provided user")
         public void sendsOffAFormattedEmailFromTheProvidedUser() {
-            String from = "expectedTest@tailgate.io";
+            String from = "expectedTest@zoneblitz.app";
             when(zoneBlitzEmailConfigurationProperties.getFrom()).thenReturn(from);
-            String subject = "Confirm Your Account With Tailgate";
+            String subject = "Confirm Your Account With Zone Blitz";
             String confirmationToken = UUID.randomUUID().toString();
             String confirmationTokenTag = "{{ confirmationToken }}";
             String message = "Navigate to " + confirmationTokenTag + " to confirm your account";

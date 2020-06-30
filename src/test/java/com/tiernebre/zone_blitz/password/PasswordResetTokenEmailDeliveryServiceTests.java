@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class PasswordResetTokenEmailDeliveryServiceTests {
     private final static String EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG = "{{ passwordResetToken }}";
-    private final static String EXPECTED_EMAIL_MESSAGE = "Please reset your password at https://tailgate.io/" + EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG;
+    private final static String EXPECTED_EMAIL_MESSAGE = "Please reset your password at https://zoneblitz.app/" + EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG;
 
     @InjectMocks
     private PasswordResetTokenEmailDeliveryService passwordResetTokenEmailDeliveryService;
@@ -37,7 +37,7 @@ public class PasswordResetTokenEmailDeliveryServiceTests {
 
     @BeforeEach
     public void setup() {
-        when(zoneBlitzEmailConfigurationProperties.getFrom()).thenReturn("Tailgate From");
+        when(zoneBlitzEmailConfigurationProperties.getFrom()).thenReturn("Zone Blitz From");
         when(passwordResetEmailDeliveryConfigurationProperties.getSubject()).thenReturn("Reset Your Password");
         when(passwordResetEmailDeliveryConfigurationProperties.getPasswordResetTokenTag()).thenReturn(EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG);
         when(passwordResetEmailDeliveryConfigurationProperties.getMessage()).thenReturn(EXPECTED_EMAIL_MESSAGE);
