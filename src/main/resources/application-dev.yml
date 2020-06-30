@@ -1,4 +1,4 @@
-tailgate:
+zone-blitz:
   jwt:
     secret: 'secretforjsonwebtokenswow'
     expiration-window-in-minutes: 15
