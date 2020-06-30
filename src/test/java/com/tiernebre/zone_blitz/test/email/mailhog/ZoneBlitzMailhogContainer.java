@@ -7,21 +7,21 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
  * Singleton Container Representation of a MailHog container to allow for easy-to-spin-up
  * email tests:
  */
-public class TailgateMailhogContainer extends GenericContainer {
+public class ZoneBlitzMailhogContainer extends GenericContainer {
     private static final int SMTP_PORT = 1025;
     private static final int API_PORT = 8025;
 
     private static final String IMAGE_VERSION = "mailhog/mailhog";
-    private static TailgateMailhogContainer container;
+    private static ZoneBlitzMailhogContainer container;
 
-    private TailgateMailhogContainer() {
+    private ZoneBlitzMailhogContainer() {
         super(IMAGE_VERSION);
         setExposedPorts(ImmutableList.of(SMTP_PORT, API_PORT));
     }
 
-    public static TailgateMailhogContainer getInstance() {
+    public static ZoneBlitzMailhogContainer getInstance() {
         if (container == null) {
-            container = new TailgateMailhogContainer();
+            container = new ZoneBlitzMailhogContainer();
         }
         return container;
     }
