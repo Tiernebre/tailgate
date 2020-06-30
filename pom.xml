@@ -9,13 +9,13 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tiernebre</groupId>
-	<artifactId>tailgate</artifactId>
+	<artifactId>zone-blitz</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tailgate</name>
+	<name>zone-blitz</name>
 	<description>NCAA Dynasty Manager</description>
 
 	<properties>
-		<codegen-db.name>tailgate</codegen-db.name>
+		<codegen-db.name>zone-blitz</codegen-db.name>
 		<codegen-db.url>jdbc:postgresql://localhost:${codegen-db.port}/${codegen-db.name}</codegen-db.url>
 		<codegen-db.username>codegenuser</codegen-db.username>
 		<codegen-db.password>GenerateJooqCode!</codegen-db.password>
@@ -133,7 +133,7 @@
 				<configuration>
 					<images>
 						<image>
-							<alias>tailgate-code-generation-db</alias>
+							<alias>zone-blitz-code-generation-db</alias>
 							<name>postgres:12.2</name>
 							<run>
 								<env>
