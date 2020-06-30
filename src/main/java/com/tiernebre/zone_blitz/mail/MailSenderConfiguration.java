@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 @RequiredArgsConstructor
 public class MailSenderConfiguration {
-    private final TailgateEmailConfigurationProperties configurationProperties;
+    private final ZoneBlitzEmailConfigurationProperties configurationProperties;
 
     @Bean
     public JavaMailSender mailSender() {

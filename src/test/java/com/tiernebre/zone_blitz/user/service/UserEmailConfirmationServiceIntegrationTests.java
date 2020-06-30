@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.user.service;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.mail.TailgateEmailConfigurationProperties;
+import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.test.EmailIntegrationTestSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
 import com.tiernebre.zone_blitz.test.email.TestEmailInboxService;
@@ -28,7 +28,7 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
     private TestEmailInboxService testEmailInboxService;
 
     @Autowired
-    private TailgateEmailConfigurationProperties tailgateEmailConfigurationProperties;
+    private ZoneBlitzEmailConfigurationProperties zoneBlitzEmailConfigurationProperties;
 
     @Autowired
     private UserEmailConfirmationConfigurationProperties userEmailConfirmationConfigurationProperties;
@@ -53,7 +53,7 @@ public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrati
             assertTrue(StringUtils.isNotBlank(foundEmail.getTo()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getSubject()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getText()));
-            assertEquals(tailgateEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
+            assertEquals(zoneBlitzEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
             assertEquals(userToConfirm.getEmail(), foundEmail.getTo());
             assertEquals(userEmailConfirmationConfigurationProperties.getSubject(), foundEmail.getSubject());
         }

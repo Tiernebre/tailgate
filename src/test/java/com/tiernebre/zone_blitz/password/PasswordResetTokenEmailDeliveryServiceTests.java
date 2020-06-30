@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.password;
 
-import com.tiernebre.zone_blitz.mail.TailgateEmailConfigurationProperties;
+import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,14 +30,14 @@ public class PasswordResetTokenEmailDeliveryServiceTests {
     private MailSender mailSender;
 
     @Mock
-    private TailgateEmailConfigurationProperties tailgateEmailConfigurationProperties;
+    private ZoneBlitzEmailConfigurationProperties zoneBlitzEmailConfigurationProperties;
 
     @Mock
     private PasswordResetEmailDeliveryConfigurationProperties passwordResetEmailDeliveryConfigurationProperties;
 
     @BeforeEach
     public void setup() {
-        when(tailgateEmailConfigurationProperties.getFrom()).thenReturn("Tailgate From");
+        when(zoneBlitzEmailConfigurationProperties.getFrom()).thenReturn("Tailgate From");
         when(passwordResetEmailDeliveryConfigurationProperties.getSubject()).thenReturn("Reset Your Password");
         when(passwordResetEmailDeliveryConfigurationProperties.getPasswordResetTokenTag()).thenReturn(EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG);
         when(passwordResetEmailDeliveryConfigurationProperties.getMessage()).thenReturn(EXPECTED_EMAIL_MESSAGE);
@@ -54,7 +54,7 @@ public class PasswordResetTokenEmailDeliveryServiceTests {
             passwordResetTokenEmailDeliveryService.sendOne(user, passwordResetToken);
             SimpleMailMessage expectedMailMessage = new SimpleMailMessage();
             expectedMailMessage.setTo(user.getEmail());
-            expectedMailMessage.setFrom(tailgateEmailConfigurationProperties.getFrom());
+            expectedMailMessage.setFrom(zoneBlitzEmailConfigurationProperties.getFrom());
             expectedMailMessage.setSubject(passwordResetEmailDeliveryConfigurationProperties.getSubject());
             String expectedMessage = EXPECTED_EMAIL_MESSAGE.replace(EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG, passwordResetToken);
             expectedMailMessage.setText(expectedMessage);

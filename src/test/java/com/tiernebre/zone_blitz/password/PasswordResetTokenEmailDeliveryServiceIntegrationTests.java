@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.password;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.mail.TailgateEmailConfigurationProperties;
+import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.test.EmailIntegrationTestSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
 import com.tiernebre.zone_blitz.test.email.TestEmailInboxService;
@@ -30,7 +30,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
     private TestEmailInboxService testEmailInboxService;
 
     @Autowired
-    private TailgateEmailConfigurationProperties tailgateEmailConfigurationProperties;
+    private ZoneBlitzEmailConfigurationProperties zoneBlitzEmailConfigurationProperties;
 
     @Autowired
     private PasswordResetEmailDeliveryConfigurationProperties passwordResetEmailDeliveryConfigurationProperties;
@@ -57,7 +57,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
             assertTrue(StringUtils.isNotBlank(foundEmail.getSubject()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getText()));
             assertTrue(foundEmail.getText().contains(passwordResetToken));
-            assertEquals(tailgateEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
+            assertEquals(zoneBlitzEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
             assertEquals(userToResetPasswordFor.getEmail(), foundEmail.getTo());
             assertEquals(passwordResetEmailDeliveryConfigurationProperties.getSubject(), foundEmail.getSubject());
         }

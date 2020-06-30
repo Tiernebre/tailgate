@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.user.service;
 
-import com.tiernebre.zone_blitz.mail.TailgateEmailConfigurationProperties;
+import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.token.user_confirmation.UserConfirmationTokenService;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.configuration.UserEmailConfirmationConfigurationProperties;
@@ -28,7 +28,7 @@ public class UserEmailConfirmationServiceTests {
     private JavaMailSender javaMailSender;
 
     @Mock
-    private TailgateEmailConfigurationProperties tailgateEmailConfigurationProperties;
+    private ZoneBlitzEmailConfigurationProperties zoneBlitzEmailConfigurationProperties;
 
     @Mock
     private UserEmailConfirmationConfigurationProperties configurationProperties;
@@ -43,7 +43,7 @@ public class UserEmailConfirmationServiceTests {
         @DisplayName("sends off a formatted email from the provided user")
         public void sendsOffAFormattedEmailFromTheProvidedUser() {
             String from = "expectedTest@tailgate.io";
-            when(tailgateEmailConfigurationProperties.getFrom()).thenReturn(from);
+            when(zoneBlitzEmailConfigurationProperties.getFrom()).thenReturn(from);
             String subject = "Confirm Your Account With Tailgate";
             String confirmationToken = UUID.randomUUID().toString();
             String confirmationTokenTag = "{{ confirmationToken }}";

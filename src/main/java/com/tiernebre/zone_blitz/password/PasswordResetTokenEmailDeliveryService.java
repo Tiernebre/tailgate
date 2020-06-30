@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.password;
 
-import com.tiernebre.zone_blitz.mail.TailgateEmailConfigurationProperties;
+import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSender;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PasswordResetTokenEmailDeliveryService implements PasswordResetTokenDeliveryService {
     private final MailSender mailSender;
-    private final TailgateEmailConfigurationProperties tailgateEmailConfigurationProperties;
+    private final ZoneBlitzEmailConfigurationProperties zoneBlitzEmailConfigurationProperties;
     private final PasswordResetEmailDeliveryConfigurationProperties configurationProperties;
 
     @Override
@@ -22,7 +22,7 @@ public class PasswordResetTokenEmailDeliveryService implements PasswordResetToke
         SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
         passwordResetEmail.setSubject(configurationProperties.getSubject());
         passwordResetEmail.setTo(userDto.getEmail());
-        passwordResetEmail.setFrom(tailgateEmailConfigurationProperties.getFrom());
+        passwordResetEmail.setFrom(zoneBlitzEmailConfigurationProperties.getFrom());
         passwordResetEmail.setText(formatMessage(passwordResetToken));
         mailSender.send(passwordResetEmail);
     }

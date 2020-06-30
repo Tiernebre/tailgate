@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "tailgate.email")
+@ConfigurationProperties(prefix = "zone-blitz.email")
 @ConstructorBinding
 @RequiredArgsConstructor
 @Getter
-public class TailgateEmailConfigurationProperties {
+public class ZoneBlitzEmailConfigurationProperties {
     private final String from;
     private final String host;
     private final Integer port;
