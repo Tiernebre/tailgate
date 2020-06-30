@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @ConfigurationPropertiesScan("com.tiernebre.tailgate")
 @EnableAsync
-public class TailgateApplication {
+public class ZoneBlitzApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TailgateApplication.class, args);
+		SpringApplication.run(ZoneBlitzApplication.class, args);
 	}
 
 }
