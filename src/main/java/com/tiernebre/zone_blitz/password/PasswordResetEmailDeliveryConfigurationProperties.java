@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "tailgate.password-reset.email")
+@ConfigurationProperties(prefix = "zone-blitz.password-reset.email")
 @ConstructorBinding
 @RequiredArgsConstructor
 @Getter

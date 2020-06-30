@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "tailgate.jwt")
+@ConfigurationProperties(prefix = "zone-blitz.jwt")
 @ConstructorBinding
 @RequiredArgsConstructor
 @Getter
