@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @SpringBootTest
 public abstract class DatabaseIntegrationTestSuite {
     @ClassRule
-    private static final TailgatePostgresqlContainer tailgatePostgresqlContainer = TailgatePostgresqlContainer.getInstance();
+    private static final ZoneBlitzPostgresqlContainer ZONE_BLITZ_POSTGRESQL_CONTAINER = ZoneBlitzPostgresqlContainer.getInstance();
 
     /**
      * Allows for injection of dynamically generated database configurations before Spring fully initializes.
@@ -25,10 +25,10 @@ public abstract class DatabaseIntegrationTestSuite {
     protected static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(@NotNull ConfigurableApplicationContext configurableApplicationContext) {
-            tailgatePostgresqlContainer.start();
-            configurableApplicationContext.getEnvironment().getSystemProperties().put("spring.datasource.url", tailgatePostgresqlContainer.getJdbcUrl());
-            configurableApplicationContext.getEnvironment().getSystemProperties().put("spring.datasource.username", tailgatePostgresqlContainer.getUsername());
-            configurableApplicationContext.getEnvironment().getSystemProperties().put("spring.datasource.password", tailgatePostgresqlContainer.getPassword());
+            ZONE_BLITZ_POSTGRESQL_CONTAINER.start();
+            configurableApplicationContext.getEnvironment().getSystemProperties().put("spring.datasource.url", ZONE_BLITZ_POSTGRESQL_CONTAINER.getJdbcUrl());
+            configurableApplicationContext.getEnvironment().getSystemProperties().put("spring.datasource.username", ZONE_BLITZ_POSTGRESQL_CONTAINER.getUsername());
+            configurableApplicationContext.getEnvironment().getSystemProperties().put("spring.datasource.password", ZONE_BLITZ_POSTGRESQL_CONTAINER.getPassword());
         }
     }
 }

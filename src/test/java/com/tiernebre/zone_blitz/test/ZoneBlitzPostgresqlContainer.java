@@ -8,17 +8,17 @@ import org.testcontainers.containers.PostgreSQLContainer;
  * for all of the integration tests that are derived from this, only _one_ PostgreSQL
  * container is used, rather than several.
  */
-public class TailgatePostgresqlContainer extends PostgreSQLContainer<TailgatePostgresqlContainer> {
+public class ZoneBlitzPostgresqlContainer extends PostgreSQLContainer<ZoneBlitzPostgresqlContainer> {
     private static final String IMAGE_VERSION = "postgres:12.3";
-    private static TailgatePostgresqlContainer container;
+    private static ZoneBlitzPostgresqlContainer container;
 
-    private TailgatePostgresqlContainer() {
+    private ZoneBlitzPostgresqlContainer() {
         super(IMAGE_VERSION);
     }
 
-    public static TailgatePostgresqlContainer getInstance() {
+    public static ZoneBlitzPostgresqlContainer getInstance() {
         if (container == null) {
-            container = new TailgatePostgresqlContainer();
+            container = new ZoneBlitzPostgresqlContainer();
         }
         return container;
     }
