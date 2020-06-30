@@ -1,23 +1,23 @@
-tailgate:
+zone-blitz:
   jwt:
     secret: 'secretforjsonwebtokenswow'
   refresh-token:
     expiration-window-in-minutes: 1
   email:
-    from: 'noreply@tailgate.io'
+    from: 'noreply@zoneblitz.app'
     host: 'localhost'
     port: 1025
   user:
     confirmation:
       email:
-        subject: 'Confirm your account with Tailgate'
+        subject: 'Confirm your account with Zone Blitz'
         confirmation-token-tag: '{{ confirmationToken }}'
-        message: 'Please go to https://tailgate.io/account/confirm/${tailgate.user.confirmation.email.confirmationTokenTag}'
+        message: 'Please go to https://zoneblitz.app/account/confirm/${zone-blitz.user.confirmation.email.confirmationTokenTag}'
   password-reset:
     email:
-      subject: 'Reset your password on Tailgate'
+      subject: 'Reset your password on Zone Blitz'
       password-reset-token-tag: '{{ passwordResetToken }}'
-      message: 'Please go to https://tailgate.io/reset-password/{{ passwordResetToken }}'
+      message: 'Please go to https://zoneblitz.app/reset-password/{{ passwordResetToken }}'
     token:
       expiration-window-in-minutes: 1
 
