@@ -1,4 +1,4 @@
-tailgate:
+zone-blitz:
   jwt:
     secret: 'secretforjsonwebtokenswow'
   refresh-token:
