@@ -1,0 +1,22 @@
+package com.tiernebre.zone_blitz.test;
+
+import com.tiernebre.zone_blitz.user.UserFactory;
+import com.tiernebre.zone_blitz.user.dto.UserDto;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithSecurityContextFactory;
+
+import java.util.ArrayList;
+
+public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
+    @Override
+    public SecurityContext createSecurityContext(WithMockCustomUser withMockCustomUser) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        UserDto principal = UserFactory.CUSTOM_AUTHENTICATED_USER;
+        Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, new ArrayList<>());
+        context.setAuthentication(auth);
+        return context;
+    }
+}
