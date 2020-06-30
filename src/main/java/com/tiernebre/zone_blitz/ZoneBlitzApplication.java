@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@ConfigurationPropertiesScan("com.tiernebre.tailgate")
+@ConfigurationPropertiesScan("com.tiernebre.zone_blitz")
 @EnableAsync
 public class ZoneBlitzApplication {
 
