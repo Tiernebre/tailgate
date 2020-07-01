@@ -22,9 +22,17 @@ public class GoogleReCaptchaVerifier implements CaptchaVerifier {
                 secret,
                 captchaToken
         );
+        checkForInvalidTokenResponse(response);
+        ensureValidTokenMeetsCriteria(response);
+    }
+
+    private void checkForInvalidTokenResponse(GoogleReCaptchaVerificationResponse response) throws CaptchaIsNotValidException {
         if (response == null || !response.isSuccess()) {
             throw new CaptchaIsNotValidException();
         }
+    }
+
+    private void ensureValidTokenMeetsCriteria(GoogleReCaptchaVerificationResponse response) throws CaptchaIsNotValidException {
         if (response.getScore().compareTo(configurationProperties.getMinimumAllowedScore()) < 0) {
             throw new CaptchaIsNotValidException();
         }
