@@ -34,13 +34,32 @@ public class GoogleReCaptchaVerifierTests {
     @DisplayName("verify")
     class VerifyTests {
         @Test
-        @DisplayName("does not throw any errors if the captcha token is valid and has a high enough score")
-        void doesNothingIfTheCaptchaTokenIsValid() {
+        @DisplayName("does not throw any errors if the captcha token is valid and has a score higher than the minimum allowed")
+        void doesNotThrowAnyErrorsIfTheCaptchaTokenIsValidAndHasScoreHigherThanMinimumAllowed() {
             String secret = UUID.randomUUID().toString();
             when(googleReCaptchaConfigurationProperties.getSecret()).thenReturn(secret);
             when(googleReCaptchaConfigurationProperties.getMinimumAllowedScore()).thenReturn(BigDecimal.ZERO);
             String captchaToken = UUID.randomUUID().toString();
             GoogleReCaptchaVerificationResponse mockedGoogleResponse = GoogleReCaptchaVerificationResponseFactory.generateOneDto();
+            when(googleReCaptchaRestTemplate.postForObject(
+                    eq("/siteverify?secret={secret}&response={response}"),
+                    isNull(),
+                    eq(GoogleReCaptchaVerificationResponse.class),
+                    eq(secret),
+                    eq(captchaToken)
+            )).thenReturn(mockedGoogleResponse);
+            assertDoesNotThrow(() -> googleReCaptchaVerifier.verify(captchaToken));
+        }
+
+        @Test
+        @DisplayName("does not throw any errors if the captcha token is valid and has a score that is the exact same as the minimum allowed score")
+        void doesNotThrowAnyErrorsIfTheCaptchaTokenIsValidAndHasScoreThatIsThatIsTheExactSameAsTheMinimumAllowedScore() {
+            BigDecimal minimumAllowedScore = BigDecimal.valueOf(0.25);
+            String secret = UUID.randomUUID().toString();
+            when(googleReCaptchaConfigurationProperties.getSecret()).thenReturn(secret);
+            when(googleReCaptchaConfigurationProperties.getMinimumAllowedScore()).thenReturn(minimumAllowedScore);
+            String captchaToken = UUID.randomUUID().toString();
+            GoogleReCaptchaVerificationResponse mockedGoogleResponse = GoogleReCaptchaVerificationResponseFactory.generateOneDto(true, minimumAllowedScore);
             when(googleReCaptchaRestTemplate.postForObject(
                     eq("/siteverify?secret={secret}&response={response}"),
                     isNull(),
