@@ -68,5 +68,24 @@ public class GoogleReCaptchaVerifierTests {
                     () -> googleReCaptchaVerifier.verify(captchaToken)
             );
         }
+
+        @Test
+        @DisplayName("throws not valid captcha error if the rest template returns null")
+        void throwsNotValidCaptchaErrorIfTheRestTemplateReturnsNull() {
+            String secret = UUID.randomUUID().toString();
+            when(googleReCaptchaConfigurationProperties.getSecret()).thenReturn(secret);
+            String captchaToken = UUID.randomUUID().toString();
+            when(googleReCaptchaRestTemplate.postForObject(
+                    eq("/siteverify?secret={secret}&response={response}"),
+                    isNull(),
+                    eq(GoogleReCaptchaVerificationResponse.class),
+                    eq(secret),
+                    eq(captchaToken)
+            )).thenReturn(null);
+            assertThrows(
+                    CaptchaIsNotValidException.class,
+                    () -> googleReCaptchaVerifier.verify(captchaToken)
+            );
+        }
     }
 }
