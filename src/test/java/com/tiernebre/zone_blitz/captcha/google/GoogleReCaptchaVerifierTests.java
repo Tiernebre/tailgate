@@ -72,6 +72,27 @@ public class GoogleReCaptchaVerifierTests {
         }
 
         @Test
+        @DisplayName("throws not valid captcha error if the captcha token is valid, but had a low score")
+        void throwsNotValidCaptchaErrorIfTheCaptchaTokenIsValidButHadALowScore() {
+            String secret = UUID.randomUUID().toString();
+            when(googleReCaptchaConfigurationProperties.getSecret()).thenReturn(secret);
+            when(googleReCaptchaConfigurationProperties.getMinimumAllowedScore()).thenReturn(BigDecimal.ONE);
+            String captchaToken = UUID.randomUUID().toString();
+            GoogleReCaptchaVerificationResponse mockedGoogleResponse = GoogleReCaptchaVerificationResponseFactory.generateOneDto(true, BigDecimal.ZERO);
+            when(googleReCaptchaRestTemplate.postForObject(
+                    eq("/siteverify?secret={secret}&response={response}"),
+                    isNull(),
+                    eq(GoogleReCaptchaVerificationResponse.class),
+                    eq(secret),
+                    eq(captchaToken)
+            )).thenReturn(mockedGoogleResponse);
+            assertThrows(
+                    CaptchaIsNotValidException.class,
+                    () -> googleReCaptchaVerifier.verify(captchaToken)
+            );
+        }
+
+        @Test
         @DisplayName("throws not valid captcha error if the rest template returns null")
         void throwsNotValidCaptchaErrorIfTheRestTemplateReturnsNull() {
             String secret = UUID.randomUUID().toString();
