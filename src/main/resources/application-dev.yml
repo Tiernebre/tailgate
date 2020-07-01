@@ -30,3 +30,7 @@ spring:
     username: postgres
     password: password
     driverClassName: org.postgresql.Driver
+
+google:
+  recaptcha:
+    url:  https://www.google.com/recaptcha/api/siteverify
