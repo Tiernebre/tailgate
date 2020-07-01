@@ -7,7 +7,7 @@ import java.util.Collections;
 public class CaptchaIsNotValidException extends InvalidException {
     private final static String ERROR_MESSAGE = "The Captcha token provided was deemed to be invalid.";
 
-    protected CaptchaIsNotValidException() {
+    public CaptchaIsNotValidException() {
         super(ERROR_MESSAGE, Collections.singleton(ERROR_MESSAGE));
     }
 }
