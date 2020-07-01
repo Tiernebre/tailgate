@@ -1,13 +1,15 @@
 package com.tiernebre.zone_blitz.token.access.jwt;
 
-import lombok.Value;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "zone-blitz.jwt")
 @ConstructorBinding
-@Value
+@RequiredArgsConstructor
+@Getter
 public class JwtTokenConfigurationProperties {
-    String secret;
-    Integer expirationWindowInMinutes;
+    private final String secret;
+    private final Integer expirationWindowInMinutes;
 }

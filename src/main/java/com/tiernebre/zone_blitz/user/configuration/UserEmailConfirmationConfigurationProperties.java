@@ -1,14 +1,16 @@
 package com.tiernebre.zone_blitz.user.configuration;
 
-import lombok.Value;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "zone-blitz.user.confirmation.email")
 @ConstructorBinding
-@Value
+@RequiredArgsConstructor
+@Getter
 public class UserEmailConfirmationConfigurationProperties {
-    String subject;
-    String message;
-    String confirmationTokenTag;
+    private final String subject;
+    private final String message;
+    private final String confirmationTokenTag;
 }
