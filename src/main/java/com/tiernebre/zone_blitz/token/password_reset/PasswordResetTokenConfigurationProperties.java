@@ -1,14 +1,12 @@
 package com.tiernebre.zone_blitz.token.password_reset;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "zone-blitz.password-reset.token")
 @ConstructorBinding
-@RequiredArgsConstructor
-@Getter
+@Value
 public class PasswordResetTokenConfigurationProperties {
-    private final Integer expirationWindowInMinutes;
+    Integer expirationWindowInMinutes;
 }

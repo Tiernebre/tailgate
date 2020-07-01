@@ -1,14 +1,12 @@
 package com.tiernebre.zone_blitz.token.refresh;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "zone-blitz.refresh-token")
 @ConstructorBinding
-@RequiredArgsConstructor
-@Getter
+@Value
 public class RefreshTokenConfigurationProperties {
-    private final Integer expirationWindowInMinutes;
+    Integer expirationWindowInMinutes;
 }
