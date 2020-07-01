@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+import java.math.BigDecimal;
+
 @ConfigurationProperties(prefix = "google.recaptcha")
 @ConstructorBinding
 @Getter
@@ -12,4 +14,5 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 public class GoogleReCaptchaConfigurationProperties {
     private final String url;
     private final String secret;
+    private final BigDecimal minimumAllowedScore;
 }

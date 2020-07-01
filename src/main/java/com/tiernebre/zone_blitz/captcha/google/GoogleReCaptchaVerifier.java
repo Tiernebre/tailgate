@@ -25,5 +25,8 @@ public class GoogleReCaptchaVerifier implements CaptchaVerifier {
         if (response == null || !response.isSuccess()) {
             throw new CaptchaIsNotValidException();
         }
+        if (response.getScore().compareTo(configurationProperties.getMinimumAllowedScore()) < 0) {
+            throw new CaptchaIsNotValidException();
+        }
     }
 }

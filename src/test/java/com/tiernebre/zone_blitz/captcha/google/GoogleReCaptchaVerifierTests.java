@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -33,10 +34,11 @@ public class GoogleReCaptchaVerifierTests {
     @DisplayName("verify")
     class VerifyTests {
         @Test
-        @DisplayName("does not throw any errors if the captcha token is valid")
+        @DisplayName("does not throw any errors if the captcha token is valid and has a high enough score")
         void doesNothingIfTheCaptchaTokenIsValid() {
             String secret = UUID.randomUUID().toString();
             when(googleReCaptchaConfigurationProperties.getSecret()).thenReturn(secret);
+            when(googleReCaptchaConfigurationProperties.getMinimumAllowedScore()).thenReturn(BigDecimal.ZERO);
             String captchaToken = UUID.randomUUID().toString();
             GoogleReCaptchaVerificationResponse mockedGoogleResponse = GoogleReCaptchaVerificationResponseFactory.generateOneDto();
             when(googleReCaptchaRestTemplate.postForObject(
@@ -55,7 +57,7 @@ public class GoogleReCaptchaVerifierTests {
             String secret = UUID.randomUUID().toString();
             when(googleReCaptchaConfigurationProperties.getSecret()).thenReturn(secret);
             String captchaToken = UUID.randomUUID().toString();
-            GoogleReCaptchaVerificationResponse mockedGoogleResponse = GoogleReCaptchaVerificationResponseFactory.generateOneDto(false);
+            GoogleReCaptchaVerificationResponse mockedGoogleResponse = GoogleReCaptchaVerificationResponseFactory.generateOneDto(false, BigDecimal.ONE);
             when(googleReCaptchaRestTemplate.postForObject(
                     eq("/siteverify?secret={secret}&response={response}"),
                     isNull(),

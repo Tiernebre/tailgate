@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Value;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -11,6 +12,8 @@ import java.util.Set;
 @Builder
 public class GoogleReCaptchaVerificationResponse {
     boolean success;
+    BigDecimal score;
+    String action;
     @JsonProperty("challenge_ts")
     ZonedDateTime challengeTimestamp;
     String hostname;
