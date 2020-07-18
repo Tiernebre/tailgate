@@ -60,7 +60,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         public void returnsWithTheSession() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
             when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
@@ -73,7 +73,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .andExpect(jsonPath("$.accessToken").exists())
                     .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
                     .andExpect(jsonPath("$.refreshToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken));
+                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken.toString()));
         }
 
         @Test
@@ -81,7 +81,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         public void returnsWithTheRefreshTokenAsACookie() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
             when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
@@ -93,7 +93,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(header().exists("Set-Cookie"))
-                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken))
+                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken.toString()))
                     .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
                     .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
         }
@@ -106,13 +106,13 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @Test
         @DisplayName("returns with 201 CREATED status if successful")
         public void returnsWithCreatedStatus() throws Exception {
-            String originalRefreshToken = UUID.randomUUID().toString();
+            UUID originalRefreshToken = UUID.randomUUID();
             when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionDto.builder()
                     .accessToken(UUID.randomUUID().toString())
-                    .refreshToken(UUID.randomUUID().toString())
+                    .refreshToken(UUID.randomUUID())
                     .build()
             );
-            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken);
+            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
             )
@@ -131,39 +131,39 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @Test
         @DisplayName("returns with the session in the JSON response body")
         public void returnsWithTheSession() throws Exception {
-            String originalRefreshToken = UUID.randomUUID().toString();
+            UUID originalRefreshToken = UUID.randomUUID();
             String expectedAccessToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
             when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
                     .build());
-            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken);
+            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
             )
                     .andExpect(jsonPath("$.accessToken").exists())
                     .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
                     .andExpect(jsonPath("$.refreshToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken));
+                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken.toString()));
         }
 
         @Test
         @DisplayName("returns with the refresh token set as a cookie")
         public void returnsWithTheRefreshTokenAsACookie() throws Exception {
-            String originalRefreshToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            UUID originalRefreshToken = UUID.randomUUID();
+            UUID expectedRefreshToken = UUID.randomUUID();
             when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionDto.builder()
                     .accessToken(UUID.randomUUID().toString())
                     .refreshToken(expectedRefreshToken)
                     .build());
             int expectedRefreshTokenAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES));
-            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken);
+            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
             )
                     .andExpect(header().exists("Set-Cookie"))
-                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken))
+                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken.toString()))
                     .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
                     .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
         }

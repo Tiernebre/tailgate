@@ -1,7 +1,6 @@
 package com.tiernebre.zone_blitz.session;
 
 import com.tiernebre.zone_blitz.test.SpringIntegrationTestingSuite;
-import com.tiernebre.zone_blitz.validator.StringIsBlankException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
-import static com.tiernebre.zone_blitz.session.SessionValidatorImpl.INVALID_REFRESH_TOKEN_REQUEST_ERROR;
 import static com.tiernebre.zone_blitz.session.SessionValidatorImpl.NULL_CREATE_SESSION_REQUEST_ERROR_MESSAGE;
 import static com.tiernebre.zone_blitz.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,33 +69,6 @@ public class SessionValidatorImplIntegrationTests extends SpringIntegrationTesti
                     .email(UUID.randomUUID().toString() + ".com")
                     .build();
             assertDoesNotThrow(() -> sessionValidator.validate(createSessionRequest));
-        }
-    }
-
-    @Nested
-    @DisplayName("validateRefreshToken")
-    public class ValidateRefreshTokenTests {
-        @ParameterizedTest(name = "throws an invalid refresh request exception if refresh token is equal to \"{0}\"")
-        @ValueSource(strings = {
-                "",
-                " ",
-                "    "
-        })
-        @NullSource
-        public void throwsAnInvalidRefreshRequestExceptionIfRefreshTokenIsEqualTo(String refreshToken) {
-            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> sessionValidator.validateRefreshToken(refreshToken));
-            assertEquals(INVALID_REFRESH_TOKEN_REQUEST_ERROR, thrownException.getMessage());
-        }
-
-        @ParameterizedTest(name = "does not throw an invalid refresh request exception if refresh token is equal to \"{0}\"")
-        @ValueSource(strings = {
-                "test",
-                "a",
-                "123",
-                "b072efd5-a8be-449c-bf2d-572e562f4087"
-        })
-        public void doesNotThrowAnInvalidRefreshRequestExceptionIfRefreshTokenIsEqualTo(String refreshToken) {
-            assertDoesNotThrow(() -> sessionValidator.validateRefreshToken(refreshToken));
         }
     }
 }
