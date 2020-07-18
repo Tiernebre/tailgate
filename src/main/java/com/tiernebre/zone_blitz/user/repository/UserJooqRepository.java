@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.tiernebre.zone_blitz.jooq.Tables.*;
@@ -98,7 +99,7 @@ public class UserJooqRepository implements UserRepository {
     }
 
     @Override
-    public Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken) {
+    public Optional<UserEntity> findOneWithNonExpiredRefreshToken(UUID refreshToken) {
         return dslContext.select(USERS.asterisk())
                 .from(USERS)
                 .join(REFRESH_TOKENS)
@@ -115,7 +116,7 @@ public class UserJooqRepository implements UserRepository {
     }
 
     @Override
-    public boolean confirmOne(String confirmationToken) {
+    public boolean confirmOne(UUID confirmationToken) {
         int numberOfConfirmedUsers = dslContext
                 .update(USERS)
                 .set(USERS.IS_CONFIRMED, true)

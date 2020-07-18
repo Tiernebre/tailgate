@@ -5,19 +5,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
     private final PasswordResetTokenRepository repository;
 
     @Override
-    public String createOneForUser(UserDto user) {
+    public UUID createOneForUser(UserDto user) {
         return repository.createOneForUser(user).getToken();
     }
 
     @Override
     @Async
-    public void deleteOneAsynchronously(String token) {
+    public void deleteOneAsynchronously(UUID token) {
         repository.deleteOne(token);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("password-reset-tokens")
@@ -24,7 +25,7 @@ public class PasswordResetTokenRestfulController {
     @PatchMapping("/{passwordResetToken}/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePasswordUsingResetToken(
-            @PathVariable String passwordResetToken,
+            @PathVariable UUID passwordResetToken,
             @RequestBody ResetTokenUpdatePasswordRequest request
     ) throws UserNotFoundForPasswordUpdateException, InvalidPasswordResetTokenException, InvalidUpdatePasswordRequestException, InvalidSecurityQuestionAnswerException {
         userPasswordService.updateOneUsingResetToken(passwordResetToken, request);
@@ -32,7 +33,7 @@ public class PasswordResetTokenRestfulController {
 
     @GetMapping("/{passwordResetToken}/security-questions")
     public List<SecurityQuestionDto> getSecurityQuestionsForPasswordResetToken(
-            @PathVariable String passwordResetToken
+            @PathVariable UUID passwordResetToken
     ) {
         return securityQuestionService.getAllForPasswordResetToken(passwordResetToken);
     }

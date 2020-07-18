@@ -46,7 +46,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
                     .id(userToResetPasswordFor.getId())
                     .email(userToResetPasswordFor.getEmail())
                     .build();
-            String passwordResetToken = UUID.randomUUID().toString();
+            UUID passwordResetToken = UUID.randomUUID();
             passwordResetTokenEmailDeliveryService.sendOne(userToResetPasswordForAsDto, passwordResetToken);
             TestEmail foundEmail = testEmailInboxService.searchForEmail(
                     TestEmailSearchOption.TO,
@@ -56,7 +56,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
             assertTrue(StringUtils.isNotBlank(foundEmail.getTo()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getSubject()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getText()));
-            assertTrue(foundEmail.getText().contains(passwordResetToken));
+            assertTrue(foundEmail.getText().contains(passwordResetToken.toString()));
             assertEquals(zoneBlitzEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
             assertEquals(userToResetPasswordFor.getEmail(), foundEmail.getTo());
             assertEquals(passwordResetEmailDeliveryConfigurationProperties.getSubject(), foundEmail.getSubject());

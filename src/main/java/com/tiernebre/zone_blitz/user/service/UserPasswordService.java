@@ -1,12 +1,14 @@
 package com.tiernebre.zone_blitz.user.service;
 
 import com.tiernebre.zone_blitz.user.dto.ResetTokenUpdatePasswordRequest;
-import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
+import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.zone_blitz.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.zone_blitz.user.exception.InvalidUpdatePasswordRequestException;
 import com.tiernebre.zone_blitz.user.exception.UserNotFoundForPasswordUpdateException;
+
+import java.util.UUID;
 
 public interface UserPasswordService {
     /**
@@ -23,7 +25,7 @@ public interface UserPasswordService {
      * @throws InvalidPasswordResetTokenException If the password reset token provided is invalid.
      * @throws UserNotFoundForPasswordUpdateException If the information provided did not lead to an update.
      */
-    void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest)
+    void updateOneUsingResetToken(UUID resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest)
             throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException, InvalidSecurityQuestionAnswerException;
 
     /**

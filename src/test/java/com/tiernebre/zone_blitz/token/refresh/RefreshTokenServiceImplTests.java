@@ -1,22 +1,17 @@
 package com.tiernebre.zone_blitz.token.refresh;
 
-import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.UserFactory;
-import com.tiernebre.zone_blitz.validator.StringIsBlankException;
+import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static com.tiernebre.zone_blitz.token.refresh.RefreshTokenConstants.BLANK_TOKEN_ERROR_MESSAGE;
 import static com.tiernebre.zone_blitz.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -40,7 +35,7 @@ public class RefreshTokenServiceImplTests {
             UserDto userDto = UserFactory.generateOneDto();
             RefreshTokenEntity expectedRefreshToken = RefreshTokenFactory.generateOneEntity();
             when(refreshTokenRepository.createOneForUser(eq(userDto))).thenReturn(expectedRefreshToken);
-            String createdToken = refreshTokenService.createOneForUser(userDto);
+            UUID createdToken = refreshTokenService.createOneForUser(userDto);
             assertEquals(expectedRefreshToken.getToken(), createdToken);
         }
 
@@ -58,17 +53,9 @@ public class RefreshTokenServiceImplTests {
         @Test
         @DisplayName("deletes the given token")
         public void returnsTheCreatedRefreshToken() {
-            String refreshTokenToDelete = UUID.randomUUID().toString();
+            UUID refreshTokenToDelete = UUID.randomUUID();
             refreshTokenService.deleteOne(refreshTokenToDelete);
             verify(refreshTokenRepository, times(1)).deleteOne(eq(refreshTokenToDelete));
-        }
-
-        @ParameterizedTest(name = "throws StringIsBlankException with a helpful error message if the token provided is \"{0}\"")
-        @NullSource
-        @ValueSource(strings = {"", " "})
-        public void throwsStringIsBlankExceptionIfTheTokenProvidedIs(String token) {
-            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> refreshTokenService.deleteOne(token));
-            assertEquals(BLANK_TOKEN_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
 }

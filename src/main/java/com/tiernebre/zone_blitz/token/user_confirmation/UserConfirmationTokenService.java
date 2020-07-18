@@ -2,6 +2,8 @@ package com.tiernebre.zone_blitz.token.user_confirmation;
 
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 
+import java.util.UUID;
+
 public interface UserConfirmationTokenService {
     /**
      * Creates a confirmation token for a provided user.
@@ -9,7 +11,7 @@ public interface UserConfirmationTokenService {
      * @param user The user to create a confirmation token for.
      * @return The created confirmation token.
      */
-    String createOneForUser(UserDto user);
+    UUID createOneForUser(UserDto user);
 
     /**
      * Tries to find a confirmation token for a user. If for some
@@ -19,5 +21,5 @@ public interface UserConfirmationTokenService {
      * @param user The user to either find or create a new confirmation token for.
      * @return The found or generated confirmation token.
      */
-    String findOrGenerateForUser(UserDto user);
+    UUID findOrGenerateForUser(UserDto user);
 }

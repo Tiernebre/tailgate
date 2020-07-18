@@ -8,6 +8,8 @@ import com.tiernebre.zone_blitz.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
@@ -34,8 +36,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionDto refreshOne(String originalRefreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-        validator.validateRefreshToken(originalRefreshToken);
+    public SessionDto refreshOne(UUID originalRefreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(originalRefreshToken)
                 .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));

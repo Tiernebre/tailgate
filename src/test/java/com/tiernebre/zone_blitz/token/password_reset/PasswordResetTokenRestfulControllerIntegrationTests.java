@@ -38,7 +38,7 @@ public class PasswordResetTokenRestfulControllerIntegrationTests extends WebCont
         @Test
         @DisplayName("returns with 204 NO CONTENT status")
         void returnsWith204NoContentStatus() throws Exception {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String uri = String.format("/password-reset-tokens/%s/password", resetToken);
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequestFactory.generateOneDto();
             doNothing().when(userPasswordService).updateOneUsingResetToken(eq(resetToken), eq(resetTokenUpdatePasswordRequest));
@@ -56,7 +56,7 @@ public class PasswordResetTokenRestfulControllerIntegrationTests extends WebCont
         @Test
         @DisplayName("returns with 200 OK status")
         void returnsWith204NoContentStatus() throws Exception {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String uri = String.format("/password-reset-tokens/%s/security-questions", resetToken);
             List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
             when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
@@ -66,7 +66,7 @@ public class PasswordResetTokenRestfulControllerIntegrationTests extends WebCont
         @Test
         @DisplayName("returns with the security questions properly formatted in JSON")
         void returnsWithTheSecurityQuestionsProperlyFormattedInJson() throws Exception {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String uri = String.format("/password-reset-tokens/%s/security-questions", resetToken);
             List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
             SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestions.get(0);

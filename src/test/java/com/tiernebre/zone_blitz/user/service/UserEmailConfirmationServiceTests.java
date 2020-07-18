@@ -45,7 +45,7 @@ public class UserEmailConfirmationServiceTests {
             String from = "expectedTest@zoneblitz.app";
             when(zoneBlitzEmailConfigurationProperties.getFrom()).thenReturn(from);
             String subject = "Confirm Your Account With Zone Blitz";
-            String confirmationToken = UUID.randomUUID().toString();
+            UUID confirmationToken = UUID.randomUUID();
             String confirmationTokenTag = "{{ confirmationToken }}";
             String message = "Navigate to " + confirmationTokenTag + " to confirm your account";
             when(configurationProperties.getSubject()).thenReturn(subject);
@@ -54,7 +54,7 @@ public class UserEmailConfirmationServiceTests {
             UserDto user = UserFactory.generateOneDto();
             when(tokenService.findOrGenerateForUser(eq(user))).thenReturn(confirmationToken);
             userEmailConfirmationService.sendOne(user);
-            String expectedFormattedTextMessage = message.replace(confirmationTokenTag, confirmationToken);
+            String expectedFormattedTextMessage = message.replace(confirmationTokenTag, confirmationToken.toString());
             SimpleMailMessage expectedEmailSent = new SimpleMailMessage();
             expectedEmailSent.setTo(user.getEmail());
             expectedEmailSent.setFrom(from);

@@ -1,6 +1,7 @@
 package com.tiernebre.zone_blitz.user.repository;
 
 import java.util.Map;
+import java.util.UUID;
 
 public interface UserSecurityQuestionsRepository {
     /**
@@ -9,5 +10,5 @@ public interface UserSecurityQuestionsRepository {
      * @param resetToken The reset token assigned to that user's password reset request.
      * @return a map that uses a security question ID as a key, with the value being the answer.
      */
-    Map<Long, String> getAnswersForEmailAndResetToken(String email, String resetToken);
+    Map<Long, String> getAnswersForEmailAndResetToken(String email, UUID resetToken);
 }

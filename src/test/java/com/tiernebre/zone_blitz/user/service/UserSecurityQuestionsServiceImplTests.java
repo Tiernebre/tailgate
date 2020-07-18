@@ -42,7 +42,7 @@ public class UserSecurityQuestionsServiceImplTests {
         @Test
         @DisplayName("does not throw an invalid error if the provided answers match the found ones")
         void doesNotThrowAnInvalidErrorIfTheProvidedAnswersMatchTheFoundOnes() {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
             Map<Long, String> providedAnswers = new HashMap<>();
@@ -64,7 +64,7 @@ public class UserSecurityQuestionsServiceImplTests {
         @Test
         @DisplayName("throws an invalid error if all provided answers do not match the found ones")
         void throwsAnInvalidErrorIfAllProvidedAnswersDoNotMatchTheFoundOnes() {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
             Map<Long, String> providedAnswers = new HashMap<>();
@@ -88,7 +88,7 @@ public class UserSecurityQuestionsServiceImplTests {
         @Test
         @DisplayName("throws an invalid error if some provided answers do not match the found ones")
         void throwsAnInvalidErrorIfSomeProvidedAnswersDoNotMatchTheFoundOnes() {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
             Map<Long, String> providedAnswers = new HashMap<>();
@@ -113,7 +113,7 @@ public class UserSecurityQuestionsServiceImplTests {
         @Test
         @DisplayName("ignores extra provided answers that do not match the found answers")
         void ignoresExtraProvidedAnswersThatDoNotMatchTheFoundAnswers() {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
             Map<Long, String> providedAnswers = new HashMap<>();
@@ -139,7 +139,7 @@ public class UserSecurityQuestionsServiceImplTests {
         @Test
         @DisplayName("throws an invalid error if a provided answer was missing for an assigned security question")
         void throwsAnInvalidErrorIfAProvidedAnswerWasMissingForAnAssignedSecurityQuestion() {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
             Map<Long, String> providedAnswers = new HashMap<>();
@@ -167,7 +167,7 @@ public class UserSecurityQuestionsServiceImplTests {
         @NullSource
         @ValueSource(strings = " ")
         void throwsAnInvalidErrorIfAProvidedAnswerWas(String providedAnswer) {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             String email = UUID.randomUUID().toString();
             Map<Long, String> foundAnswers = new HashMap<>();
             Map<Long, String> providedAnswers = new HashMap<>();

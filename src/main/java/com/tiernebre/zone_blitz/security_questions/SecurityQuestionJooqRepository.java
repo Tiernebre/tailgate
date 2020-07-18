@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.jooq.Tables.*;
 import static com.tiernebre.zone_blitz.jooq.tables.SecurityQuestions.SECURITY_QUESTIONS;
@@ -32,7 +33,7 @@ public class SecurityQuestionJooqRepository implements SecurityQuestionRepositor
     }
 
     @Override
-    public List<SecurityQuestionEntity> getAllForPasswordResetToken(String passwordResetToken) {
+    public List<SecurityQuestionEntity> getAllForPasswordResetToken(UUID passwordResetToken) {
         return dslContext
                 .select(SECURITY_QUESTIONS.asterisk())
                 .from(SECURITY_QUESTIONS)

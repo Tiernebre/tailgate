@@ -4,8 +4,8 @@ import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.zone_blitz.user.UpdatePasswordRequestFactory;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.dto.ResetTokenUpdatePasswordRequest;
-import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
+import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.zone_blitz.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.zone_blitz.user.exception.InvalidUpdatePasswordRequestException;
@@ -16,10 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -70,7 +66,7 @@ public class UserPasswordServiceImplTests {
                     .validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
             assertThrows(
                     InvalidUpdatePasswordRequestException.class,
-                    () -> userPasswordService.updateOneUsingResetToken(UUID.randomUUID().toString(), resetTokenUpdatePasswordRequest)
+                    () -> userPasswordService.updateOneUsingResetToken(UUID.randomUUID(), resetTokenUpdatePasswordRequest)
             );
         }
 
@@ -79,7 +75,7 @@ public class UserPasswordServiceImplTests {
         void throwsInvalidErrorIfSecurityQuestionAnswersAreInvalid() throws InvalidUpdatePasswordRequestException, InvalidSecurityQuestionAnswerException {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             Map<Long, String> securityQuestionAnswers = ImmutableMap.of(
                     1L, UUID.randomUUID().toString(),
                     2L, UUID.randomUUID().toString()
@@ -100,23 +96,12 @@ public class UserPasswordServiceImplTests {
             );
         }
 
-        @EmptySource
-        @NullSource
-        @ValueSource(strings = { " " })
-        @ParameterizedTest(name = "throws invalid error if the reset token is \"{0}\"")
-        void throwsInvalidErrorIfTheResetTokenIsBlank(String resetToken) {
-            assertThrows(
-                    InvalidPasswordResetTokenException.class,
-                    () -> userPasswordService.updateOneUsingResetToken(resetToken, ResetTokenUpdatePasswordRequest.builder().build())
-            );
-        }
-
         @Test
         @DisplayName("updates password for a user")
         void updatesPasswordForAUser() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException, InvalidSecurityQuestionAnswerException {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             Map<Long, String> securityQuestionAnswers = ImmutableMap.of(
                     1L, UUID.randomUUID().toString(),
                     2L, UUID.randomUUID().toString()
@@ -150,7 +135,7 @@ public class UserPasswordServiceImplTests {
         void throwsNotFoundErrorIfUpdateDidNotOccur() throws InvalidUpdatePasswordRequestException {
             String newPassword = UUID.randomUUID().toString();
             String email = UUID.randomUUID().toString() + "@test.com";
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()
                     .newPassword(newPassword)
                     .confirmationNewPassword(newPassword)

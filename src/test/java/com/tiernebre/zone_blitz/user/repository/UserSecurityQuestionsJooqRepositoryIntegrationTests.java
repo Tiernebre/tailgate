@@ -53,7 +53,7 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Databas
                     .stream()
                     .map(UserSecurityQuestionsRecord::getAnswer)
                     .collect(Collectors.toSet());
-            String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            UUID resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
             Map<Long, String> foundAnswers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), resetToken);
             assertTrue(MapUtils.isNotEmpty(foundAnswers));
             assertTrue(originalAnswers.containsAll(foundAnswers.values()));
@@ -63,7 +63,7 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Databas
         @DisplayName("returns an empty set if the email is not legit")
         void returnsAnEmptySetIfTheEmailIsNotLegit() {
             UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
-            String resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            UUID resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
             Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), resetToken);
             assertTrue(MapUtils.isEmpty(answers));
         }
@@ -72,7 +72,7 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Databas
         @DisplayName("returns an empty set if the password reset token is not legit")
         void returnsAnEmptySetIfThePasswordResetTokenIsNotLegit() {
             UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID().toString());
+            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
 
@@ -80,7 +80,7 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Databas
         @DisplayName("returns an empty set if the password reset token and email are not legit")
         void returnsAnEmptySetIfThePasswordResetTokenAndEmailAreNotLegit() {
             userRecordPool.createAndSaveOneWithSecurityQuestions();
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
 

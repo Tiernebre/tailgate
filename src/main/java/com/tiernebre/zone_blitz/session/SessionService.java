@@ -2,6 +2,8 @@ package com.tiernebre.zone_blitz.session;
 
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 
+import java.util.UUID;
+
 public interface SessionService {
     /**
      * Creates a session with an access token based upon the given request.
@@ -21,5 +23,5 @@ public interface SessionService {
      * @throws GenerateAccessTokenException if the access token had an error while being generated.
      * @throws InvalidRefreshSessionRequestException if the refresh token is invalid or expired.
      */
-    SessionDto refreshOne(String refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException;
+    SessionDto refreshOne(UUID refreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException;
 }

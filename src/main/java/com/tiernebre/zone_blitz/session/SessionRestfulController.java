@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -35,7 +36,7 @@ public class SessionRestfulController {
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionDto refreshOne(
-            @CookieValue(REFRESH_TOKEN_COOKIE_NAME) String refreshToken,
+            @CookieValue(REFRESH_TOKEN_COOKIE_NAME) UUID refreshToken,
             HttpServletResponse httpServletResponse
     ) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
         SessionDto refreshedSession = service.refreshOne(refreshToken);
@@ -44,7 +45,7 @@ public class SessionRestfulController {
     }
 
     private void setRefreshTokenCookieFromSession(SessionDto session, HttpServletResponse httpServletResponse) {
-        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken());
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken().toString());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(getRefreshTokenCookieAgeInSeconds());
         httpServletResponse.addCookie(refreshTokenCookie);

@@ -76,7 +76,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
         @Test
         @DisplayName("returns with 204 NO CONTENT status if successful")
         void returnsWith204NoContentStatusIfSuccessful() throws Exception {
-            String confirmationToken = UUID.randomUUID().toString();
+            UUID confirmationToken = UUID.randomUUID();
             doNothing().when(userService).confirmOne(eq(confirmationToken));
             mockMvc.perform(
                     patch("/users/confirmation/" + confirmationToken)
@@ -86,7 +86,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
         @Test
         @DisplayName("returns with 404 NOT FOUND status if user was not confirmed")
         void returnsWith404NotFoundStatusIfUserWasNotConfirmed() throws Exception {
-            String confirmationToken = UUID.randomUUID().toString();
+            UUID confirmationToken = UUID.randomUUID();
             doThrow(new UserNotFoundForConfirmationException()).when(userService).confirmOne(eq(confirmationToken));
             mockMvc.perform(
                     patch("/users/confirmation/" + confirmationToken)

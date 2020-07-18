@@ -1,6 +1,7 @@
 package com.tiernebre.zone_blitz.user.repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Manages passwords for a user.
@@ -13,7 +14,7 @@ public interface UserPasswordRepository {
      * @param resetToken The password reset token also tied to a password reset request.
      * @return true if the user was found and updated, false if no user was found and updated with the criteria provided.
      */
-    boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, String resetToken);
+    boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, UUID resetToken);
 
     /**
      * Updates a user's password using a given user id.

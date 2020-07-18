@@ -7,6 +7,7 @@ import com.tiernebre.zone_blitz.user.exception.UserAlreadyExistsException;
 import com.tiernebre.zone_blitz.user.exception.UserNotFoundForConfirmationException;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserService {
     /**
@@ -38,11 +39,11 @@ public interface UserService {
      * @return An optional containing a user if the refresh token is valid and non-expired, or an empty optional if the
      *         refresh token is expired or invalid.
      */
-    Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken);
+    Optional<UserDto> findOneByNonExpiredRefreshToken(UUID refreshToken);
 
     /**
      * Confirms a user given a confirmation token.
      * @param confirmationToken The token to confirm a user.
      */
-    void confirmOne(String confirmationToken) throws UserNotFoundForConfirmationException;
+    void confirmOne(UUID confirmationToken) throws UserNotFoundForConfirmationException;
 }

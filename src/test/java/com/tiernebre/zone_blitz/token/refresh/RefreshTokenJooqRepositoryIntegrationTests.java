@@ -2,19 +2,15 @@ package com.tiernebre.zone_blitz.token.refresh;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
-import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
-import com.tiernebre.zone_blitz.validator.StringIsBlankException;
-import org.apache.commons.lang3.StringUtils;
+import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.tiernebre.zone_blitz.token.refresh.RefreshTokenConstants.BLANK_TOKEN_ERROR_MESSAGE;
+import java.util.UUID;
+
 import static com.tiernebre.zone_blitz.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.*;
 
@@ -37,7 +33,6 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.createOneForUser(user);
             assertNotNull(refreshTokenEntity.getToken());
-            assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
             assertNotNull(refreshTokenEntity.getCreatedAt());
             assertEquals(user.getId(), refreshTokenEntity.getUserId());
         }
@@ -55,7 +50,7 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
         @Test
         @DisplayName("deletes the given refresh token")
         void deletesTheGivenRefreshToken() {
-            String refreshTokenToDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
+            UUID refreshTokenToDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
             assertNotNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
             refreshTokenRepository.deleteOne(refreshTokenToDelete);
             assertNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
@@ -64,21 +59,13 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
         @Test
         @DisplayName("only deletes the given refresh token")
         void onlyDeletesTheGivenRefreshToken() {
-            String refreshTokenToDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
-            String refreshTokenToNotDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
+            UUID refreshTokenToDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
+            UUID refreshTokenToNotDelete = refreshTokenRecordPool.createAndSaveOne().getToken();
             assertNotNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
             assertNotNull(refreshTokenRecordPool.getOneById(refreshTokenToNotDelete));
             refreshTokenRepository.deleteOne(refreshTokenToDelete);
             assertNull(refreshTokenRecordPool.getOneById(refreshTokenToDelete));
             assertNotNull(refreshTokenRecordPool.getOneById(refreshTokenToNotDelete));
-        }
-
-        @ParameterizedTest(name = "throws a StringIsBlankException with a helpful message if the token to delete is \"{0}\"")
-        @NullSource
-        @ValueSource(strings = { "", " " })
-        void throwsStringIsBlankExceptionWithAHelpfulMessageIfTheTokenToDeleteIs(String tokenToDelete) {
-            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> refreshTokenRepository.deleteOne(tokenToDelete));
-            assertEquals(BLANK_TOKEN_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
 }

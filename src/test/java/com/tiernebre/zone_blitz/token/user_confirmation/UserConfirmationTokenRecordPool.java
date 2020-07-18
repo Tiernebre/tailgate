@@ -29,8 +29,4 @@ public class UserConfirmationTokenRecordPool {
                 .fetchOne();
         return refreshTokensRecord.into(UserConfirmationTokensRecord.class);
     }
-
-    public UserConfirmationTokensRecord getOneById(String id) {
-        return dslContext.selectFrom(USER_CONFIRMATION_TOKENS).where(USER_CONFIRMATION_TOKENS.TOKEN.eq(id)).fetchOne();
-    }
 }

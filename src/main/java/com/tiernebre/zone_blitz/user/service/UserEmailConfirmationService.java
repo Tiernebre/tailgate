@@ -9,6 +9,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserEmailConfirmationService implements UserConfirmationService {
@@ -30,7 +32,7 @@ public class UserEmailConfirmationService implements UserConfirmationService {
     private String getText(UserDto user) {
         String originalMessage = configurationProperties.getMessage();
         String tagToReplace = configurationProperties.getConfirmationTokenTag();
-        String confirmationToken = tokenService.findOrGenerateForUser(user);
-        return originalMessage.replace(tagToReplace, confirmationToken);
+        UUID confirmationToken = tokenService.findOrGenerateForUser(user);
+        return originalMessage.replace(tagToReplace, confirmationToken.toString());
     }
 }

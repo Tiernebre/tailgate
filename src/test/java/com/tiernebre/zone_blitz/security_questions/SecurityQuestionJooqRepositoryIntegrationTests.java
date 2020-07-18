@@ -128,7 +128,7 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
                     .stream()
                     .map(securityQuestionsRecord -> securityQuestionsRecord.into(SecurityQuestionEntity.class))
                     .collect(Collectors.toList());
-            String passwordResetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(usersRecord).getToken();
+            UUID passwordResetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(usersRecord).getToken();
             List<SecurityQuestionEntity> foundSecurityQuestions = securityQuestionJooqRepository.getAllForPasswordResetToken(passwordResetToken);
             assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
         }
@@ -136,7 +136,7 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
         @Test
         @DisplayName("returns an empty list for an invalid reset token")
         void returnsAnEmptyListForAnInvalidResetToken() {
-            List<SecurityQuestionEntity> foundSecurityQuestions = securityQuestionJooqRepository.getAllForPasswordResetToken(UUID.randomUUID().toString());
+            List<SecurityQuestionEntity> foundSecurityQuestions = securityQuestionJooqRepository.getAllForPasswordResetToken(UUID.randomUUID());
             assertTrue(foundSecurityQuestions.isEmpty());
         }
     }
