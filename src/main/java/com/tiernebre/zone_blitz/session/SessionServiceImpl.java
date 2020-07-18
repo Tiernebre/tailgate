@@ -1,5 +1,6 @@
 package com.tiernebre.zone_blitz.session;
 
+import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
@@ -48,11 +49,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
-        String fingerprint = accessTokenFingerprintGenerator.generateOne();
+        AccessTokenDto accessToken = accessTokenProvider.generateOne(user);
         return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(user, fingerprint).getToken())
+                .accessToken(accessToken.getToken())
                 .refreshToken(refreshTokenService.createOneForUser(user))
-                .fingerprint(fingerprint)
+                .fingerprint(accessToken.getFingerprint())
                 .build();
     }
 }

@@ -72,7 +72,7 @@ public class SessionServiceImplTests {
                     .refreshToken(expectedRefreshToken)
                     .fingerprint(expectedFingerprint)
                     .build();
-            when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(expectedAccessToken);
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.createOne(createSessionRequest);
             assertEquals(expectedSession, createdSession);
         }
@@ -126,7 +126,7 @@ public class SessionServiceImplTests {
                     .refreshToken(expectedRefreshToken)
                     .fingerprint(expectedFingerprint)
                     .build();
-            when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(expectedAccessToken);
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.refreshOne(refreshToken);
             assertEquals(expectedSession, createdSession);
         }
@@ -147,7 +147,7 @@ public class SessionServiceImplTests {
             UUID originalRefreshToken = UUID.randomUUID();
             when(userService.findOneByNonExpiredRefreshToken(eq(originalRefreshToken))).thenReturn(Optional.of(user));
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID());
-            when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(AccessTokenFactory.generateOneDto());
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(AccessTokenFactory.generateOneDto());
             when(accessTokenFingerprintGenerator.generateOne()).thenReturn(UUID.randomUUID().toString());
             sessionService.refreshOne(originalRefreshToken);
             verify(refreshTokenService, times(1)).deleteOne(eq(originalRefreshToken));

@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
+import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintHasher;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -29,15 +30,14 @@ public class JwtTokenProvider implements AccessTokenProvider {
     private final JwtTokenConfigurationProperties configurationProperties;
     private final Clock clock;
     private final AccessTokenFingerprintHasher fingerprintHasher;
+    private final AccessTokenFingerprintGenerator fingerprintGenerator;
 
     @Override
-    public AccessTokenDto generateOne(
-            UserDto user,
-            String fingerprint
-    ) throws GenerateAccessTokenException {
+    public AccessTokenDto generateOne(UserDto user) throws GenerateAccessTokenException {
         Objects.requireNonNull(user, NULL_USER_ERROR_MESSAGE);
 
         try {
+            String fingerprint = fingerprintGenerator.generateOne();
             String accessToken = JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
@@ -48,6 +48,7 @@ public class JwtTokenProvider implements AccessTokenProvider {
                     .sign(algorithm);
             return AccessTokenDto.builder()
                     .token(accessToken)
+                    .fingerprint(fingerprint)
                     .build();
         } catch (Exception exception){
             throw new GenerateAccessTokenException(exception.getMessage());

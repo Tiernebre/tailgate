@@ -4,7 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
+import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintHasher;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.UserFactory;
@@ -42,6 +44,9 @@ public class JwtTokenProviderTests {
     @Mock
     private AccessTokenFingerprintHasher fingerprintHasher;
 
+    @Mock
+    private AccessTokenFingerprintGenerator fingerprintGenerator;
+
     private Clock fixedTestClock;
 
     @BeforeEach
@@ -51,7 +56,8 @@ public class JwtTokenProviderTests {
                 ALGORITHM,
                 jwtTokenConfigurationProperties,
                 Clock.fixed(Instant.now(), ZoneId.of("UTC")),
-                fingerprintHasher
+                fingerprintHasher,
+                fingerprintGenerator
         );
     }
 
@@ -60,22 +66,24 @@ public class JwtTokenProviderTests {
     public class GenerateOneTests {
 
         @Test
-        @DisplayName("returns the generated JSON web token with the correct claims")
+        @DisplayName("returns the generated JSON web token with the correct claims and fingerprint")
         void returnsTheGeneratedJSONWebToken() throws GenerateAccessTokenException {
             when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
             String fingerprint = UUID.randomUUID().toString();
             String expectedHashedFingerprint = UUID.randomUUID().toString();
+            when(fingerprintGenerator.generateOne()).thenReturn(fingerprint);
             when(fingerprintHasher.hashFingerprint(eq(fingerprint))).thenReturn(expectedHashedFingerprint);
             UserDto userDTO = UserFactory.generateOneDto();
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             Date expectedExpiresAt = new Date(expectedMillisForExpiration);
-            String generatedToken = jwtTokenProvider.generateOne(userDTO, fingerprint).getToken();
+            AccessTokenDto generatedToken = jwtTokenProvider.generateOne(userDTO);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();
-            DecodedJWT decodedJWT = jwtVerifier.verify(generatedToken);
+            DecodedJWT decodedJWT = jwtVerifier.verify(generatedToken.getToken());
             assertAll(
+                    () -> assertEquals(fingerprint, generatedToken.getFingerprint()),
                     () -> assertEquals(ISSUER, decodedJWT.getIssuer()),
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
                     () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim(EMAIL_CLAIM).asString()),
@@ -93,16 +101,17 @@ public class JwtTokenProviderTests {
                     null,
                     jwtTokenConfigurationProperties,
                     fixedTestClock,
-                    fingerprintHasher
+                    fingerprintHasher,
+                    fingerprintGenerator
             );
             UserDto userDTO = UserFactory.generateOneDto();
-            assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO, UUID.randomUUID().toString()));
+            assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
         }
 
         @Test
         @DisplayName("throws a NullPointerException if the user passed in is null with a helpful message")
         void throwsNullPointerExceptionIfTheUserPassedInIsNullWithAHelpfulMessage() {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> jwtTokenProvider.generateOne(null, UUID.randomUUID().toString()));
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> jwtTokenProvider.generateOne(null));
             assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
