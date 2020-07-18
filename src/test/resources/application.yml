@@ -6,7 +6,7 @@ zone-blitz:
   email:
     from: 'noreply@zoneblitz.app'
     host: 'localhost'
-    port: ${SMTP_PORT:1025}
+    port: ${SMTP_PORT}
   user:
     confirmation:
       email:
