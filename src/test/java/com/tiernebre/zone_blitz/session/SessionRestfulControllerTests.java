@@ -66,7 +66,6 @@ public class SessionRestfulControllerTests {
             assertNotNull(refreshTokenCookie);
             assertEquals(expectedSession.getRefreshToken().toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
-            assertTrue(refreshTokenCookie.getSecure());
         }
 
         @Test
@@ -132,7 +131,6 @@ public class SessionRestfulControllerTests {
             assertNotNull(fingerprintCookie);
             assertEquals(expectedRefreshedSession.getFingerprint(), fingerprintCookie.getValue());
             assertTrue(fingerprintCookie.isHttpOnly());
-            assertTrue(fingerprintCookie.getSecure());
         }
     }
 }

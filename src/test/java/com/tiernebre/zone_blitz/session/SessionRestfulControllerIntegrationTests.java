@@ -103,7 +103,6 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
             )
                     .andExpect(header().exists("Set-Cookie"))
                     .andExpect(cookie().value(FINGERPRINT_COOKIE_NAME, expectedSession.getFingerprint()))
-                    .andExpect(cookie().secure(FINGERPRINT_COOKIE_NAME, true))
                     .andExpect(cookie().httpOnly(FINGERPRINT_COOKIE_NAME, true));
         }
     }
@@ -178,7 +177,6 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
             )
                     .andExpect(header().exists("Set-Cookie"))
                     .andExpect(cookie().value(FINGERPRINT_COOKIE_NAME, expectedSession.getFingerprint()))
-                    .andExpect(cookie().secure(FINGERPRINT_COOKIE_NAME, true))
                     .andExpect(cookie().httpOnly(FINGERPRINT_COOKIE_NAME, true));
         }
     }
