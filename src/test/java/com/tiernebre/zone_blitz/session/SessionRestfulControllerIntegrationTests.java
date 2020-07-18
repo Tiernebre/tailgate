@@ -16,7 +16,8 @@ import javax.servlet.http.Cookie;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.tiernebre.zone_blitz.session.SessionRestfulController.REFRESH_TOKEN_COOKIE_NAME;
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.FINGERPRINT_COOKIE_NAME;
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.REFRESH_TOKEN_COOKIE_NAME;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,12 +46,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @DisplayName("returns with 201 CREATED status if successful")
         public void returnsWithCreatedStatus() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .build());
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionFactory.generateOne());
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
@@ -63,33 +59,25 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @DisplayName("returns with the session in the JSON response body")
         public void returnsWithTheSession() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .build());
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(jsonPath("$.accessToken").exists())
-                    .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
-                    .andExpect(jsonPath("$.refreshToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken.toString()));
+                    .andExpect(jsonPath("$.accessToken").value(expectedSession.getAccessToken()))
+                    .andExpect(jsonPath("$.refreshToken").doesNotExist())
+                    .andExpect(jsonPath("$.fingerprint").doesNotExist());
         }
 
         @Test
         @DisplayName("returns with the refresh token set as a cookie")
         public void returnsWithTheRefreshTokenAsACookie() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .build());
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
             int expectedRefreshTokenAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES));
             mockMvc.perform(
                     post("/sessions")
@@ -97,9 +85,25 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(header().exists("Set-Cookie"))
-                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken.toString()))
+                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedSession.getRefreshToken().toString()))
                     .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
                     .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
+        }
+
+        @Test
+        @DisplayName("returns with the fingerprint set as a cookie")
+        public void returnsWithTheFingerprintSetAsACookie() throws Exception {
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
+            mockMvc.perform(
+                    post("/sessions")
+                            .content(objectMapper.writeValueAsString(createSessionRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+            )
+                    .andExpect(header().exists("Set-Cookie"))
+                    .andExpect(cookie().value(FINGERPRINT_COOKIE_NAME, expectedSession.getFingerprint()))
+                    .andExpect(cookie().httpOnly(FINGERPRINT_COOKIE_NAME, true));
         }
     }
 
@@ -111,11 +115,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @DisplayName("returns with 201 CREATED status if successful")
         public void returnsWithCreatedStatus() throws Exception {
             UUID originalRefreshToken = UUID.randomUUID();
-            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionDto.builder()
-                    .accessToken(UUID.randomUUID().toString())
-                    .refreshToken(UUID.randomUUID())
-                    .build()
-            );
+            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionFactory.generateOne());
             Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
@@ -136,40 +136,48 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @DisplayName("returns with the session in the JSON response body")
         public void returnsWithTheSession() throws Exception {
             UUID originalRefreshToken = UUID.randomUUID();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .build());
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(expectedSession);
             Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
             )
                     .andExpect(jsonPath("$.accessToken").exists())
-                    .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
-                    .andExpect(jsonPath("$.refreshToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken.toString()));
+                    .andExpect(jsonPath("$.accessToken").value(expectedSession.getAccessToken()))
+                    .andExpect(jsonPath("$.refreshToken").doesNotExist())
+                    .andExpect(jsonPath("$.fingerprint").doesNotExist());
         }
 
         @Test
         @DisplayName("returns with the refresh token set as a cookie")
         public void returnsWithTheRefreshTokenAsACookie() throws Exception {
             UUID originalRefreshToken = UUID.randomUUID();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(SessionDto.builder()
-                    .accessToken(UUID.randomUUID().toString())
-                    .refreshToken(expectedRefreshToken)
-                    .build());
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(expectedSession);
             int expectedRefreshTokenAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES));
             Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
             mockMvc.perform(
                     put("/sessions").cookie(refreshTokenCookie)
             )
                     .andExpect(header().exists("Set-Cookie"))
-                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshToken.toString()))
+                    .andExpect(cookie().value(REFRESH_TOKEN_COOKIE_NAME, expectedSession.getRefreshToken().toString()))
                     .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
                     .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
+        }
+
+        @Test
+        @DisplayName("returns with the fingerprint set as a cookie")
+        public void returnsWithTheFingerprintAsACookie() throws Exception {
+            UUID originalRefreshToken = UUID.randomUUID();
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(expectedSession);
+            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
+            mockMvc.perform(
+                    put("/sessions").cookie(refreshTokenCookie)
+            )
+                    .andExpect(header().exists("Set-Cookie"))
+                    .andExpect(cookie().value(FINGERPRINT_COOKIE_NAME, expectedSession.getFingerprint()))
+                    .andExpect(cookie().httpOnly(FINGERPRINT_COOKIE_NAME, true));
         }
     }
 }
