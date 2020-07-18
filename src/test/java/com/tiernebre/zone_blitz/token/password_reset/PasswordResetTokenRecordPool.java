@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 import static com.tiernebre.zone_blitz.jooq.Tables.PASSWORD_RESET_TOKENS;
 
 
@@ -28,7 +30,7 @@ public class PasswordResetTokenRecordPool {
         return passwordResetTokensRecord.into(PasswordResetTokensRecord.class);
     }
 
-    public PasswordResetTokensRecord getOneById(String id) {
+    public PasswordResetTokensRecord getOneById(UUID id) {
         return dslContext.selectFrom(PASSWORD_RESET_TOKENS).where(PASSWORD_RESET_TOKENS.TOKEN.eq(id)).fetchOne();
     }
 

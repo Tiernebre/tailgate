@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class SecurityQuestionServiceImpl implements SecurityQuestionService {
     }
 
     @Override
-    public List<SecurityQuestionDto> getAllForPasswordResetToken(String passwordResetToken) {
+    public List<SecurityQuestionDto> getAllForPasswordResetToken(UUID passwordResetToken) {
         return converter.createFromEntities(repository.getAllForPasswordResetToken(passwordResetToken));
     }
 

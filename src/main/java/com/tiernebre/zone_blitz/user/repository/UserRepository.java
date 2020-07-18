@@ -5,6 +5,7 @@ import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
 import com.tiernebre.zone_blitz.user.entity.UserEntity;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Provides operations to perform on Users data.
@@ -35,12 +36,12 @@ public interface UserRepository extends Repository<UserEntity, Long, CreateUserR
      * @return An optional containing the user tied to a given refresh token if the refresh token
      *         is not expired and valid, or an empty optional if the refresh token is expired or invalid.
      */
-    Optional<UserEntity> findOneWithNonExpiredRefreshToken(String refreshToken);
+    Optional<UserEntity> findOneWithNonExpiredRefreshToken(UUID refreshToken);
 
     /**
      * Confirms a user.
      * @param confirmationToken The confirmation token tied to a user to confirm.
      * @return true if there was a user confirmed, false if no user was found.
      */
-    boolean confirmOne(String confirmationToken);
+    boolean confirmOne(UUID confirmationToken);
 }

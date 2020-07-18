@@ -2,6 +2,7 @@ package com.tiernebre.zone_blitz.security_questions;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface SecurityQuestionService {
     /**
@@ -27,5 +28,5 @@ public interface SecurityQuestionService {
      * @param passwordResetToken The password reset token to find questions for.
      * @return The found security questions.
      */
-    List<SecurityQuestionDto> getAllForPasswordResetToken(String passwordResetToken);
+    List<SecurityQuestionDto> getAllForPasswordResetToken(UUID passwordResetToken);
 }

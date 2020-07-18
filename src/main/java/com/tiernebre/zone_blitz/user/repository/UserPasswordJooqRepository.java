@@ -5,6 +5,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
 import static com.tiernebre.zone_blitz.jooq.tables.Users.USERS;
@@ -16,7 +17,7 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     private final UserPasswordResetRepositoryUtilities utilities;
 
     @Override
-    public boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, String resetToken) {
+    public boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, UUID resetToken) {
         int numberOfUpdated = dslContext
                 .update(USERS)
                 .set(USERS.PASSWORD, password)

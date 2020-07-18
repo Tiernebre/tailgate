@@ -2,6 +2,7 @@ package com.tiernebre.zone_blitz.security_questions;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface SecurityQuestionRepository {
     /**
@@ -18,5 +19,5 @@ public interface SecurityQuestionRepository {
      */
     boolean allExistWithIds(Set<Long> ids);
 
-    List<SecurityQuestionEntity> getAllForPasswordResetToken(String passwordResetToken);
+    List<SecurityQuestionEntity> getAllForPasswordResetToken(UUID passwordResetToken);
 }

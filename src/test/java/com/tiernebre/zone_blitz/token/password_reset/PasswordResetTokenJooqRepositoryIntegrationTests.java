@@ -51,9 +51,9 @@ public class PasswordResetTokenJooqRepositoryIntegrationTests extends DatabaseIn
         @Test
         @DisplayName("deletes the given password reset token value")
         public void deletesTheGivenPasswordResetTokenValue() {
-            PasswordResetTokensRecord PasswordResetTokensRecord = passwordResetTokenRecordPool.createAndSaveOne();
-            passwordResetTokenJooqRepository.deleteOne(PasswordResetTokensRecord.getToken());
-            assertNull(passwordResetTokenRecordPool.getOneById(PasswordResetTokensRecord.getToken()));
+            PasswordResetTokensRecord passwordResetTokensRecord = passwordResetTokenRecordPool.createAndSaveOne();
+            passwordResetTokenJooqRepository.deleteOne(passwordResetTokensRecord.getToken());
+            assertNull(passwordResetTokenRecordPool.getOneById(passwordResetTokensRecord.getToken()));
         }
 
         @Test

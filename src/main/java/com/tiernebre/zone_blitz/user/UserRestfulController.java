@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class UserRestfulController {
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/confirmation/{confirmationToken}")
-    public void confirmUser(@PathVariable String confirmationToken) throws UserNotFoundForConfirmationException {
+    public void confirmUser(@PathVariable UUID confirmationToken) throws UserNotFoundForConfirmationException {
         service.confirmOne(confirmationToken);
     }
 

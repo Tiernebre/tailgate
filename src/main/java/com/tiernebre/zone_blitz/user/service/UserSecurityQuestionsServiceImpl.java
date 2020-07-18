@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class UserSecurityQuestionsServiceImpl implements UserSecurityQuestionsSe
     @Override
     public void validateAnswersForUserWithEmailAndResetToken(
             String email,
-            String resetToken,
+            UUID resetToken,
             Map<Long, String> answersToValidate
     ) throws InvalidSecurityQuestionAnswerException {
         Map<Long, String> foundAnswers = repository.getAnswersForEmailAndResetToken(email, resetToken);

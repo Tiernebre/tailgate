@@ -2,6 +2,8 @@ package com.tiernebre.zone_blitz.token.refresh;
 
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 
+import java.util.UUID;
+
 public interface RefreshTokenService {
     /**
      * Creates a refresh token that is stored and connected to a User to allow for easy future refreshes of access tokens.
@@ -14,5 +16,5 @@ public interface RefreshTokenService {
      * Deletes a Refresh Token by its given unique token value.
      * @param token The token of the refresh token to delete.
      */
-    void deleteOne(String token);
+    void deleteOne(UUID token);
 }

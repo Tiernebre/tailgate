@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 import static com.tiernebre.zone_blitz.jooq.Tables.PASSWORD_RESET_TOKENS;
 
 @Repository
@@ -23,7 +25,7 @@ public class PasswordResetTokenJooqRepository implements PasswordResetTokenRepos
     }
 
     @Override
-    public void deleteOne(String token) {
+    public void deleteOne(UUID token) {
         dslContext
                 .deleteFrom(PASSWORD_RESET_TOKENS)
                 .where(PASSWORD_RESET_TOKENS.TOKEN.eq(token))

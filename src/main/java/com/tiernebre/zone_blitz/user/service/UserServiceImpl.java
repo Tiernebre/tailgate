@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,16 +61,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findOneByNonExpiredRefreshToken(String refreshToken) {
-        StringValidator.requireNonBlank(refreshToken, REQUIRED_REFRESH_TOKEN_MESSAGE);
-
+    public Optional<UserDto> findOneByNonExpiredRefreshToken(UUID refreshToken) {
         return repository
                 .findOneWithNonExpiredRefreshToken(refreshToken)
                 .map(converter::convertFromEntity);
     }
 
     @Override
-    public void confirmOne(String confirmationToken) throws UserNotFoundForConfirmationException {
+    public void confirmOne(UUID confirmationToken) throws UserNotFoundForConfirmationException {
         boolean userWasConfirmed = repository.confirmOne(confirmationToken);
         if (!userWasConfirmed) {
             throw new UserNotFoundForConfirmationException();

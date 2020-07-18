@@ -245,7 +245,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         @Test
         @DisplayName("returns an empty optional for a refresh token that does not exist")
         void returnsAnEmptyOptionalForANonExistentRefreshToken() {
-            Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(UUID.randomUUID().toString());
+            Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(UUID.randomUUID());
             assertFalse(foundUser.isPresent());
         }
 
@@ -273,7 +273,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         void setsAUserIsConfirmedToTrue() {
             UsersRecord user = userRecordPool.createAndSaveOne();
             assertFalse(user.getIsConfirmed());
-            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            UUID confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
             userJooqRepository.confirmOne(confirmationToken);
             user.refresh();
             assertTrue(user.getIsConfirmed());
@@ -286,7 +286,7 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
             UsersRecord userToNotConfirm = userRecordPool.createAndSaveOne();
             assertFalse(userToConfirm.getIsConfirmed());
             assertFalse(userToNotConfirm.getIsConfirmed());
-            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(userToConfirm).getToken();
+            UUID confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(userToConfirm).getToken();
             confirmationTokenRecordPool.createAndSaveOneForUser(userToNotConfirm);
             userJooqRepository.confirmOne(confirmationToken);
             userToConfirm.refresh();
@@ -300,14 +300,14 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
         void returnsTrueIfAUserWasConfirmed() {
             UsersRecord user = userRecordPool.createAndSaveOne();
             assertFalse(user.getIsConfirmed());
-            String confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
+            UUID confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
             assertTrue(userJooqRepository.confirmOne(confirmationToken));
         }
 
         @Test
         @DisplayName("returns false if a user was not confirmed")
         void returnsFalseIfAUserWasNotConfirmed() {
-            assertFalse(userJooqRepository.confirmOne(UUID.randomUUID().toString()));
+            assertFalse(userJooqRepository.confirmOne(UUID.randomUUID()));
         }
     }
 
