@@ -32,4 +32,4 @@ spring:
 
 mailhog:
   host: 'localhost'
-  port: ${MAILHOG_API_PORT:8025}
+  port: ${MAILHOG_API_PORT}
