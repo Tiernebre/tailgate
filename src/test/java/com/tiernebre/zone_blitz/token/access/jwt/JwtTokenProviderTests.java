@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.tiernebre.zone_blitz.token.access.jwt.JwtTokenProvider.*;
+import static com.tiernebre.zone_blitz.token.access.jwt.JwtTokenConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;

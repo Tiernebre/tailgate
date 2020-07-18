@@ -16,18 +16,14 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.tiernebre.zone_blitz.token.access.jwt.JwtTokenConstants.*;
+
 /**
  * Generates / Validates JSON Web Tokens.
  */
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider implements AccessTokenProvider {
-    static final String ISSUER = "zone-blitz";
-    static final String EMAIL_CLAIM = "email";
-    static final String IS_CONFIRMED_CLAIM = "isConfirmed";
-    static final String NULL_USER_ERROR_MESSAGE = "The user to generate a JWT token from must not be null.";
-    static final String FINGERPRINT_CLAIM = "userFingerprint";
-
     private final Algorithm algorithm;
     private final JwtTokenConfigurationProperties configurationProperties;
     private final Clock clock;
