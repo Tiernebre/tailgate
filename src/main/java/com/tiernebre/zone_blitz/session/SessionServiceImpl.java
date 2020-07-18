@@ -50,7 +50,7 @@ public class SessionServiceImpl implements SessionService {
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
         String fingerprint = accessTokenFingerprintGenerator.generateOne();
         return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(user, fingerprint))
+                .accessToken(accessTokenProvider.generateOne(user, fingerprint).getToken())
                 .refreshToken(refreshTokenService.createOneForUser(user))
                 .fingerprint(fingerprint)
                 .build();

@@ -9,7 +9,7 @@ public interface AccessTokenProvider {
      * @param fingerprint A secure fingerprint identifier used to prevent sidejacking attacks of the generated token.
      * @return An access token used for authentication to allow a user to perform authenticated only actions.
      */
-    String generateOne(
+    AccessTokenDto generateOne(
             UserDto user,
             String fingerprint
     ) throws GenerateAccessTokenException;

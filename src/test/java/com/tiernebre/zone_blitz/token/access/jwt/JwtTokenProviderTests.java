@@ -70,7 +70,7 @@ public class JwtTokenProviderTests {
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             Date expectedExpiresAt = new Date(expectedMillisForExpiration);
-            String generatedToken = jwtTokenProvider.generateOne(userDTO, fingerprint);
+            String generatedToken = jwtTokenProvider.generateOne(userDTO, fingerprint).getToken();
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();

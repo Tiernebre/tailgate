@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintHasher;
@@ -30,14 +31,14 @@ public class JwtTokenProvider implements AccessTokenProvider {
     private final AccessTokenFingerprintHasher fingerprintHasher;
 
     @Override
-    public String generateOne(
+    public AccessTokenDto generateOne(
             UserDto user,
             String fingerprint
     ) throws GenerateAccessTokenException {
         Objects.requireNonNull(user, NULL_USER_ERROR_MESSAGE);
 
         try {
-            return JWT.create()
+            String accessToken = JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
@@ -45,6 +46,9 @@ public class JwtTokenProvider implements AccessTokenProvider {
                     .withClaim(FINGERPRINT_CLAIM, fingerprintHasher.hashFingerprint(fingerprint))
                     .withExpiresAt(generateExpiresAt())
                     .sign(algorithm);
+            return AccessTokenDto.builder()
+                    .token(accessToken)
+                    .build();
         } catch (Exception exception){
             throw new GenerateAccessTokenException(exception.getMessage());
         }
