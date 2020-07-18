@@ -24,6 +24,11 @@ zone-blitz:
 spring:
   flyway:
     enabled: true
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
 
 mailhog:
   host: 'localhost'
