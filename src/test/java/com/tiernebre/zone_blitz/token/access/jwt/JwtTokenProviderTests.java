@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
+import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintHasher;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.tiernebre.zone_blitz.token.access.jwt.JwtTokenProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +39,9 @@ public class JwtTokenProviderTests {
     @Mock
     private JwtTokenConfigurationProperties jwtTokenConfigurationProperties;
 
+    @Mock
+    private AccessTokenFingerprintHasher fingerprintHasher;
+
     private Clock fixedTestClock;
 
     @BeforeEach
@@ -45,7 +50,8 @@ public class JwtTokenProviderTests {
         jwtTokenProvider = new JwtTokenProvider(
                 ALGORITHM,
                 jwtTokenConfigurationProperties,
-                Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+                Clock.fixed(Instant.now(), ZoneId.of("UTC")),
+                fingerprintHasher
         );
     }
 
@@ -57,11 +63,14 @@ public class JwtTokenProviderTests {
         @DisplayName("returns the generated JSON web token with the correct claims")
         void returnsTheGeneratedJSONWebToken() throws GenerateAccessTokenException {
             when(jwtTokenConfigurationProperties.getExpirationWindowInMinutes()).thenReturn(TEST_EXPIRATION_WINDOW_IN_MINUTES);
+            String fingerprint = UUID.randomUUID().toString();
+            String expectedHashedFingerprint = UUID.randomUUID().toString();
+            when(fingerprintHasher.hashFingerprint(eq(fingerprint))).thenReturn(expectedHashedFingerprint);
             UserDto userDTO = UserFactory.generateOneDto();
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             Date expectedExpiresAt = new Date(expectedMillisForExpiration);
-            String generatedToken = jwtTokenProvider.generateOne(userDTO, UUID.randomUUID().toString());
+            String generatedToken = jwtTokenProvider.generateOne(userDTO, fingerprint);
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();
@@ -71,7 +80,8 @@ public class JwtTokenProviderTests {
                     () -> assertEquals(userDTO.getId().toString(), decodedJWT.getSubject()),
                     () -> assertEquals(userDTO.getEmail(), decodedJWT.getClaim(EMAIL_CLAIM).asString()),
                     () -> assertEquals(userDTO.isConfirmed(), decodedJWT.getClaim(IS_CONFIRMED_CLAIM).asBoolean()),
-                    () -> assertEquals(expectedExpiresAt, decodedJWT.getExpiresAt())
+                    () -> assertEquals(expectedExpiresAt, decodedJWT.getExpiresAt()),
+                    () -> assertEquals(expectedHashedFingerprint, decodedJWT.getClaim(FINGERPRINT_CLAIM).asString())
             );
         }
 
@@ -82,7 +92,8 @@ public class JwtTokenProviderTests {
             JwtTokenProvider jwtTokenServiceWithBorkedAlgorithm = new JwtTokenProvider(
                     null,
                     jwtTokenConfigurationProperties,
-                    fixedTestClock
+                    fixedTestClock,
+                    fingerprintHasher
             );
             UserDto userDTO = UserFactory.generateOneDto();
             assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO, UUID.randomUUID().toString()));

@@ -6,14 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
+import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintHasher;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.util.Date;
 import java.util.Objects;
@@ -29,10 +26,12 @@ public class JwtTokenProvider implements AccessTokenProvider {
     static final String EMAIL_CLAIM = "email";
     static final String IS_CONFIRMED_CLAIM = "isConfirmed";
     static final String NULL_USER_ERROR_MESSAGE = "The user to generate a JWT token from must not be null.";
+    static final String FINGERPRINT_CLAIM = "userFingerprint";
 
     private final Algorithm algorithm;
     private final JwtTokenConfigurationProperties configurationProperties;
     private final Clock clock;
+    private final AccessTokenFingerprintHasher fingerprintHasher;
 
     @Override
     public String generateOne(
@@ -47,6 +46,7 @@ public class JwtTokenProvider implements AccessTokenProvider {
                     .withSubject(user.getId().toString())
                     .withClaim(EMAIL_CLAIM, user.getEmail())
                     .withClaim(IS_CONFIRMED_CLAIM, user.isConfirmed())
+                    .withClaim(FINGERPRINT_CLAIM, fingerprintHasher.hashFingerprint(fingerprint))
                     .withExpiresAt(generateExpiresAt())
                     .sign(algorithm);
         } catch (Exception exception){
@@ -73,11 +73,5 @@ public class JwtTokenProvider implements AccessTokenProvider {
 
     private Date generateExpiresAt() {
         return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getExpirationWindowInMinutes()));
-    }
-
-    private String hashFingerprint(String fingerprint) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] userFingerprintDigest = digest.digest(fingerprint.getBytes(StandardCharsets.UTF_8));
-        return DatatypeConverter.printHexBinary(userFingerprintDigest);
     }
 }
