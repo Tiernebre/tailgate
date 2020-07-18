@@ -1,5 +1,6 @@
 package com.tiernebre.zone_blitz.authentication;
 
+import com.tiernebre.zone_blitz.token.access.AccessTokenInvalidException;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
@@ -15,6 +16,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockFilterChain;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -27,6 +31,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.FINGERPRINT_COOKIE_NAME;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
@@ -68,7 +73,7 @@ public class JwtAuthorizationFilterTests {
 
         @Test
         @DisplayName("sets authentication in the context for a valid token")
-        void setsAuthenticationForValidToken() throws IOException, ServletException {
+        void setsAuthenticationForValidToken() throws IOException, ServletException, AccessTokenInvalidException {
             HttpServletRequest req = mock(HttpServletRequest.class);
             HttpServletResponse res = mock(HttpServletResponse.class);
             FilterChain filterChain = mock(FilterChain.class);
@@ -83,10 +88,26 @@ public class JwtAuthorizationFilterTests {
             assertEquals(authorizedUser, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         }
 
+        @Test
+        @DisplayName("sets the response as UNAUTHORIZED if the access token provided is invalid")
+        void setsTheResponseAsUnauthorizedIfTheAccessTokenProvidedIsInvalid() throws IOException, ServletException, AccessTokenInvalidException {
+            MockHttpServletRequest req = new MockHttpServletRequest();
+            MockHttpServletResponse res = new MockHttpServletResponse();
+            MockFilterChain filterChain = new MockFilterChain();
+            String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
+            req.addHeader("Authorization", "Bearer " + token);
+            String fingerprint = UUID.randomUUID().toString();
+            Cookie[] cookies = { new Cookie(FINGERPRINT_COOKIE_NAME, fingerprint) };
+            req.setCookies(cookies);
+            when(tokenProvider.validateOne(eq(token), eq(fingerprint))).thenThrow(new AccessTokenInvalidException());
+            jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
+            assertEquals(SC_UNAUTHORIZED, res.getStatus());
+        }
+
         @NullSource
         @EmptySource
         @ParameterizedTest(name = "uses null for the fingerprint if the cookies are {0}")
-        void usesNullForTheFingerprintIfTheCookiesAre(Cookie[] cookies) throws IOException, ServletException {
+        void usesNullForTheFingerprintIfTheCookiesAre(Cookie[] cookies) throws IOException, ServletException, AccessTokenInvalidException {
             HttpServletRequest req = mock(HttpServletRequest.class);
             HttpServletResponse res = mock(HttpServletResponse.class);
             FilterChain filterChain = mock(FilterChain.class);
@@ -101,7 +122,7 @@ public class JwtAuthorizationFilterTests {
 
         @Test
         @DisplayName("uses null for the fingerprint if the cookies do not contain the fingerprint cookie")
-        void usesNullForTheFingerprintIfTheCookiesDoNotContainTheFingerprintCookie() throws IOException, ServletException {
+        void usesNullForTheFingerprintIfTheCookiesDoNotContainTheFingerprintCookie() throws IOException, ServletException, AccessTokenInvalidException {
             HttpServletRequest req = mock(HttpServletRequest.class);
             HttpServletResponse res = mock(HttpServletResponse.class);
             FilterChain filterChain = mock(FilterChain.class);

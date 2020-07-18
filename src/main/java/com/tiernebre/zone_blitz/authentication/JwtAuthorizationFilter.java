@@ -41,12 +41,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             HttpServletResponse res,
             FilterChain chain
     ) throws IOException, ServletException {
-        String tokenProvided = req.getHeader(TOKEN_HEADER);
-        if (tokenIsProvidedInCorrectFormat(tokenProvided)) {
-            UsernamePasswordAuthenticationToken authentication = getAuthentication(tokenProvided, getAccessTokenFingerprintFromCookies(req));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            String tokenProvided = req.getHeader(TOKEN_HEADER);
+            if (tokenIsProvidedInCorrectFormat(tokenProvided)) {
+                UsernamePasswordAuthenticationToken authentication = getAuthentication(tokenProvided, getAccessTokenFingerprintFromCookies(req));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            chain.doFilter(req, res);
+        } catch (AccessTokenInvalidException accessTokenInvalidException) {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-        chain.doFilter(req, res);
     }
 
     private boolean tokenIsProvidedInCorrectFormat(String tokenProvided) {
