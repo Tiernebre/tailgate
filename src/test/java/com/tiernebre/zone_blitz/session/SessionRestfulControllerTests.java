@@ -48,12 +48,7 @@ public class SessionRestfulControllerTests {
         @DisplayName("returns the created session")
         void returnsTheCreatedToken() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            SessionDto expectedSession = SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .build();
+            SessionDto expectedSession = SessionFactory.generateOne();
             when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
             SessionDto gottenSession = sessionRestfulController.createOne(createSessionRequest, new MockHttpServletResponse());
             assertEquals(expectedSession, gottenSession);
@@ -63,18 +58,13 @@ public class SessionRestfulControllerTests {
         @DisplayName("sets a cookie containing the refresh token on the provided response")
         void returnsTheRefreshTokenAsACookieOnTheProvidedResponse() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            SessionDto expectedSession = SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .build();
+            SessionDto expectedSession = SessionFactory.generateOne();
             when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
             MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
             sessionRestfulController.createOne(createSessionRequest, httpServletResponse);
             Cookie refreshTokenCookie = httpServletResponse.getCookie(REFRESH_TOKEN_COOKIE_NAME);
             assertNotNull(refreshTokenCookie);
-            assertEquals(expectedRefreshToken.toString(), refreshTokenCookie.getValue());
+            assertEquals(expectedSession.getRefreshToken().toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
             assertTrue(refreshTokenCookie.getSecure());
         }
@@ -83,20 +73,13 @@ public class SessionRestfulControllerTests {
         @DisplayName("sets a cookie containing the access token fingerprint on the provided response")
         void returnsTheAccessTokenFingerprintAsACookieOnTheProvidedResponse() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedAccessToken = UUID.randomUUID().toString();
-            UUID expectedRefreshToken = UUID.randomUUID();
-            String expectedFingerprint = UUID.randomUUID().toString();
-            SessionDto expectedSession = SessionDto.builder()
-                    .accessToken(expectedAccessToken)
-                    .refreshToken(expectedRefreshToken)
-                    .fingerprint(expectedFingerprint)
-                    .build();
+            SessionDto expectedSession = SessionFactory.generateOne();
             when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
             MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
             sessionRestfulController.createOne(createSessionRequest, httpServletResponse);
             Cookie fingerprintCookie = httpServletResponse.getCookie(FINGERPRINT_TOKEN_COOKIE_NAME);
             assertNotNull(fingerprintCookie);
-            assertEquals(expectedFingerprint, fingerprintCookie.getValue());
+            assertEquals(expectedSession.getFingerprint(), fingerprintCookie.getValue());
             assertTrue(fingerprintCookie.isHttpOnly());
             assertTrue(fingerprintCookie.getSecure());
         }
@@ -109,12 +92,7 @@ public class SessionRestfulControllerTests {
         @DisplayName("returns the refreshed session")
         void returnsTheRefreshedSession() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
             UUID refreshToken = UUID.randomUUID();
-            String expectedNewAccessToken = UUID.randomUUID().toString();
-            UUID expectedNewRefreshToken = UUID.randomUUID();
-            SessionDto expectedRefreshedSession = SessionDto.builder()
-                    .accessToken(expectedNewAccessToken)
-                    .refreshToken(expectedNewRefreshToken)
-                    .build();
+            SessionDto expectedRefreshedSession = SessionFactory.generateOne();
             when(sessionService.refreshOne(refreshToken)).thenReturn(expectedRefreshedSession);
             SessionDto refreshedSessionGotten = sessionRestfulController.refreshOne(refreshToken, new MockHttpServletResponse());
             assertEquals(expectedRefreshedSession, refreshedSessionGotten);
@@ -146,20 +124,13 @@ public class SessionRestfulControllerTests {
         @DisplayName("sets a cookie containing the access token fingerprint on the provided response")
         void returnsTheAccessTokenFingerprintAsACookieOnTheProvidedResponse() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
             UUID refreshToken = UUID.randomUUID();
-            String expectedNewAccessToken = UUID.randomUUID().toString();
-            UUID expectedNewRefreshToken = UUID.randomUUID();
-            String expectedFingerprint = UUID.randomUUID().toString();
-            SessionDto expectedRefreshedSession = SessionDto.builder()
-                    .accessToken(expectedNewAccessToken)
-                    .refreshToken(expectedNewRefreshToken)
-                    .fingerprint(expectedFingerprint)
-                    .build();
+            SessionDto expectedRefreshedSession = SessionFactory.generateOne();
             when(sessionService.refreshOne(refreshToken)).thenReturn(expectedRefreshedSession);
             MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
             sessionRestfulController.refreshOne(refreshToken, mockHttpServletResponse);
             Cookie fingerprintCookie = mockHttpServletResponse.getCookie(FINGERPRINT_TOKEN_COOKIE_NAME);
             assertNotNull(fingerprintCookie);
-            assertEquals(expectedFingerprint, fingerprintCookie.getValue());
+            assertEquals(expectedRefreshedSession.getFingerprint(), fingerprintCookie.getValue());
             assertTrue(fingerprintCookie.isHttpOnly());
             assertTrue(fingerprintCookie.getSecure());
         }
