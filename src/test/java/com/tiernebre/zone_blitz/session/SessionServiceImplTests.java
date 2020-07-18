@@ -4,7 +4,6 @@ import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.AccessTokenFactory;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
-import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenService;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
@@ -42,9 +41,6 @@ public class SessionServiceImplTests {
     @Mock
     private RefreshTokenService refreshTokenService;
 
-    @Mock
-    private AccessTokenFingerprintGenerator accessTokenFingerprintGenerator;
-
     @InjectMocks
     private SessionServiceImpl sessionService;
 
@@ -64,9 +60,8 @@ public class SessionServiceImplTests {
             doNothing().when(sessionValidator).validate(createSessionRequest);
             AccessTokenDto expectedAccessToken = AccessTokenFactory.generateOneDto();
             UUID expectedRefreshToken = UUID.randomUUID();
-            String expectedFingerprint = UUID.randomUUID().toString();
+            String expectedFingerprint = expectedAccessToken.getFingerprint();
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
-            when(accessTokenFingerprintGenerator.generateOne()).thenReturn(expectedFingerprint);
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken.getToken())
                     .refreshToken(expectedRefreshToken)
@@ -119,8 +114,7 @@ public class SessionServiceImplTests {
             AccessTokenDto expectedAccessToken = AccessTokenFactory.generateOneDto();
             UUID expectedRefreshToken = UUID.randomUUID();
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
-            String expectedFingerprint = UUID.randomUUID().toString();
-            when(accessTokenFingerprintGenerator.generateOne()).thenReturn(expectedFingerprint);
+            String expectedFingerprint = expectedAccessToken.getFingerprint();
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken.getToken())
                     .refreshToken(expectedRefreshToken)
@@ -148,7 +142,6 @@ public class SessionServiceImplTests {
             when(userService.findOneByNonExpiredRefreshToken(eq(originalRefreshToken))).thenReturn(Optional.of(user));
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID());
             when(accessTokenProvider.generateOne(eq(user))).thenReturn(AccessTokenFactory.generateOneDto());
-            when(accessTokenFingerprintGenerator.generateOne()).thenReturn(UUID.randomUUID().toString());
             sessionService.refreshOne(originalRefreshToken);
             verify(refreshTokenService, times(1)).deleteOne(eq(originalRefreshToken));
         }
