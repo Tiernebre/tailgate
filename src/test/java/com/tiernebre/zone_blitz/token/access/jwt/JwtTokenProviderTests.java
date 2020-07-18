@@ -3,6 +3,7 @@ package com.tiernebre.zone_blitz.token.access.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -144,7 +148,7 @@ public class JwtTokenProviderTests {
             String fingerprint = UUID.randomUUID().toString();
             String providedFingerprintHash = UUID.randomUUID().toString();
             String expectedHashedFingerprint = UUID.randomUUID().toString();
-            when(fingerprintHasher.hashFingerprint(eq(UUID.randomUUID().toString()))).thenReturn(providedFingerprintHash);
+            when(fingerprintHasher.hashFingerprint(eq(fingerprint))).thenReturn(providedFingerprintHash);
             String testToken = JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(expectedUser.getId().toString())
@@ -152,7 +156,24 @@ public class JwtTokenProviderTests {
                     .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
                     .withClaim(FINGERPRINT_CLAIM, expectedHashedFingerprint)
                     .sign(ALGORITHM);
-            assertThrows(Exception.class, () -> jwtTokenProvider.validateOne(testToken, fingerprint));
+            assertThrows(InvalidClaimException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprint));
+        }
+
+        @EmptySource
+        @NullSource
+        @ParameterizedTest(name = "throws an error if given a fingerprint = \"{0}\"")
+        void throwsAnErrorIfGivenAnIncorrectFingerprint(String fingerprintProvided) {
+            UserDto expectedUser = UserFactory.generateOneDto();
+            String expectedHashedFingerprint = UUID.randomUUID().toString();
+            when(fingerprintHasher.hashFingerprint(eq(fingerprintProvided))).thenReturn(fingerprintProvided);
+            String testToken = JWT.create()
+                    .withIssuer(ISSUER)
+                    .withSubject(expectedUser.getId().toString())
+                    .withClaim(EMAIL_CLAIM, expectedUser.getEmail())
+                    .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
+                    .withClaim(FINGERPRINT_CLAIM, expectedHashedFingerprint)
+                    .sign(ALGORITHM);
+            assertThrows(InvalidClaimException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprintProvided));
         }
     }
 }
