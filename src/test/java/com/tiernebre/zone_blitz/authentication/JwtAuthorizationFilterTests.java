@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
@@ -28,6 +29,7 @@ import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.FINGERP
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,6 +72,22 @@ public class JwtAuthorizationFilterTests {
             when(req.getCookies()).thenReturn(cookies);
             UserDto authorizedUser = UserFactory.generateOneDto();
             when(tokenProvider.validateOne(eq(token), eq(fingerprint))).thenReturn(authorizedUser);
+            jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
+            assertEquals(authorizedUser, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        }
+
+        @NullSource
+        @EmptySource
+        @ParameterizedTest(name = "uses null for the fingerprint if the cookies are {0}")
+        void usesNullForTheFingerprintIfTheCookiesAre(Cookie[] cookies) throws IOException, ServletException {
+            HttpServletRequest req = mock(HttpServletRequest.class);
+            HttpServletResponse res = mock(HttpServletResponse.class);
+            FilterChain filterChain = mock(FilterChain.class);
+            String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
+            when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
+            when(req.getCookies()).thenReturn(cookies);
+            UserDto authorizedUser = UserFactory.generateOneDto();
+            when(tokenProvider.validateOne(eq(token), isNull())).thenReturn(authorizedUser);
             jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
             assertEquals(authorizedUser, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         }
