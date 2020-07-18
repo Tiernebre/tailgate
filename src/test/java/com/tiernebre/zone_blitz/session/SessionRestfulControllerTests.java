@@ -17,6 +17,7 @@ import javax.servlet.http.Cookie;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static com.tiernebre.zone_blitz.session.SessionRestfulController.FINGERPRINT_TOKEN_COOKIE_NAME;
 import static com.tiernebre.zone_blitz.session.SessionRestfulController.REFRESH_TOKEN_COOKIE_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,7 +34,7 @@ public class SessionRestfulControllerTests {
     @InjectMocks
     private SessionRestfulController sessionRestfulController;
 
-    private int TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES = 2;
+    private final int TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES = 2;
 
     @BeforeEach
     public void setup() {
@@ -77,6 +78,28 @@ public class SessionRestfulControllerTests {
             assertTrue(refreshTokenCookie.isHttpOnly());
             assertTrue(refreshTokenCookie.getSecure());
         }
+
+        @Test
+        @DisplayName("sets a cookie containing the access token fingerprint on the provided response")
+        void returnsTheAccessTokenFingerprintAsACookieOnTheProvidedResponse() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
+            CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
+            String expectedAccessToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
+            String expectedFingerprint = UUID.randomUUID().toString();
+            SessionDto expectedSession = SessionDto.builder()
+                    .accessToken(expectedAccessToken)
+                    .refreshToken(expectedRefreshToken)
+                    .fingerprint(expectedFingerprint)
+                    .build();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(expectedSession);
+            MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
+            sessionRestfulController.createOne(createSessionRequest, httpServletResponse);
+            Cookie fingerprintCookie = httpServletResponse.getCookie(FINGERPRINT_TOKEN_COOKIE_NAME);
+            assertNotNull(fingerprintCookie);
+            assertEquals(expectedFingerprint, fingerprintCookie.getValue());
+            assertTrue(fingerprintCookie.isHttpOnly());
+            assertTrue(fingerprintCookie.getSecure());
+        }
     }
 
     @Nested
@@ -117,6 +140,28 @@ public class SessionRestfulControllerTests {
             assertTrue(refreshTokenCookie.getSecure());
             int expectedCookieAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES));
             assertEquals(expectedCookieAge, refreshTokenCookie.getMaxAge());
+        }
+
+        @Test
+        @DisplayName("sets a cookie containing the access token fingerprint on the provided response")
+        void returnsTheAccessTokenFingerprintAsACookieOnTheProvidedResponse() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
+            UUID refreshToken = UUID.randomUUID();
+            String expectedNewAccessToken = UUID.randomUUID().toString();
+            UUID expectedNewRefreshToken = UUID.randomUUID();
+            String expectedFingerprint = UUID.randomUUID().toString();
+            SessionDto expectedRefreshedSession = SessionDto.builder()
+                    .accessToken(expectedNewAccessToken)
+                    .refreshToken(expectedNewRefreshToken)
+                    .fingerprint(expectedFingerprint)
+                    .build();
+            when(sessionService.refreshOne(refreshToken)).thenReturn(expectedRefreshedSession);
+            MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+            sessionRestfulController.refreshOne(refreshToken, mockHttpServletResponse);
+            Cookie fingerprintCookie = mockHttpServletResponse.getCookie(FINGERPRINT_TOKEN_COOKIE_NAME);
+            assertNotNull(fingerprintCookie);
+            assertEquals(expectedFingerprint, fingerprintCookie.getValue());
+            assertTrue(fingerprintCookie.isHttpOnly());
+            assertTrue(fingerprintCookie.getSecure());
         }
     }
 }
