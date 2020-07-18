@@ -1,23 +1,15 @@
 package com.tiernebre.zone_blitz.token.access.fingerprint;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
-import java.security.SecureRandom;
-
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class AccessTokenSecureRandomFingerprintGeneratorTests {
-    private AccessTokenSecureRandomFingerprintGenerator accessTokenSecureRandomFingerprintGenerator;
-
-    @BeforeEach
-    void setup() {
-        accessTokenSecureRandomFingerprintGenerator = new AccessTokenSecureRandomFingerprintGenerator(new SecureRandom());
-    }
+    private static final AccessTokenSecureRandomFingerprintGenerator accessTokenSecureRandomFingerprintGenerator = new AccessTokenSecureRandomFingerprintGenerator();
 
     @Nested
     @DisplayName("generateOne")
