@@ -13,7 +13,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     private final PasswordResetTokenRepository repository;
 
     @Override
-    public String createOneForUser(UserDto user) {
+    public UUID createOneForUser(UserDto user) {
         return repository.createOneForUser(user).getToken();
     }
 

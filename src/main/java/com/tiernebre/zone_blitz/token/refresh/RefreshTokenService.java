@@ -10,7 +10,7 @@ public interface RefreshTokenService {
      * @param user The user to create a refresh token for.
      * @return The refresh token that a client can use to refresh tokens for a user.
      */
-    String createOneForUser(UserDto user);
+    UUID createOneForUser(UserDto user);
 
     /**
      * Deletes a Refresh Token by its given unique token value.

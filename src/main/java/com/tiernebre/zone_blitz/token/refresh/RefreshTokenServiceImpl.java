@@ -15,7 +15,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository repository;
 
     @Override
-    public String createOneForUser(UserDto user) {
+    public UUID createOneForUser(UserDto user) {
         Objects.requireNonNull(user, NULL_USER_ERROR_MESSAGE);
 
         return repository.createOneForUser(user).getToken();

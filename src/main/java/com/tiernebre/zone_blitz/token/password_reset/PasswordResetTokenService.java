@@ -11,7 +11,7 @@ public interface PasswordResetTokenService {
      * @param user The user to create a password reset token for.
      * @return The created password reset token.
      */
-    String createOneForUser(UserDto user);
+    UUID createOneForUser(UserDto user);
 
     /**
      * Deletes a password reset token asynchronously.

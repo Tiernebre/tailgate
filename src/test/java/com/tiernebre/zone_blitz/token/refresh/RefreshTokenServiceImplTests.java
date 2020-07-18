@@ -35,7 +35,7 @@ public class RefreshTokenServiceImplTests {
             UserDto userDto = UserFactory.generateOneDto();
             RefreshTokenEntity expectedRefreshToken = RefreshTokenFactory.generateOneEntity();
             when(refreshTokenRepository.createOneForUser(eq(userDto))).thenReturn(expectedRefreshToken);
-            String createdToken = refreshTokenService.createOneForUser(userDto);
+            UUID createdToken = refreshTokenService.createOneForUser(userDto);
             assertEquals(expectedRefreshToken.getToken(), createdToken);
         }
 

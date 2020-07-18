@@ -6,6 +6,8 @@ import com.tiernebre.zone_blitz.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PasswordResetServiceImpl implements PasswordResetService {
@@ -21,7 +23,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     }
 
     private void sendOffPasswordResetTokenToUser(UserDto user) {
-        String passwordResetToken = passwordResetTokenService.createOneForUser(user);
+        UUID passwordResetToken = passwordResetTokenService.createOneForUser(user);
         passwordResetTokenDeliveryService.sendOne(user, passwordResetToken);
     }
 }

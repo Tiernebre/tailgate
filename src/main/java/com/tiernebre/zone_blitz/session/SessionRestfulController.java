@@ -45,7 +45,7 @@ public class SessionRestfulController {
     }
 
     private void setRefreshTokenCookieFromSession(SessionDto session, HttpServletResponse httpServletResponse) {
-        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken());
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken().toString());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(getRefreshTokenCookieAgeInSeconds());
         httpServletResponse.addCookie(refreshTokenCookie);

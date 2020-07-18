@@ -4,7 +4,6 @@ import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,6 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrat
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.createOneForUser(user);
             assertNotNull(refreshTokenEntity.getToken());
-            assertTrue(StringUtils.isNotBlank(refreshTokenEntity.getToken()));
             assertNotNull(refreshTokenEntity.getCreatedAt());
             assertEquals(user.getId(), refreshTokenEntity.getUserId());
         }
