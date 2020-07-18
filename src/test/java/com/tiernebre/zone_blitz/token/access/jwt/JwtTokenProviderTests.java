@@ -136,5 +136,23 @@ public class JwtTokenProviderTests {
             UserDto foundUser = jwtTokenProvider.validateOne(testToken, fingerprint);
             assertEquals(expectedUser, foundUser);
         }
+
+        @Test
+        @DisplayName("throws an error if given an incorrect fingerprint")
+        void throwsAnErrorIfGivenAnIncorrectFingerprint() {
+            UserDto expectedUser = UserFactory.generateOneDto();
+            String fingerprint = UUID.randomUUID().toString();
+            String providedFingerprintHash = UUID.randomUUID().toString();
+            String expectedHashedFingerprint = UUID.randomUUID().toString();
+            when(fingerprintHasher.hashFingerprint(eq(UUID.randomUUID().toString()))).thenReturn(providedFingerprintHash);
+            String testToken = JWT.create()
+                    .withIssuer(ISSUER)
+                    .withSubject(expectedUser.getId().toString())
+                    .withClaim(EMAIL_CLAIM, expectedUser.getEmail())
+                    .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
+                    .withClaim(FINGERPRINT_CLAIM, expectedHashedFingerprint)
+                    .sign(ALGORITHM);
+            assertThrows(Exception.class, () -> jwtTokenProvider.validateOne(testToken, fingerprint));
+        }
     }
 }
