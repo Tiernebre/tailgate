@@ -55,14 +55,12 @@ public class SessionRestfulController {
         Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken().toString());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(getRefreshTokenCookieAgeInSeconds());
-        refreshTokenCookie.setSecure(true);
         return refreshTokenCookie;
     }
 
     private Cookie createFingerprintCookie(SessionDto session) {
         Cookie fingerprintCookie = new Cookie(FINGERPRINT_COOKIE_NAME, session.getFingerprint());
         fingerprintCookie.setHttpOnly(true);
-        fingerprintCookie.setSecure(true);
         return fingerprintCookie;
     }
 
