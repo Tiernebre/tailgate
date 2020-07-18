@@ -5,7 +5,7 @@ import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionRecordPool;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenRecordPool;
 import com.tiernebre.zone_blitz.token.user_confirmation.UserConfirmationTokenRecordPool;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserJooqRepository userJooqRepository;
 

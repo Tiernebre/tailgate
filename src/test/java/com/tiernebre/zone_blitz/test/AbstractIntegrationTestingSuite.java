@@ -1,15 +1,14 @@
 package com.tiernebre.zone_blitz.test;
 
+import com.tiernebre.zone_blitz.test.email.mailhog.ZoneBlitzMailhogContainer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Provides the necessary setup for spooling up a Database to perform Integration Tests against.
- */
 @SpringBootTest
 @Transactional
-public abstract class DatabaseIntegrationTestSuite {
+public abstract class AbstractIntegrationTestingSuite {
     static {
         ZoneBlitzPostgresqlContainer.getInstance().start();
+        ZoneBlitzMailhogContainer.getInstance().start();
     }
 }

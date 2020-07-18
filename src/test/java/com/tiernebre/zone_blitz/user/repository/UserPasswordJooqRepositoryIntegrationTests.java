@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.user.repository;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokensRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenConfigurationProperties;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class UserPasswordJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserPasswordJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserPasswordJooqRepository userPasswordJooqRepository;
 

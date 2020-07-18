@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.user.validator;
 
-import com.tiernebre.zone_blitz.test.SpringIntegrationTestingSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.dto.ResetTokenUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.exception.InvalidUpdatePasswordRequestException;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import static com.tiernebre.zone_blitz.user.validator.UserValidationConstants.*;
 import static org.junit.Assert.*;
 
-public class UserPasswordValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
+public class UserPasswordValidatorImplIntegrationTests extends AbstractIntegrationTestingSuite {
     private static final String VALID_EMAIL_VALIDATION_MESSAGE = "email must be a well-formed email address";
 
     @Autowired

@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.password;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
-import com.tiernebre.zone_blitz.test.EmailIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
 import com.tiernebre.zone_blitz.test.email.TestEmailInboxService;
 import com.tiernebre.zone_blitz.test.email.TestEmailSearchOption;
@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends EmailIntegrationTestSuite {
+public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private PasswordResetTokenEmailDeliveryService passwordResetTokenEmailDeliveryService;
 

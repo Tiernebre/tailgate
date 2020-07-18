@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.security_questions;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import org.junit.jupiter.api.*;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class SecurityQuestionJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private SecurityQuestionRecordPool recordPool;
 

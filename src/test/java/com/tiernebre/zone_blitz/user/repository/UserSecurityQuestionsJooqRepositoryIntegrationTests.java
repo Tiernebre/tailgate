@@ -3,7 +3,7 @@ package com.tiernebre.zone_blitz.user.repository;
 import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokensRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenConfigurationProperties;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
-public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserSecurityQuestionsJooqRepository userSecurityQuestionsJooqRepository;
 

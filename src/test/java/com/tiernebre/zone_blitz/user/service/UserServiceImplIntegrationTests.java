@@ -5,7 +5,7 @@ import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionRecordPool;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.doNothing;
 @MockBeans({
         @MockBean(UserConfirmationService.class)
 })
-public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserServiceImplIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserService userService;
 
