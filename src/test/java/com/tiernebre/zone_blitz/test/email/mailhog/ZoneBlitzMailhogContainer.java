@@ -29,7 +29,7 @@ public class ZoneBlitzMailhogContainer extends GenericContainer {
     @Override
     public void start() {
         super.start();
-        System.setProperty("EMAIL_PORT", Integer.toString(getMappedPort(SMTP_PORT)));
+        System.setProperty("SMTP_PORT", Integer.toString(getMappedPort(SMTP_PORT)));
         System.setProperty("MAILHOG_API_PORT", Integer.toString(getMappedPort(API_PORT)));
     }
 
