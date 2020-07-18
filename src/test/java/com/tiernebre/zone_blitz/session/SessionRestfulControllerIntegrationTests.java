@@ -31,7 +31,7 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
     @MockBean
     private RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
 
-    private static final int TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES = 1;
+    private static final int TEST_REFRESH_TOKEN_EXPIRATION_WINDOW_IN_MINUTES = 10;
 
     @BeforeEach
     public void setup() {
@@ -45,8 +45,12 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
         @DisplayName("returns with 201 CREATED status if successful")
         public void returnsWithCreatedStatus() throws Exception {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
-            String expectedToken = UUID.randomUUID().toString();
-            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder().accessToken(expectedToken).build());
+            String expectedAccessToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
+            when(sessionService.createOne(eq(createSessionRequest))).thenReturn(SessionDto.builder()
+                    .accessToken(expectedAccessToken)
+                    .refreshToken(expectedRefreshToken)
+                    .build());
             mockMvc.perform(
                     post("/sessions")
                             .content(objectMapper.writeValueAsString(createSessionRequest))
