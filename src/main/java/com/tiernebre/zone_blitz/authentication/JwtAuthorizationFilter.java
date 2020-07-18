@@ -1,5 +1,6 @@
 package com.tiernebre.zone_blitz.authentication;
 
+import com.tiernebre.zone_blitz.token.access.AccessTokenInvalidException;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.apache.commons.lang3.ArrayUtils;
@@ -64,7 +65,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(String token, String fingerprint) {
+    private UsernamePasswordAuthenticationToken getAuthentication(String token, String fingerprint) throws AccessTokenInvalidException {
         UserDto user = tokenProvider.validateOne(token.replace(TOKEN_PREFIX, ""), fingerprint);
         return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
     }

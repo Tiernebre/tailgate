@@ -3,14 +3,14 @@ package com.tiernebre.zone_blitz.token.access.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
+import com.tiernebre.zone_blitz.token.access.AccessTokenInvalidException;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintHasher;
-import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.UserFactory;
+import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static com.tiernebre.zone_blitz.token.access.jwt.JwtTokenConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -125,7 +126,7 @@ public class JwtTokenProviderTests {
     public class ValidateOneTests {
         @Test
         @DisplayName("returns the decoded User if the JWT token provided is valid")
-        void returnsTheDecodedUserForValidJWT() {
+        void returnsTheDecodedUserForValidJWT() throws AccessTokenInvalidException {
             UserDto expectedUser = UserFactory.generateOneDto();
             String fingerprint = UUID.randomUUID().toString();
             String expectedHashedFingerprint = UUID.randomUUID().toString();
@@ -156,7 +157,7 @@ public class JwtTokenProviderTests {
                     .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
                     .withClaim(FINGERPRINT_CLAIM, expectedHashedFingerprint)
                     .sign(ALGORITHM);
-            assertThrows(InvalidClaimException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprint));
+            assertThrows(AccessTokenInvalidException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprint));
         }
 
         @EmptySource
@@ -165,7 +166,7 @@ public class JwtTokenProviderTests {
         void throwsAnErrorIfGivenAnIncorrectFingerprint(String fingerprintProvided) {
             UserDto expectedUser = UserFactory.generateOneDto();
             String expectedHashedFingerprint = UUID.randomUUID().toString();
-            when(fingerprintHasher.hashFingerprint(eq(fingerprintProvided))).thenReturn(fingerprintProvided);
+            lenient().when(fingerprintHasher.hashFingerprint(eq(fingerprintProvided))).thenReturn(fingerprintProvided);
             String testToken = JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(expectedUser.getId().toString())
@@ -173,7 +174,7 @@ public class JwtTokenProviderTests {
                     .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
                     .withClaim(FINGERPRINT_CLAIM, expectedHashedFingerprint)
                     .sign(ALGORITHM);
-            assertThrows(InvalidClaimException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprintProvided));
+            assertThrows(AccessTokenInvalidException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprintProvided));
         }
     }
 }

@@ -19,5 +19,5 @@ public interface AccessTokenProvider {
     UserDto validateOne(
             String token,
             String fingerprint
-    );
+    ) throws AccessTokenInvalidException;
 }

@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Getter
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-public abstract class InvalidException extends Exception {
+public abstract class InvalidException extends RuntimeException {
     private final Set<String> errors;
 
     protected InvalidException(

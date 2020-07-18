@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
+import com.tiernebre.zone_blitz.token.access.AccessTokenInvalidException;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
@@ -56,13 +57,20 @@ public class JwtTokenProvider implements AccessTokenProvider {
     }
 
     @Override
-    public UserDto validateOne(String token, String fingerprint) {
-        JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(ISSUER)
-                .withClaim(FINGERPRINT_CLAIM, fingerprintHasher.hashFingerprint(fingerprint))
-                .build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        return mapDecodedJWTToUser(decodedJWT);
+    public UserDto validateOne(String token, String fingerprint) throws AccessTokenInvalidException {
+        try {
+            Objects.requireNonNull(token);
+            Objects.requireNonNull(fingerprint);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .withClaim(FINGERPRINT_CLAIM, fingerprintHasher.hashFingerprint(fingerprint))
+                    .build();
+            DecodedJWT decodedJWT = verifier.verify(token);
+            return mapDecodedJWTToUser(decodedJWT);
+        } catch (Exception e) {
+            throw new AccessTokenInvalidException();
+        }
     }
 
     private UserDto mapDecodedJWTToUser(DecodedJWT decodedJWT) {
