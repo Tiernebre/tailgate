@@ -48,7 +48,7 @@ public class SessionRestfulControllerTests {
         void returnsTheCreatedToken() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
@@ -63,7 +63,7 @@ public class SessionRestfulControllerTests {
         void returnsTheRefreshTokenAsACookieOnTheProvidedResponse() throws UserNotFoundForSessionException, GenerateAccessTokenException, InvalidCreateSessionRequestException {
             CreateSessionRequest createSessionRequest = TokenFactory.generateOneCreateRequest();
             String expectedAccessToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            UUID expectedRefreshToken = UUID.randomUUID();
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
@@ -73,7 +73,7 @@ public class SessionRestfulControllerTests {
             sessionRestfulController.createOne(createSessionRequest, httpServletResponse);
             Cookie refreshTokenCookie = httpServletResponse.getCookie(REFRESH_TOKEN_COOKIE_NAME);
             assertNotNull(refreshTokenCookie);
-            assertEquals(expectedRefreshToken, refreshTokenCookie.getValue());
+            assertEquals(expectedRefreshToken.toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
         }
     }
@@ -84,9 +84,9 @@ public class SessionRestfulControllerTests {
         @Test
         @DisplayName("returns the refreshed session")
         void returnsTheRefreshedSession() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-            String refreshToken = UUID.randomUUID().toString();
+            UUID refreshToken = UUID.randomUUID();
             String expectedNewAccessToken = UUID.randomUUID().toString();
-            String expectedNewRefreshToken = UUID.randomUUID().toString();
+            UUID expectedNewRefreshToken = UUID.randomUUID();
             SessionDto expectedRefreshedSession = SessionDto.builder()
                     .accessToken(expectedNewAccessToken)
                     .refreshToken(expectedNewRefreshToken)
@@ -99,9 +99,9 @@ public class SessionRestfulControllerTests {
         @Test
         @DisplayName("sets a cookie with the newly generated refresh token")
         void setsACookieWithTheNewlyGeneratedRefreshToken() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-            String refreshToken = UUID.randomUUID().toString();
+            UUID refreshToken = UUID.randomUUID();
             String expectedNewAccessToken = UUID.randomUUID().toString();
-            String expectedNewRefreshToken = UUID.randomUUID().toString();
+            UUID expectedNewRefreshToken = UUID.randomUUID();
             SessionDto expectedRefreshedSession = SessionDto.builder()
                     .accessToken(expectedNewAccessToken)
                     .refreshToken(expectedNewRefreshToken)
@@ -111,7 +111,7 @@ public class SessionRestfulControllerTests {
             sessionRestfulController.refreshOne(refreshToken, mockHttpServletResponse);
             Cookie refreshTokenCookie = mockHttpServletResponse.getCookie(REFRESH_TOKEN_COOKIE_NAME);
             assertNotNull(refreshTokenCookie);
-            assertEquals(expectedNewRefreshToken, refreshTokenCookie.getValue());
+            assertEquals(expectedNewRefreshToken.toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
             int expectedCookieAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES));
             assertEquals(expectedCookieAge, refreshTokenCookie.getMaxAge());

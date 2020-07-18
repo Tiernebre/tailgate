@@ -32,13 +32,13 @@ public class UserConfirmationTokenServiceImplTests {
         @DisplayName("returns the created user confirmation token")
         public void returnsTheCreatedUserConfirmationToken() {
             UserDto user = UserFactory.generateOneDto();
-            String expectedConfirmationToken = UUID.randomUUID().toString();
+            UUID expectedConfirmationToken = UUID.randomUUID();
             when(userConfirmationTokenRepository.createOneForUser(eq(user))).thenReturn(
                     UserConfirmationTokenEntity.builder()
                     .token(expectedConfirmationToken)
                     .build()
             );
-            String gottenConfirmationToken = userConfirmationTokenService.createOneForUser(user);
+            UUID gottenConfirmationToken = userConfirmationTokenService.createOneForUser(user);
             assertEquals(expectedConfirmationToken, gottenConfirmationToken);
         }
     }
@@ -50,12 +50,12 @@ public class UserConfirmationTokenServiceImplTests {
         @DisplayName("returns the found confirmation token if it exists")
         public void returnsTheCreatedUserConfirmationToken() {
             UserDto user = UserFactory.generateOneDto();
-            String expectedConfirmationToken = UUID.randomUUID().toString();
+            UUID expectedConfirmationToken = UUID.randomUUID();
             UserConfirmationTokenEntity userConfirmationTokenEntity = UserConfirmationTokenEntity.builder()
                             .token(expectedConfirmationToken)
                             .build();
             when(userConfirmationTokenRepository.findOneForUser(eq(user))).thenReturn(Optional.of(userConfirmationTokenEntity));
-            String tokenGotten = userConfirmationTokenService.findOrGenerateForUser(user);
+            UUID tokenGotten = userConfirmationTokenService.findOrGenerateForUser(user);
             assertEquals(expectedConfirmationToken, tokenGotten);
         }
 
@@ -63,13 +63,13 @@ public class UserConfirmationTokenServiceImplTests {
         @DisplayName("returns the generated confirmation token if a previous one did not exist")
         public void returnsTheGeneratedConfirmationTokenIfAPreviousOneDidNotExist() {
             UserDto user = UserFactory.generateOneDto();
-            String expectedConfirmationToken = UUID.randomUUID().toString();
+            UUID expectedConfirmationToken = UUID.randomUUID();
             UserConfirmationTokenEntity userConfirmationTokenEntity = UserConfirmationTokenEntity.builder()
                     .token(expectedConfirmationToken)
                     .build();
             when(userConfirmationTokenRepository.findOneForUser(eq(user))).thenReturn(Optional.empty());
             when(userConfirmationTokenRepository.createOneForUser(eq(user))).thenReturn(userConfirmationTokenEntity);
-            String tokenGotten = userConfirmationTokenService.findOrGenerateForUser(user);
+            UUID tokenGotten = userConfirmationTokenService.findOrGenerateForUser(user);
             assertEquals(expectedConfirmationToken, tokenGotten);
         }
     }
