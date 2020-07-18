@@ -2,6 +2,7 @@ package com.tiernebre.zone_blitz.session;
 
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
+import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenService;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
@@ -39,6 +40,9 @@ public class SessionServiceImplTests {
     @Mock
     private RefreshTokenService refreshTokenService;
 
+    @Mock
+    private AccessTokenFingerprintGenerator accessTokenFingerprintGenerator;
+
     @InjectMocks
     private SessionServiceImpl sessionService;
 
@@ -58,10 +62,13 @@ public class SessionServiceImplTests {
             doNothing().when(sessionValidator).validate(createSessionRequest);
             String expectedAccessToken = UUID.randomUUID().toString();
             UUID expectedRefreshToken = UUID.randomUUID();
+            String expectedFingerprint = UUID.randomUUID().toString();
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
+            when(accessTokenFingerprintGenerator.generateOne()).thenReturn(expectedFingerprint);
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
+                    .fingerprint(expectedFingerprint)
                     .build();
             when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.createOne(createSessionRequest);
@@ -110,9 +117,12 @@ public class SessionServiceImplTests {
             String expectedToken = UUID.randomUUID().toString();
             UUID expectedRefreshToken = UUID.randomUUID();
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
+            String expectedFingerprint = UUID.randomUUID().toString();
+            when(accessTokenFingerprintGenerator.generateOne()).thenReturn(expectedFingerprint);
             SessionDto expectedSession = SessionDto.builder()
                     .accessToken(expectedToken)
                     .refreshToken(expectedRefreshToken)
+                    .fingerprint(expectedFingerprint)
                     .build();
             when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(expectedToken);
             SessionDto createdSession = sessionService.refreshOne(refreshToken);
@@ -136,6 +146,7 @@ public class SessionServiceImplTests {
             when(userService.findOneByNonExpiredRefreshToken(eq(originalRefreshToken))).thenReturn(Optional.of(user));
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID());
             when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(UUID.randomUUID().toString());
+            when(accessTokenFingerprintGenerator.generateOne()).thenReturn(UUID.randomUUID().toString());
             sessionService.refreshOne(originalRefreshToken);
             verify(refreshTokenService, times(1)).deleteOne(eq(originalRefreshToken));
         }

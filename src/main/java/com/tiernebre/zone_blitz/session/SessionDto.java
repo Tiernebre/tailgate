@@ -10,4 +10,5 @@ import java.util.UUID;
 public class SessionDto {
     String accessToken;
     UUID refreshToken;
+    String fingerprint;
 }

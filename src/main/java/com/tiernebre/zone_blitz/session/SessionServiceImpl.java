@@ -2,6 +2,7 @@ package com.tiernebre.zone_blitz.session;
 
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
+import com.tiernebre.zone_blitz.token.access.fingerprint.AccessTokenFingerprintGenerator;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenService;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.service.UserService;
@@ -20,6 +21,7 @@ public class SessionServiceImpl implements SessionService {
     private final SessionValidator validator;
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
+    private final AccessTokenFingerprintGenerator accessTokenFingerprintGenerator;
 
     @Override
     public SessionDto createOne(CreateSessionRequest createSessionRequest) throws InvalidCreateSessionRequestException, UserNotFoundForSessionException, GenerateAccessTokenException {
@@ -46,9 +48,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
+        String fingerprint = accessTokenFingerprintGenerator.generateOne();
         return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(user, UUID.randomUUID().toString()))
+                .accessToken(accessTokenProvider.generateOne(user, fingerprint))
                 .refreshToken(refreshTokenService.createOneForUser(user))
+                .fingerprint(fingerprint)
                 .build();
     }
 }
