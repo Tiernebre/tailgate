@@ -75,6 +75,7 @@ public class SessionRestfulControllerTests {
             assertNotNull(refreshTokenCookie);
             assertEquals(expectedRefreshToken.toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
+            assertTrue(refreshTokenCookie.getSecure());
         }
     }
 
@@ -113,6 +114,7 @@ public class SessionRestfulControllerTests {
             assertNotNull(refreshTokenCookie);
             assertEquals(expectedNewRefreshToken.toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
+            assertTrue(refreshTokenCookie.getSecure());
             int expectedCookieAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES));
             assertEquals(expectedCookieAge, refreshTokenCookie.getMaxAge());
         }

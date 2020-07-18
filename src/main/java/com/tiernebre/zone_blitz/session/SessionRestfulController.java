@@ -16,7 +16,8 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @RequestMapping("/sessions")
 public class SessionRestfulController {
-    static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+    static final String REFRESH_TOKEN_COOKIE_NAME = "__Secure-rt";
+    static final String FINGERPRINT_TOKEN_COOKIE_NAME = "__Secure-fgp";
 
     private final SessionService service;
     private final RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
@@ -28,7 +29,7 @@ public class SessionRestfulController {
             HttpServletResponse httpServletResponse
     ) throws GenerateAccessTokenException, UserNotFoundForSessionException, InvalidCreateSessionRequestException {
         SessionDto createdSession = service.createOne(createSessionRequest);
-        setRefreshTokenCookieFromSession(createdSession, httpServletResponse);
+        setCookiesForSession(createdSession, httpServletResponse);
         return createdSession;
     }
 
@@ -40,15 +41,28 @@ public class SessionRestfulController {
             HttpServletResponse httpServletResponse
     ) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
         SessionDto refreshedSession = service.refreshOne(refreshToken);
-        setRefreshTokenCookieFromSession(refreshedSession, httpServletResponse);
+        setCookiesForSession(refreshedSession, httpServletResponse);
         return refreshedSession;
     }
 
-    private void setRefreshTokenCookieFromSession(SessionDto session, HttpServletResponse httpServletResponse) {
+    private void setCookiesForSession(SessionDto session, HttpServletResponse httpServletResponse) {
+        httpServletResponse.addCookie(createRefreshTokenCookie(session));
+        httpServletResponse.addCookie(createFingerprintCookie(session));
+    }
+
+    private Cookie createRefreshTokenCookie(SessionDto session) {
         Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken().toString());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(getRefreshTokenCookieAgeInSeconds());
-        httpServletResponse.addCookie(refreshTokenCookie);
+        refreshTokenCookie.setSecure(true);
+        return refreshTokenCookie;
+    }
+
+    private Cookie createFingerprintCookie(SessionDto session) {
+        Cookie fingerprintCookie = new Cookie(FINGERPRINT_TOKEN_COOKIE_NAME, session.getFingerprint());
+        fingerprintCookie.setHttpOnly(true);
+        fingerprintCookie.setSecure(true);
+        return fingerprintCookie;
     }
 
     private int getRefreshTokenCookieAgeInSeconds() {
