@@ -14,9 +14,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-public class Sha256TokenFingerprintHasherTests {
+public class Sha256AccessTokenFingerprintHasherTests {
     @InjectMocks
-    private Sha256TokenFingerprintHasher sha256TokenFingerprintHasher;
+    private Sha256AccessTokenFingerprintHasher sha256TokenFingerprintHasher;
 
     @Nested
     @DisplayName("hashFingerprint")

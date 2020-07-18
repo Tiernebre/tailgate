@@ -11,7 +11,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
 @Slf4j
-public class Sha256TokenFingerprintHasher implements TokenFingerprintHasher {
+public class Sha256AccessTokenFingerprintHasher implements AccessTokenFingerprintHasher {
     private final static String ALGORITHM = "SHA-256";
 
     @Override
