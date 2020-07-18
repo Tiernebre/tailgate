@@ -176,5 +176,12 @@ public class JwtTokenProviderTests {
                     .sign(ALGORITHM);
             assertThrows(AccessTokenInvalidException.class, () -> jwtTokenProvider.validateOne(testToken, fingerprintProvided));
         }
+
+        @EmptySource
+        @NullSource
+        @ParameterizedTest(name = "throws an error if given token = \"{0}\"")
+        void throwsAnErrorIfGivenAnIncorrectToken(String tokenProvided) {
+            assertThrows(AccessTokenInvalidException.class, () -> jwtTokenProvider.validateOne(tokenProvided, UUID.randomUUID().toString()));
+        }
     }
 }
