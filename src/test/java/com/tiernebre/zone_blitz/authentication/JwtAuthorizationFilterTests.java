@@ -22,11 +22,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -36,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,7 +62,6 @@ public class JwtAuthorizationFilterTests {
                 "test",
                 "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0"
         })
-        @NullSource
         void testNotSetAuthenticationSituationsForTokenBeing(String token) throws IOException, ServletException {
             assertSecurityContextHolderDoesNotGetSetForToken(token);
         }
@@ -74,14 +69,14 @@ public class JwtAuthorizationFilterTests {
         @Test
         @DisplayName("sets authentication in the context for a valid token")
         void setsAuthenticationForValidToken() throws IOException, ServletException, AccessTokenInvalidException {
-            HttpServletRequest req = mock(HttpServletRequest.class);
-            HttpServletResponse res = mock(HttpServletResponse.class);
-            FilterChain filterChain = mock(FilterChain.class);
+            MockHttpServletRequest req = new MockHttpServletRequest();
+            MockHttpServletResponse res = new MockHttpServletResponse();
+            MockFilterChain filterChain = new MockFilterChain();
             String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
-            when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
+            req.addHeader("Authorization", "Bearer " + token);
             String fingerprint = UUID.randomUUID().toString();
             Cookie[] cookies = { new Cookie(FINGERPRINT_COOKIE_NAME, fingerprint) };
-            when(req.getCookies()).thenReturn(cookies);
+            req.setCookies(cookies);
             UserDto authorizedUser = UserFactory.generateOneDto();
             when(tokenProvider.validateOne(eq(token), eq(fingerprint))).thenReturn(authorizedUser);
             jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
@@ -108,12 +103,12 @@ public class JwtAuthorizationFilterTests {
         @EmptySource
         @ParameterizedTest(name = "uses null for the fingerprint if the cookies are {0}")
         void usesNullForTheFingerprintIfTheCookiesAre(Cookie[] cookies) throws IOException, ServletException, AccessTokenInvalidException {
-            HttpServletRequest req = mock(HttpServletRequest.class);
-            HttpServletResponse res = mock(HttpServletResponse.class);
-            FilterChain filterChain = mock(FilterChain.class);
+            MockHttpServletRequest req = new MockHttpServletRequest();
+            MockHttpServletResponse res = new MockHttpServletResponse();
+            MockFilterChain filterChain = new MockFilterChain();
             String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
-            when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-            when(req.getCookies()).thenReturn(cookies);
+            req.addHeader("Authorization", "Bearer " + token);
+            req.setCookies(cookies);
             UserDto authorizedUser = UserFactory.generateOneDto();
             when(tokenProvider.validateOne(eq(token), isNull())).thenReturn(authorizedUser);
             jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
@@ -123,13 +118,13 @@ public class JwtAuthorizationFilterTests {
         @Test
         @DisplayName("uses null for the fingerprint if the cookies do not contain the fingerprint cookie")
         void usesNullForTheFingerprintIfTheCookiesDoNotContainTheFingerprintCookie() throws IOException, ServletException, AccessTokenInvalidException {
-            HttpServletRequest req = mock(HttpServletRequest.class);
-            HttpServletResponse res = mock(HttpServletResponse.class);
-            FilterChain filterChain = mock(FilterChain.class);
+            MockHttpServletRequest req = new MockHttpServletRequest();
+            MockHttpServletResponse res = new MockHttpServletResponse();
+            MockFilterChain filterChain = new MockFilterChain();
             String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
-            when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
+            req.addHeader("Authorization", "Bearer " + token);
             Cookie[] cookies = { new Cookie(UUID.randomUUID().toString(), UUID.randomUUID().toString()) };
-            when(req.getCookies()).thenReturn(cookies);
+            req.setCookies(cookies);
             UserDto authorizedUser = UserFactory.generateOneDto();
             when(tokenProvider.validateOne(eq(token), isNull())).thenReturn(authorizedUser);
             jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
@@ -137,10 +132,10 @@ public class JwtAuthorizationFilterTests {
         }
 
         private void assertSecurityContextHolderDoesNotGetSetForToken(String token) throws IOException, ServletException {
-            HttpServletRequest req = mock(HttpServletRequest.class);
-            HttpServletResponse res = mock(HttpServletResponse.class);
-            FilterChain filterChain = mock(FilterChain.class);
-            when(req.getHeader(eq("Authorization"))).thenReturn(token);
+            MockHttpServletRequest req = new MockHttpServletRequest();
+            MockHttpServletResponse res = new MockHttpServletResponse();
+            MockFilterChain filterChain = new MockFilterChain();
+            req.addHeader("Authorization", token);
             jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
             assertNull(SecurityContextHolder.getContext().getAuthentication());
         }
