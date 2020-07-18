@@ -67,6 +67,16 @@ public class JwtAuthorizationFilterTests {
         }
 
         @Test
+        @DisplayName("does set an authentication if no authorization header exists")
+        void doesNotSetAnAuthenticationIfNoAuthorizationHeaderExists() throws IOException, ServletException {
+            MockHttpServletRequest req = new MockHttpServletRequest();
+            MockHttpServletResponse res = new MockHttpServletResponse();
+            MockFilterChain filterChain = new MockFilterChain();
+            jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
+            assertNull(SecurityContextHolder.getContext().getAuthentication());
+        }
+
+        @Test
         @DisplayName("sets authentication in the context for a valid token")
         void setsAuthenticationForValidToken() throws IOException, ServletException, AccessTokenInvalidException {
             MockHttpServletRequest req = new MockHttpServletRequest();
