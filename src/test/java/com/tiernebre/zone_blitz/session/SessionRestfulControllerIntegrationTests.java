@@ -165,5 +165,21 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .andExpect(cookie().httpOnly(REFRESH_TOKEN_COOKIE_NAME, true))
                     .andExpect(cookie().maxAge(REFRESH_TOKEN_COOKIE_NAME, expectedRefreshTokenAge));
         }
+
+        @Test
+        @DisplayName("returns with the fingerprint set as a cookie")
+        public void returnsWithTheFingerprintAsACookie() throws Exception {
+            UUID originalRefreshToken = UUID.randomUUID();
+            SessionDto expectedSession = SessionFactory.generateOne();
+            when(sessionService.refreshOne(eq(originalRefreshToken))).thenReturn(expectedSession);
+            Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, originalRefreshToken.toString());
+            mockMvc.perform(
+                    put("/sessions").cookie(refreshTokenCookie)
+            )
+                    .andExpect(header().exists("Set-Cookie"))
+                    .andExpect(cookie().value(FINGERPRINT_TOKEN_COOKIE_NAME, expectedSession.getFingerprint()))
+                    .andExpect(cookie().secure(FINGERPRINT_TOKEN_COOKIE_NAME, true))
+                    .andExpect(cookie().httpOnly(FINGERPRINT_TOKEN_COOKIE_NAME, true));
+        }
     }
 }
