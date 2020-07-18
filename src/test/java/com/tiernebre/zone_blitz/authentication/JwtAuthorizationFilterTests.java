@@ -3,6 +3,7 @@ package com.tiernebre.zone_blitz.authentication;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.user.UserFactory;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,12 @@ public class JwtAuthorizationFilterTests {
 
     @InjectMocks
     private JwtAuthorizationFilter jwtAuthorizationFilter;
+
+    @AfterEach
+    void cleanup() {
+        SecurityContextHolder.clearContext();
+        SecurityContextHolder.createEmptyContext();
+    }
 
     @Nested
     @DisplayName("doFilterInternal")
@@ -85,6 +92,22 @@ public class JwtAuthorizationFilterTests {
             FilterChain filterChain = mock(FilterChain.class);
             String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
             when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
+            when(req.getCookies()).thenReturn(cookies);
+            UserDto authorizedUser = UserFactory.generateOneDto();
+            when(tokenProvider.validateOne(eq(token), isNull())).thenReturn(authorizedUser);
+            jwtAuthorizationFilter.doFilterInternal(req, res, filterChain);
+            assertEquals(authorizedUser, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        }
+
+        @Test
+        @DisplayName("uses null for the fingerprint if the cookies do not contain the fingerprint cookie")
+        void usesNullForTheFingerprintIfTheCookiesDoNotContainTheFingerprintCookie() throws IOException, ServletException {
+            HttpServletRequest req = mock(HttpServletRequest.class);
+            HttpServletResponse res = mock(HttpServletResponse.class);
+            FilterChain filterChain = mock(FilterChain.class);
+            String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNydXRlYWsiLCJlbWFpbCI6InRpZXJuZWJyZUBnbWFpbC5jb20ifQ.QCe0mYNZXYyDFF7vYlkGclYBLV-ml0kCQdBDi5wFDo0";
+            when(req.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
+            Cookie[] cookies = { new Cookie(UUID.randomUUID().toString(), UUID.randomUUID().toString()) };
             when(req.getCookies()).thenReturn(cookies);
             UserDto authorizedUser = UserFactory.generateOneDto();
             when(tokenProvider.validateOne(eq(token), isNull())).thenReturn(authorizedUser);
