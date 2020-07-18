@@ -12,12 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.FINGERPRINT_COOKIE_NAME;
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.REFRESH_TOKEN_COOKIE_NAME;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sessions")
 public class SessionRestfulController {
-    static final String REFRESH_TOKEN_COOKIE_NAME = "__Secure-rt";
-    static final String FINGERPRINT_TOKEN_COOKIE_NAME = "__Secure-fgp";
 
     private final SessionService service;
     private final RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
@@ -59,7 +60,7 @@ public class SessionRestfulController {
     }
 
     private Cookie createFingerprintCookie(SessionDto session) {
-        Cookie fingerprintCookie = new Cookie(FINGERPRINT_TOKEN_COOKIE_NAME, session.getFingerprint());
+        Cookie fingerprintCookie = new Cookie(FINGERPRINT_COOKIE_NAME, session.getFingerprint());
         fingerprintCookie.setHttpOnly(true);
         fingerprintCookie.setSecure(true);
         return fingerprintCookie;

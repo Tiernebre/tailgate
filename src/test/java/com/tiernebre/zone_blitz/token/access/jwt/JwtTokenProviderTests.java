@@ -114,13 +114,17 @@ public class JwtTokenProviderTests {
         @DisplayName("returns the decoded User if the JWT token provided is valid")
         void returnsTheDecodedUserForValidJWT() {
             UserDto expectedUser = UserFactory.generateOneDto();
+            String fingerprint = UUID.randomUUID().toString();
+            String expectedHashedFingerprint = UUID.randomUUID().toString();
+            when(fingerprintHasher.hashFingerprint(eq(fingerprint))).thenReturn(expectedHashedFingerprint);
             String testToken = JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(expectedUser.getId().toString())
                     .withClaim(EMAIL_CLAIM, expectedUser.getEmail())
                     .withClaim(IS_CONFIRMED_CLAIM, expectedUser.isConfirmed())
+                    .withClaim(FINGERPRINT_CLAIM, expectedHashedFingerprint)
                     .sign(ALGORITHM);
-            UserDto foundUser = jwtTokenProvider.validateOne(testToken);
+            UserDto foundUser = jwtTokenProvider.validateOne(testToken, fingerprint);
             assertEquals(expectedUser, foundUser);
         }
     }

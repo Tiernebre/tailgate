@@ -16,7 +16,12 @@ public interface AccessTokenProvider {
 
     /**
      * Validates if a given access token is legitimate.
+     * @param token The access token to validate.
+     * @param fingerprint The provided fingerprint to validate that is tied to the access token.
      * @return The User representation of the access token payload if successful.
      */
-    UserDto validateOne(String token);
+    UserDto validateOne(
+            String token,
+            String fingerprint
+    );
 }

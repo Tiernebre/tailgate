@@ -16,8 +16,8 @@ import javax.servlet.http.Cookie;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.tiernebre.zone_blitz.session.SessionRestfulController.FINGERPRINT_TOKEN_COOKIE_NAME;
-import static com.tiernebre.zone_blitz.session.SessionRestfulController.REFRESH_TOKEN_COOKIE_NAME;
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.FINGERPRINT_COOKIE_NAME;
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.REFRESH_TOKEN_COOKIE_NAME;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -102,9 +102,9 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                             .contentType(MediaType.APPLICATION_JSON)
             )
                     .andExpect(header().exists("Set-Cookie"))
-                    .andExpect(cookie().value(FINGERPRINT_TOKEN_COOKIE_NAME, expectedSession.getFingerprint()))
-                    .andExpect(cookie().secure(FINGERPRINT_TOKEN_COOKIE_NAME, true))
-                    .andExpect(cookie().httpOnly(FINGERPRINT_TOKEN_COOKIE_NAME, true));
+                    .andExpect(cookie().value(FINGERPRINT_COOKIE_NAME, expectedSession.getFingerprint()))
+                    .andExpect(cookie().secure(FINGERPRINT_COOKIE_NAME, true))
+                    .andExpect(cookie().httpOnly(FINGERPRINT_COOKIE_NAME, true));
         }
     }
 
@@ -177,9 +177,9 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     put("/sessions").cookie(refreshTokenCookie)
             )
                     .andExpect(header().exists("Set-Cookie"))
-                    .andExpect(cookie().value(FINGERPRINT_TOKEN_COOKIE_NAME, expectedSession.getFingerprint()))
-                    .andExpect(cookie().secure(FINGERPRINT_TOKEN_COOKIE_NAME, true))
-                    .andExpect(cookie().httpOnly(FINGERPRINT_TOKEN_COOKIE_NAME, true));
+                    .andExpect(cookie().value(FINGERPRINT_COOKIE_NAME, expectedSession.getFingerprint()))
+                    .andExpect(cookie().secure(FINGERPRINT_COOKIE_NAME, true))
+                    .andExpect(cookie().httpOnly(FINGERPRINT_COOKIE_NAME, true));
         }
     }
 }

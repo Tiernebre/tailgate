@@ -51,9 +51,10 @@ public class JwtTokenProvider implements AccessTokenProvider {
     }
 
     @Override
-    public UserDto validateOne(String token) {
+    public UserDto validateOne(String token, String fingerprint) {
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(ISSUER)
+                .withClaim(FINGERPRINT_CLAIM, fingerprintHasher.hashFingerprint(fingerprint))
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
         return mapDecodedJWTToUser(decodedJWT);
