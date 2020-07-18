@@ -6,7 +6,7 @@ zone-blitz:
   email:
     from: 'noreply@zoneblitz.app'
     host: 'localhost'
-    port: 1025
+    port: ${EMAIL_PORT}
   user:
     confirmation:
       email:
@@ -32,4 +32,4 @@ spring:
 
 mailhog:
   host: 'localhost'
-  port: 8025
+  port: ${MAILHOG_API_PORT}
