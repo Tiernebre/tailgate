@@ -63,7 +63,7 @@ public class SessionServiceImplTests {
                     .accessToken(expectedAccessToken)
                     .refreshToken(expectedRefreshToken)
                     .build();
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
+            when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.createOne(createSessionRequest);
             assertEquals(expectedSession, createdSession);
         }
@@ -114,7 +114,7 @@ public class SessionServiceImplTests {
                     .accessToken(expectedToken)
                     .refreshToken(expectedRefreshToken)
                     .build();
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(expectedToken);
             SessionDto createdSession = sessionService.refreshOne(refreshToken);
             assertEquals(expectedSession, createdSession);
         }
@@ -135,7 +135,7 @@ public class SessionServiceImplTests {
             UUID originalRefreshToken = UUID.randomUUID();
             when(userService.findOneByNonExpiredRefreshToken(eq(originalRefreshToken))).thenReturn(Optional.of(user));
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID());
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(UUID.randomUUID().toString());
+            when(accessTokenProvider.generateOne(eq(user), anyString())).thenReturn(UUID.randomUUID().toString());
             sessionService.refreshOne(originalRefreshToken);
             verify(refreshTokenService, times(1)).deleteOne(eq(originalRefreshToken));
         }

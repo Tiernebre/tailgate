@@ -47,7 +47,7 @@ public class SessionServiceImpl implements SessionService {
 
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
         return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(user))
+                .accessToken(accessTokenProvider.generateOne(user, UUID.randomUUID().toString()))
                 .refreshToken(refreshTokenService.createOneForUser(user))
                 .build();
     }
