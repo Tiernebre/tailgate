@@ -27,6 +27,7 @@ public class UserSecurityQuestionsJooqRepository implements UserSecurityQuestion
                 .join(PASSWORD_RESET_TOKENS)
                 .on(USERS.ID.eq(PASSWORD_RESET_TOKENS.USER_ID))
                 .where(USERS.EMAIL.eq(email))
+                .and(PASSWORD_RESET_TOKENS.TOKEN.eq(resetToken))
                 .and(utilities.passwordResetTokenIsNotExpired())
                 .fetchMap(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID, USER_SECURITY_QUESTIONS.ANSWER);
     }

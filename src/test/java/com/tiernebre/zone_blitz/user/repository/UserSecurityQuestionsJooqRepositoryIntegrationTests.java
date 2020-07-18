@@ -62,9 +62,18 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Abstrac
         }
 
         @Test
+        @DisplayName("returns an empty set if the user has no password reset token tied to them")
+        void returnsAnEmptySetIfTheUserHasNoPasswordResetTokenTiedToThem() {
+            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
+            assertTrue(MapUtils.isEmpty(answers));
+        }
+
+        @Test
         @DisplayName("returns an empty set if the password reset token is not legit")
         void returnsAnEmptySetIfThePasswordResetTokenIsNotLegit() {
             UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            passwordResetTokenRecordPool.createAndSaveOneForUser(user);
             Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
@@ -72,7 +81,8 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Abstrac
         @Test
         @DisplayName("returns an empty set if the password reset token and email are not legit")
         void returnsAnEmptySetIfThePasswordResetTokenAndEmailAreNotLegit() {
-            userRecordPool.createAndSaveOneWithSecurityQuestions();
+            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            passwordResetTokenRecordPool.createAndSaveOneForUser(user);
             Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
