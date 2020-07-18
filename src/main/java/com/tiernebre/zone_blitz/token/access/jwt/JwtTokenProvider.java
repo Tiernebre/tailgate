@@ -10,6 +10,10 @@ import com.tiernebre.zone_blitz.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.DatatypeConverter;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.util.Date;
 import java.util.Objects;
@@ -31,7 +35,10 @@ public class JwtTokenProvider implements AccessTokenProvider {
     private final Clock clock;
 
     @Override
-    public String generateOne(UserDto user) throws GenerateAccessTokenException {
+    public String generateOne(
+            UserDto user,
+            String fingerprint
+    ) throws GenerateAccessTokenException {
         Objects.requireNonNull(user, NULL_USER_ERROR_MESSAGE);
 
         try {
@@ -66,5 +73,11 @@ public class JwtTokenProvider implements AccessTokenProvider {
 
     private Date generateExpiresAt() {
         return new Date(clock.millis() + TimeUnit.MINUTES.toMillis(configurationProperties.getExpirationWindowInMinutes()));
+    }
+
+    private String hashFingerprint(String fingerprint) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] userFingerprintDigest = digest.digest(fingerprint.getBytes(StandardCharsets.UTF_8));
+        return DatatypeConverter.printHexBinary(userFingerprintDigest);
     }
 }

@@ -19,6 +19,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.tiernebre.zone_blitz.token.access.jwt.JwtTokenProvider.*;
@@ -60,7 +61,7 @@ public class JwtTokenProviderTests {
             // JWT expiration cuts off the last three digits, we have to do so here as well
             long expectedMillisForExpiration = (fixedTestClock.millis() + TimeUnit.MINUTES.toMillis(TEST_EXPIRATION_WINDOW_IN_MINUTES)) / 1000 * 1000;
             Date expectedExpiresAt = new Date(expectedMillisForExpiration);
-            String generatedToken = jwtTokenProvider.generateOne(userDTO);
+            String generatedToken = jwtTokenProvider.generateOne(userDTO, UUID.randomUUID().toString());
             JWTVerifier jwtVerifier = JWT.require(ALGORITHM)
                     .withIssuer(ISSUER)
                     .build();
@@ -84,13 +85,13 @@ public class JwtTokenProviderTests {
                     fixedTestClock
             );
             UserDto userDTO = UserFactory.generateOneDto();
-            assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO));
+            assertThrows(GenerateAccessTokenException.class, () -> jwtTokenServiceWithBorkedAlgorithm.generateOne(userDTO, UUID.randomUUID().toString()));
         }
 
         @Test
         @DisplayName("throws a NullPointerException if the user passed in is null with a helpful message")
         void throwsNullPointerExceptionIfTheUserPassedInIsNullWithAHelpfulMessage() {
-            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> jwtTokenProvider.generateOne(null));
+            NullPointerException thrownException = assertThrows(NullPointerException.class, () -> jwtTokenProvider.generateOne(null, UUID.randomUUID().toString()));
             assertEquals(NULL_USER_ERROR_MESSAGE, thrownException.getMessage());
         }
     }
