@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.security_questions;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import org.junit.jupiter.api.*;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class SecurityQuestionJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private SecurityQuestionRecordPool recordPool;
 
@@ -32,26 +32,14 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
     @Autowired
     private PasswordResetTokenRecordPool passwordResetTokenRecordPool;
 
-    @BeforeEach
-    public void setup() {
-        recordPool.deleteAll();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        passwordResetTokenRecordPool.deleteAll();
-        userRecordPool.deleteAll();
-        recordPool.deleteAll();
-    }
-
     @Nested
     @DisplayName("getAll")
     public class GetAllTests {
         @Test
-        @DisplayName("returns all of the security questions")
+        @DisplayName("returns all of the pre-populated security questions")
         public void returnsAllOfTheSecurityQuestions() {
             List<SecurityQuestionEntity> expectedQuestions = recordPool
-                    .createMultiple()
+                    .getAll()
                     .stream()
                     .map(securityQuestionsRecord -> securityQuestionsRecord.into(SecurityQuestionEntity.class))
                     .collect(Collectors.toList());;
@@ -61,13 +49,6 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
             assertNotNull(gottenQuestions.get(0).getId());
             assertNotNull(gottenQuestions.get(0).getQuestion());
             assertEquals(expectedQuestions, gottenQuestions);
-        }
-
-        @Test
-        @DisplayName("returns an empty list if none exist")
-        public void returnsAnEmptyListIfNoneExist() {
-            List<SecurityQuestionEntity> gottenQuestions = securityQuestionJooqRepository.getAll();
-            assertTrue(gottenQuestions.isEmpty());
         }
     }
 

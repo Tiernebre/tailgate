@@ -5,7 +5,7 @@ import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionRecordPool;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenRecordPool;
 import com.tiernebre.zone_blitz.token.user_confirmation.UserConfirmationTokenRecordPool;
@@ -14,7 +14,6 @@ import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
 import com.tiernebre.zone_blitz.user.entity.UserEntity;
 import org.apache.commons.collections4.CollectionUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserJooqRepository userJooqRepository;
 
@@ -48,12 +47,6 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
     @Autowired
     private UserConfirmationTokenRecordPool confirmationTokenRecordPool;
-
-    @AfterEach
-    public void cleanup() {
-        userRecordPool.deleteAll();
-        securityQuestionRecordPool.deleteAll();
-    }
 
     @Nested
     @DisplayName("createOne")

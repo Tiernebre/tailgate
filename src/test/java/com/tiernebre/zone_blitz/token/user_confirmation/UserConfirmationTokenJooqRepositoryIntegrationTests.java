@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.token.user_confirmation;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UserConfirmationTokensRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-public class UserConfirmationTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserConfirmationTokenJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserConfirmationTokenJooqRepository userConfirmationTokenJooqRepository;
 

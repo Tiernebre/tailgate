@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.session;
 
-import com.tiernebre.zone_blitz.test.SpringIntegrationTestingSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static com.tiernebre.zone_blitz.session.SessionValidatorImpl.NULL_CREATE_
 import static com.tiernebre.zone_blitz.test.ValidatorTestUtils.assertThatValidationInvalidatedCorrectly;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SessionValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
+public class SessionValidatorImplIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private SessionValidatorImpl sessionValidator;
 

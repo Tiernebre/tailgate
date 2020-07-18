@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.user.validator;
 
 import com.tiernebre.zone_blitz.exception.InvalidException;
-import com.tiernebre.zone_blitz.test.SpringIntegrationTestingSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
 import com.tiernebre.zone_blitz.user.dto.CreateUserSecurityQuestionRequest;
 import com.tiernebre.zone_blitz.user.exception.InvalidUserException;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class UserValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
+public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestingSuite {
     private static final String STRONG_PASSWORD = "Strong_Password_12345!";
 
     @Autowired

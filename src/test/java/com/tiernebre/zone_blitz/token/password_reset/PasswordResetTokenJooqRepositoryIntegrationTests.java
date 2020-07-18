@@ -2,10 +2,9 @@ package com.tiernebre.zone_blitz.token.password_reset;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokensRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
-public class PasswordResetTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class PasswordResetTokenJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private PasswordResetTokenJooqRepository passwordResetTokenJooqRepository;
 
@@ -22,11 +21,6 @@ public class PasswordResetTokenJooqRepositoryIntegrationTests extends DatabaseIn
 
     @Autowired
     private PasswordResetTokenRecordPool passwordResetTokenRecordPool;
-
-    @AfterEach
-    public void cleanup() {
-        passwordResetTokenRecordPool.deleteAll();
-    }
 
     @Nested
     @DisplayName("createOneForUser")

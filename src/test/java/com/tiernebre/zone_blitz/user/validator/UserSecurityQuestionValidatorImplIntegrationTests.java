@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.user.validator;
 
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionService;
-import com.tiernebre.zone_blitz.test.SpringIntegrationTestingSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
 import com.tiernebre.zone_blitz.user.dto.CreateUserSecurityQuestionRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @MockBeans({
         @MockBean(SecurityQuestionService.class)
 })
-public class UserSecurityQuestionValidatorImplIntegrationTests extends SpringIntegrationTestingSuite {
+public class UserSecurityQuestionValidatorImplIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserSecurityQuestionValidatorImpl userSecurityQuestionValidator;
 

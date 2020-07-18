@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.token.refresh;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,7 @@ import java.util.UUID;
 import static com.tiernebre.zone_blitz.token.refresh.RefreshTokenConstants.NULL_USER_ERROR_MESSAGE;
 import static org.junit.Assert.*;
 
-public class RefreshTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class RefreshTokenJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
