@@ -1,6 +1,7 @@
 package com.tiernebre.zone_blitz.token.access.fingerprint;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.DatatypeConverter;
@@ -16,6 +17,8 @@ public class Sha256AccessTokenFingerprintHasher implements AccessTokenFingerprin
 
     @Override
     public String hashFingerprint(String fingerprint) {
+        if (StringUtils.isBlank(fingerprint)) return fingerprint;
+
         try {
             MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
             byte[] fingerprintDigest = digest.digest(fingerprint.getBytes(UTF_8));
