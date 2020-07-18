@@ -1,8 +1,8 @@
 package com.tiernebre.zone_blitz.session;
 
+import com.tiernebre.zone_blitz.token.TokenFactory;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenConfigurationProperties;
-import com.tiernebre.zone_blitz.token.TokenFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -80,7 +80,6 @@ public class SessionRestfulControllerTests {
             assertNotNull(fingerprintCookie);
             assertEquals(expectedSession.getFingerprint(), fingerprintCookie.getValue());
             assertTrue(fingerprintCookie.isHttpOnly());
-            assertTrue(fingerprintCookie.getSecure());
         }
     }
 
@@ -114,7 +113,6 @@ public class SessionRestfulControllerTests {
             assertNotNull(refreshTokenCookie);
             assertEquals(expectedNewRefreshToken.toString(), refreshTokenCookie.getValue());
             assertTrue(refreshTokenCookie.isHttpOnly());
-            assertTrue(refreshTokenCookie.getSecure());
             int expectedCookieAge = Math.toIntExact(TimeUnit.MINUTES.toSeconds(TEST_REFRESH_TOKEN_EXPIRATION_IN_MINUTES));
             assertEquals(expectedCookieAge, refreshTokenCookie.getMaxAge());
         }
