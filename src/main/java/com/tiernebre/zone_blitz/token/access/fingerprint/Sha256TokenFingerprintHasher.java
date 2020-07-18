@@ -1,4 +1,4 @@
-package com.tiernebre.zone_blitz.token.access;
+package com.tiernebre.zone_blitz.token.access.fingerprint;
 
 import org.springframework.stereotype.Component;
 
