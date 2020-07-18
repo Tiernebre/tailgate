@@ -32,18 +32,6 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
     @Autowired
     private PasswordResetTokenRecordPool passwordResetTokenRecordPool;
 
-    @BeforeEach
-    public void setup() {
-        recordPool.deleteAll();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        passwordResetTokenRecordPool.deleteAll();
-        userRecordPool.deleteAll();
-        recordPool.deleteAll();
-    }
-
     @Nested
     @DisplayName("getAll")
     public class GetAllTests {

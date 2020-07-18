@@ -5,7 +5,6 @@ import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,11 +21,6 @@ public class PasswordResetTokenJooqRepositoryIntegrationTests extends DatabaseIn
 
     @Autowired
     private PasswordResetTokenRecordPool passwordResetTokenRecordPool;
-
-    @AfterEach
-    public void cleanup() {
-        passwordResetTokenRecordPool.deleteAll();
-    }
 
     @Nested
     @DisplayName("createOneForUser")

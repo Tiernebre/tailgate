@@ -14,7 +14,6 @@ import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
 import com.tiernebre.zone_blitz.user.entity.UserEntity;
 import org.apache.commons.collections4.CollectionUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,12 +47,6 @@ public class UserJooqRepositoryIntegrationTests extends DatabaseIntegrationTestS
 
     @Autowired
     private UserConfirmationTokenRecordPool confirmationTokenRecordPool;
-
-    @AfterEach
-    public void cleanup() {
-        userRecordPool.deleteAll();
-        securityQuestionRecordPool.deleteAll();
-    }
 
     @Nested
     @DisplayName("createOne")

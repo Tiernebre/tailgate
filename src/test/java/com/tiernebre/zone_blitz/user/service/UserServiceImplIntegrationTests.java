@@ -47,12 +47,6 @@ public class UserServiceImplIntegrationTests extends DatabaseIntegrationTestSuit
         doNothing().when(validator).validate(any());
     }
 
-    @AfterEach
-    public void cleanup() {
-        userRecordPool.deleteAll();
-        securityQuestionRecordPool.deleteAll();
-    }
-
     @Nested
     @DisplayName("createOne")
     public class CreateOneTests {

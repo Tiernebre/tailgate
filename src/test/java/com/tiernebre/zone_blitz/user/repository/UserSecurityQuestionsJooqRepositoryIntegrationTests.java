@@ -8,7 +8,6 @@ import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenConfigura
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenRecordPool;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import org.apache.commons.collections4.MapUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,12 +33,6 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Databas
 
     @Autowired
     private PasswordResetTokenConfigurationProperties passwordResetTokenConfigurationProperties;
-
-    @AfterEach
-    public void cleanup() {
-        passwordResetTokenRecordPool.deleteAll();
-        userRecordPool.deleteAll();
-    }
 
     @Nested
     @DisplayName("getAnswersForEmailAndResetToken")
