@@ -36,10 +36,10 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
     @DisplayName("getAll")
     public class GetAllTests {
         @Test
-        @DisplayName("returns all of the security questions")
+        @DisplayName("returns all of the pre-populated security questions")
         public void returnsAllOfTheSecurityQuestions() {
             List<SecurityQuestionEntity> expectedQuestions = recordPool
-                    .createMultiple()
+                    .getAll()
                     .stream()
                     .map(securityQuestionsRecord -> securityQuestionsRecord.into(SecurityQuestionEntity.class))
                     .collect(Collectors.toList());;
@@ -49,13 +49,6 @@ public class SecurityQuestionJooqRepositoryIntegrationTests extends DatabaseInte
             assertNotNull(gottenQuestions.get(0).getId());
             assertNotNull(gottenQuestions.get(0).getQuestion());
             assertEquals(expectedQuestions, gottenQuestions);
-        }
-
-        @Test
-        @DisplayName("returns an empty list if none exist")
-        public void returnsAnEmptyListIfNoneExist() {
-            List<SecurityQuestionEntity> gottenQuestions = securityQuestionJooqRepository.getAll();
-            assertTrue(gottenQuestions.isEmpty());
         }
     }
 

@@ -18,6 +18,10 @@ import static com.tiernebre.zone_blitz.jooq.tables.SecurityQuestions.SECURITY_QU
 public class SecurityQuestionRecordPool {
     private final DSLContext dslContext;
 
+    public List<SecurityQuestionsRecord> getAll() {
+        return dslContext.selectFrom(SECURITY_QUESTIONS).fetch();
+    }
+
     public List<SecurityQuestionsRecord> createMultiple() {
         List<SecurityQuestionsRecord> securityQuestionsRecords = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
