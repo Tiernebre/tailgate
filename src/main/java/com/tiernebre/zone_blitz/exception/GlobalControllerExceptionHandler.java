@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 public class GlobalControllerExceptionHandler {
+    private static final String GENERIC_ERROR_MESSAGE = "An error on the server occurred. Please retry again or double check your information.";
+
     @ExceptionHandler(InvalidException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -21,5 +23,11 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleInvalidException() {
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGlobalError() {
+        return ErrorResponse.of(GENERIC_ERROR_MESSAGE);
     }
 }
