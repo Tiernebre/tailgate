@@ -2,6 +2,7 @@ package com.tiernebre.zone_blitz.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @ControllerAdvice
@@ -11,7 +12,6 @@ public class GlobalControllerExceptionHandler {
     static final String GENERIC_ERROR_MESSAGE = "An error on the server occurred. Please retry again or double check your information.";
 
     @ExceptionHandler(InvalidException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidException(InvalidException invalidException) {
         return ErrorResponse.builder()
@@ -20,9 +20,13 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleInvalidException() {
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public void handleAccessDeniedException() {
     }
 
     @ExceptionHandler(Exception.class)

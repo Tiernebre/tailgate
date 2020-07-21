@@ -6,6 +6,7 @@ import com.tiernebre.zone_blitz.user.dto.UserDto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,8 +49,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             chain.doFilter(req, res);
-        } catch (AccessTokenInvalidException accessTokenInvalidException) {
+        } catch (AccessTokenInvalidException | AccessDeniedException accessTokenInvalidException) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (Exception e) {
+            res.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
         }
     }
 
