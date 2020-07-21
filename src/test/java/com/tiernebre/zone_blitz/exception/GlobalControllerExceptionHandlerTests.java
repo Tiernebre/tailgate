@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.Set;
 
+import static com.tiernebre.zone_blitz.exception.GlobalControllerExceptionHandler.GENERIC_ERROR_MESSAGE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GlobalControllerExceptionHandlerTests {
     private static final GlobalControllerExceptionHandler globalControllerExceptionHandler = new GlobalControllerExceptionHandler();
@@ -23,6 +25,18 @@ public class GlobalControllerExceptionHandlerTests {
             InvalidCreateSessionRequestException invalidCreateSessionRequestException = new InvalidCreateSessionRequestException(errorMessages);
             ErrorResponse errorResponse = globalControllerExceptionHandler.handleInvalidException(invalidCreateSessionRequestException);
             assertEquals(errorMessages, errorResponse.getErrors());
+        }
+    }
+
+    @Nested
+    @DisplayName("handleGlobalErrorTests")
+    class HandleGlobalErrorTests {
+        @Test
+        @DisplayName("returns an error response that contains a generic error to avoid error leakage")
+        void returnsAnErrorResponseContainingTheInvalidExceptionErrors() {
+            ErrorResponse errorResponse = globalControllerExceptionHandler.handleGlobalError();
+            assertEquals(1, errorResponse.getErrors().size());
+            assertTrue(errorResponse.getErrors().contains(GENERIC_ERROR_MESSAGE));
         }
     }
 }
