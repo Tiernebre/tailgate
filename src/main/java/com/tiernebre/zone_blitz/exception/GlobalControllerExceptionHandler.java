@@ -22,10 +22,4 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleInvalidException() {
     }
-
-    @ExceptionHandler(UnauthorizedException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public void handleUnauthorizedException() {
-    }
 }
