@@ -6,7 +6,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @ControllerAdvice
-@RestController
 @Slf4j
 public class GlobalControllerExceptionHandler {
     static final String GENERIC_ERROR_MESSAGE = "An error on the server occurred. Please retry again or double check your information.";
