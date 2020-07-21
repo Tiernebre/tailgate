@@ -27,7 +27,15 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleGlobalError() {
+    public ErrorResponse handleGlobalError(Exception globalError) {
+        String errorLog;
+        if (globalError instanceof RuntimeException) {
+            errorLog = "Encountered RuntimeException: ";
+        } else {
+            errorLog = "Encountered unhandled exception error: ";
+        }
+        log.error(errorLog, globalError);
+        log.info("Proceeding to respond with generic error message for a globally encountered error.");
         return ErrorResponse.of(GENERIC_ERROR_MESSAGE);
     }
 }
