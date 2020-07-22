@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static com.tiernebre.zone_blitz.exception.GlobalControllerExceptionHandlerConfiguration.EXCEPTIONS_TO_LET_SPRING_HANDLE;
+
 @ControllerAdvice
 @Slf4j
 public class GlobalControllerExceptionHandler {
@@ -33,7 +35,7 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGlobalError(Exception globalError) throws Exception {
-        if (globalError instanceof AccessDeniedException) {
+        if (EXCEPTIONS_TO_LET_SPRING_HANDLE.contains(globalError.getClass())) {
             throw globalError;
         }
         String errorLog = globalError instanceof RuntimeException ? "Encountered RuntimeException" : "Encountered unhandled exception error";

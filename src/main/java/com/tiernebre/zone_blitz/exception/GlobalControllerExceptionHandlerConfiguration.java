@@ -1,10 +1,12 @@
 package com.tiernebre.zone_blitz.exception;
 
-import java.nio.file.AccessDeniedException;
-import java.util.List;
+
+import org.springframework.security.access.AccessDeniedException;
+
+import java.util.Set;
 
 public class GlobalControllerExceptionHandlerConfiguration {
-    public static final List<Class<?>> EXCEPTIONS_TO_LET_SPRING_HANDLE = List.of(
+    public static final Set<Class<?>> EXCEPTIONS_TO_LET_SPRING_HANDLE = Set.of(
             AccessDeniedException.class
     );
 }
