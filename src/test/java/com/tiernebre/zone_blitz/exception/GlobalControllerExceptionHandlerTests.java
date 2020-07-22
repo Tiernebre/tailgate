@@ -4,13 +4,14 @@ import com.tiernebre.zone_blitz.session.InvalidCreateSessionRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.exception.GlobalControllerExceptionHandler.GENERIC_ERROR_MESSAGE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class GlobalControllerExceptionHandlerTests {
     private static final GlobalControllerExceptionHandler globalControllerExceptionHandler = new GlobalControllerExceptionHandler();
@@ -47,6 +48,15 @@ public class GlobalControllerExceptionHandlerTests {
             ErrorResponse errorResponse = globalControllerExceptionHandler.handleGlobalError(exception);
             assertEquals(1, errorResponse.getErrors().size());
             assertTrue(errorResponse.getErrors().contains(GENERIC_ERROR_MESSAGE));
+        }
+
+        @Test
+        @DisplayName("re-throws the exception if the exception is an AccessDeniedException")
+        void rethrowsTheExceptionIfTheExceptionIsAnAccessDeniedException() throws Exception {
+            assertThrows(
+                    AccessDeniedException.class,
+                    () -> globalControllerExceptionHandler.handleGlobalError(new AccessDeniedException(UUID.randomUUID().toString()))
+            );
         }
     }
 }
