@@ -33,7 +33,7 @@ public class GlobalControllerExceptionHandlerTests {
     class HandleGlobalErrorTests {
         @Test
         @DisplayName("returns an error response that contains a generic error to avoid error leakage for a runtime exception")
-        void returnsAnErrorResponseContainingTheInvalidExceptionErrorsForARuntimeException() {
+        void returnsAnErrorResponseContainingTheInvalidExceptionErrorsForARuntimeException() throws Exception {
             RuntimeException runtimeException = new RuntimeException("Generic Runtime Exception!");
             ErrorResponse errorResponse = globalControllerExceptionHandler.handleGlobalError(runtimeException);
             assertEquals(1, errorResponse.getErrors().size());
@@ -42,7 +42,7 @@ public class GlobalControllerExceptionHandlerTests {
 
         @Test
         @DisplayName("returns an error response that contains a generic error to avoid error leakage for an exception")
-        void returnsAnErrorResponseContainingTheInvalidExceptionErrorsForAnException() {
+        void returnsAnErrorResponseContainingTheInvalidExceptionErrorsForAnException() throws Exception {
             Exception exception = new Exception("Generic Exception!");
             ErrorResponse errorResponse = globalControllerExceptionHandler.handleGlobalError(exception);
             assertEquals(1, errorResponse.getErrors().size());

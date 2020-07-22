@@ -30,7 +30,10 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleGlobalError(Exception globalError) {
+    public ErrorResponse handleGlobalError(Exception globalError) throws Exception {
+        if (globalError instanceof AccessDeniedException) {
+            throw globalError;
+        }
         String errorLog = globalError instanceof RuntimeException ? "Encountered RuntimeException" : "Encountered unhandled exception error";
         log.error(errorLog + ": ", globalError);
         log.info("Proceeding to respond with generic error message for a globally encountered error.");
