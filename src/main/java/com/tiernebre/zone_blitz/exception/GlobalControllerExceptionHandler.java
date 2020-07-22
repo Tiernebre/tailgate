@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.ServletException;
+
 import static com.tiernebre.zone_blitz.exception.GlobalControllerExceptionHandlerConfiguration.EXCEPTIONS_TO_LET_SPRING_HANDLE;
 
 @ControllerAdvice
@@ -35,7 +37,8 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGlobalError(Exception globalError) throws Exception {
-        if (EXCEPTIONS_TO_LET_SPRING_HANDLE.contains(globalError.getClass())) {
+        boolean exceptionShouldBeHandledBySpring = globalError instanceof ServletException || EXCEPTIONS_TO_LET_SPRING_HANDLE.contains(globalError.getClass());
+        if (exceptionShouldBeHandledBySpring) {
             throw globalError;
         }
         String errorLog = globalError instanceof RuntimeException ? "Encountered RuntimeException" : "Encountered unhandled exception error";

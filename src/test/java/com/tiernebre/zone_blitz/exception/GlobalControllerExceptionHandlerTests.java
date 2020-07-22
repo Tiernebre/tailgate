@@ -4,7 +4,9 @@ import com.tiernebre.zone_blitz.session.InvalidCreateSessionRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.MethodParameter;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MissingRequestCookieException;
 
 import java.util.Collections;
 import java.util.Set;
@@ -12,6 +14,7 @@ import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.exception.GlobalControllerExceptionHandler.GENERIC_ERROR_MESSAGE;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class GlobalControllerExceptionHandlerTests {
     private static final GlobalControllerExceptionHandler globalControllerExceptionHandler = new GlobalControllerExceptionHandler();
@@ -52,11 +55,24 @@ public class GlobalControllerExceptionHandlerTests {
 
         @Test
         @DisplayName("re-throws the exception if the exception is an AccessDeniedException")
-        void rethrowsTheExceptionIfTheExceptionIsAnAccessDeniedException() throws Exception {
-            assertThrows(
+        void rethrowsTheExceptionIfTheExceptionIsAnAccessDeniedException() {
+            AccessDeniedException originalException = new AccessDeniedException(UUID.randomUUID().toString());
+            AccessDeniedException thrownException = assertThrows(
                     AccessDeniedException.class,
-                    () -> globalControllerExceptionHandler.handleGlobalError(new AccessDeniedException(UUID.randomUUID().toString()))
+                    () -> globalControllerExceptionHandler.handleGlobalError(originalException)
             );
+            assertEquals(originalException, thrownException);
+        }
+
+        @Test
+        @DisplayName("re-throws the exception if the exception is a MissingRequestCookieException")
+        void rethrowsTheExceptionIfTheExceptionIsAMissingRequestCookieException() {
+            MissingRequestCookieException originalException = new MissingRequestCookieException(UUID.randomUUID().toString(), mock(MethodParameter.class));
+            MissingRequestCookieException thrownException = assertThrows(
+                    MissingRequestCookieException.class,
+                    () -> globalControllerExceptionHandler.handleGlobalError(originalException)
+            );
+            assertEquals(originalException, thrownException);
         }
     }
 }
