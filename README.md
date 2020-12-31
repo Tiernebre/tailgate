@@ -1,6 +1,6 @@
 # zone-blitz
 
-NCAA Dynasty Manager.
+Open-Source College Football Simulator.
 
 ## Getting Started
 
