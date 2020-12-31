@@ -128,7 +128,7 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.33.0</version>
+				<version>0.34.1</version>
 
 				<configuration>
 					<images>
@@ -146,7 +146,7 @@
 									<port>codegen-db.port:5432</port>
 								</ports>
 								<wait>
-									<time>1250</time>
+									<log>database system is ready to accept connections</log>
 								</wait>
 							</run>
 						</image>
