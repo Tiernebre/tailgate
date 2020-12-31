@@ -1,12 +1,13 @@
 package com.tiernebre.zone_blitz.session;
 
+import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
+import com.tiernebre.zone_blitz.token.access.AccessTokenFactory;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenService;
-import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.UserFactory;
+import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.service.UserService;
-import com.tiernebre.zone_blitz.validator.StringIsBlankException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -57,12 +58,14 @@ public class SessionServiceImplTests {
                     .build();
             when(userService.findOneByEmailAndPassword(eq(user.getEmail()), eq(password))).thenReturn(Optional.of(user));
             doNothing().when(sessionValidator).validate(createSessionRequest);
-            String expectedAccessToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            AccessTokenDto expectedAccessToken = AccessTokenFactory.generateOneDto();
+            UUID expectedRefreshToken = UUID.randomUUID();
+            String expectedFingerprint = expectedAccessToken.getFingerprint();
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
             SessionDto expectedSession = SessionDto.builder()
-                    .accessToken(expectedAccessToken)
+                    .accessToken(expectedAccessToken.getToken())
                     .refreshToken(expectedRefreshToken)
+                    .fingerprint(expectedFingerprint)
                     .build();
             when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.createOne(createSessionRequest);
@@ -106,16 +109,18 @@ public class SessionServiceImplTests {
         @DisplayName("returns a properly mapped session DTO representation with the tokens")
         public void returnsAProperlyMappedSessionDtoRepresentationWithTheTokens() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
             UserDto user = UserFactory.generateOneDto();
-            String refreshToken = UUID.randomUUID().toString();
+            UUID refreshToken = UUID.randomUUID();
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(user));
-            String expectedToken = UUID.randomUUID().toString();
-            String expectedRefreshToken = UUID.randomUUID().toString();
+            AccessTokenDto expectedAccessToken = AccessTokenFactory.generateOneDto();
+            UUID expectedRefreshToken = UUID.randomUUID();
             when(refreshTokenService.createOneForUser(eq(user))).thenReturn(expectedRefreshToken);
+            String expectedFingerprint = expectedAccessToken.getFingerprint();
             SessionDto expectedSession = SessionDto.builder()
-                    .accessToken(expectedToken)
+                    .accessToken(expectedAccessToken.getToken())
                     .refreshToken(expectedRefreshToken)
+                    .fingerprint(expectedFingerprint)
                     .build();
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedToken);
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(expectedAccessToken);
             SessionDto createdSession = sessionService.refreshOne(refreshToken);
             assertEquals(expectedSession, createdSession);
         }
@@ -123,30 +128,20 @@ public class SessionServiceImplTests {
         @Test
         @DisplayName("throws an invalid refresh request exception if the user could not be found from a given refresh token")
         public void throwsAnInvalidRefreshRequestExceptionIfTheUserCouldNotBeFoundFromAGivenRefreshToken() {
-            String refreshToken = UUID.randomUUID().toString();
+            UUID refreshToken = UUID.randomUUID();
             when(userService.findOneByNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
             InvalidRefreshSessionRequestException thrownException = assertThrows(InvalidRefreshSessionRequestException.class, () -> sessionService.refreshOne(refreshToken));
             assertEquals(INVALID_REFRESH_TOKEN_ERROR, thrownException.getMessage());
         }
 
         @Test
-        @DisplayName("throws an invalid refresh request exception if the refresh token is invalid")
-        public void throwsAnInvalidRefreshRequestExceptionIfTheRefreshTokenIsInvalid() {
-            String refreshToken = UUID.randomUUID().toString();
-            StringIsBlankException expectedException = new StringIsBlankException("Test Error!");
-            doThrow(expectedException).when(sessionValidator).validateRefreshToken(eq(refreshToken));
-            StringIsBlankException thrownException = assertThrows(expectedException.getClass(), () -> sessionService.refreshOne(refreshToken));
-            assertEquals(expectedException, thrownException);
-        }
-
-        @Test
         @DisplayName("deletes the previously used refresh token")
         public void deletesThePreviouslyUsedRefreshToken() throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
             UserDto user = UserFactory.generateOneDto();
-            String originalRefreshToken = UUID.randomUUID().toString();
+            UUID originalRefreshToken = UUID.randomUUID();
             when(userService.findOneByNonExpiredRefreshToken(eq(originalRefreshToken))).thenReturn(Optional.of(user));
-            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID().toString());
-            when(accessTokenProvider.generateOne(eq(user))).thenReturn(UUID.randomUUID().toString());
+            when(refreshTokenService.createOneForUser(eq(user))).thenReturn(UUID.randomUUID());
+            when(accessTokenProvider.generateOne(eq(user))).thenReturn(AccessTokenFactory.generateOneDto());
             sessionService.refreshOne(originalRefreshToken);
             verify(refreshTokenService, times(1)).deleteOne(eq(originalRefreshToken));
         }

@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.user.service;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
-import com.tiernebre.zone_blitz.test.EmailIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
 import com.tiernebre.zone_blitz.test.email.TestEmailInboxService;
 import com.tiernebre.zone_blitz.test.email.TestEmailSearchOption;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
-public class UserEmailConfirmationServiceIntegrationTests extends EmailIntegrationTestSuite {
+public class UserEmailConfirmationServiceIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserEmailConfirmationService userEmailConfirmationService;
 

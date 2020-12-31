@@ -55,7 +55,7 @@ public class UserRestfulControllerTests {
         @Test
         @DisplayName("passes along the correct information")
         void passesAlongTheCorrectInformation() throws UserNotFoundForConfirmationException {
-            String confirmationToken = UUID.randomUUID().toString();
+            UUID confirmationToken = UUID.randomUUID();
             userRestfulController.confirmUser(confirmationToken);
             verify(userService, times(1)).confirmOne(eq(confirmationToken));
         }

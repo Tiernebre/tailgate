@@ -41,7 +41,7 @@ public class PasswordResetServiceImplTests {
             PasswordResetRequest passwordResetRequest = PasswordResetFactory.generateOneRequest();
             UserDto expectedUser = UserFactory.generateOneDto();
             when(userService.findOneByEmail(eq(passwordResetRequest.getEmail()))).thenReturn(Optional.of(expectedUser));
-            String passwordResetToken = UUID.randomUUID().toString();
+            UUID passwordResetToken = UUID.randomUUID();
             when(passwordResetTokenService.createOneForUser(eq(expectedUser))).thenReturn(passwordResetToken);
             passwordResetService.createOne(passwordResetRequest);
             verify(passwordResetTokenDeliveryService, times(1)).sendOne(eq(expectedUser), eq(passwordResetToken));

@@ -8,6 +8,8 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 import static com.tiernebre.zone_blitz.jooq.Tables.REFRESH_TOKENS;
 
 /**
@@ -36,7 +38,7 @@ public class RefreshTokenRecordPool {
         return refreshTokensRecord.into(RefreshTokensRecord.class);
     }
 
-    public RefreshTokensRecord getOneById(String id) {
+    public RefreshTokensRecord getOneById(UUID id) {
         return dslContext.selectFrom(REFRESH_TOKENS).where(REFRESH_TOKENS.TOKEN.eq(id)).fetchOne();
     }
 }

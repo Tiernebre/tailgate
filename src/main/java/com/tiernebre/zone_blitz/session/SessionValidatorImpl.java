@@ -1,7 +1,6 @@
 package com.tiernebre.zone_blitz.session;
 
 import com.tiernebre.zone_blitz.validator.BaseValidator;
-import com.tiernebre.zone_blitz.validator.StringValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,10 +28,5 @@ public class SessionValidatorImpl extends BaseValidator implements SessionValida
         if (CollectionUtils.isNotEmpty(errorsFound)) {
             throw new InvalidCreateSessionRequestException(errorsFound);
         }
-    }
-
-    @Override
-    public void validateRefreshToken(String refreshToken) {
-        StringValidator.requireNonBlank(refreshToken, INVALID_REFRESH_TOKEN_REQUEST_ERROR);
     }
 }

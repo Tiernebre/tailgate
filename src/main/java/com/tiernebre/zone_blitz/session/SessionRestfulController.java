@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.FINGERPRINT_COOKIE_NAME;
+import static com.tiernebre.zone_blitz.authentication.SessionCookieNames.REFRESH_TOKEN_COOKIE_NAME;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sessions")
 public class SessionRestfulController {
-    static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
     private final SessionService service;
     private final RefreshTokenConfigurationProperties refreshTokenConfigurationProperties;
@@ -27,7 +30,7 @@ public class SessionRestfulController {
             HttpServletResponse httpServletResponse
     ) throws GenerateAccessTokenException, UserNotFoundForSessionException, InvalidCreateSessionRequestException {
         SessionDto createdSession = service.createOne(createSessionRequest);
-        setRefreshTokenCookieFromSession(createdSession, httpServletResponse);
+        setCookiesForSession(createdSession, httpServletResponse);
         return createdSession;
     }
 
@@ -35,19 +38,30 @@ public class SessionRestfulController {
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionDto refreshOne(
-            @CookieValue(REFRESH_TOKEN_COOKIE_NAME) String refreshToken,
+            @CookieValue(REFRESH_TOKEN_COOKIE_NAME) UUID refreshToken,
             HttpServletResponse httpServletResponse
     ) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
         SessionDto refreshedSession = service.refreshOne(refreshToken);
-        setRefreshTokenCookieFromSession(refreshedSession, httpServletResponse);
+        setCookiesForSession(refreshedSession, httpServletResponse);
         return refreshedSession;
     }
 
-    private void setRefreshTokenCookieFromSession(SessionDto session, HttpServletResponse httpServletResponse) {
-        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken());
+    private void setCookiesForSession(SessionDto session, HttpServletResponse httpServletResponse) {
+        httpServletResponse.addCookie(createRefreshTokenCookie(session));
+        httpServletResponse.addCookie(createFingerprintCookie(session));
+    }
+
+    private Cookie createRefreshTokenCookie(SessionDto session) {
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, session.getRefreshToken().toString());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(getRefreshTokenCookieAgeInSeconds());
-        httpServletResponse.addCookie(refreshTokenCookie);
+        return refreshTokenCookie;
+    }
+
+    private Cookie createFingerprintCookie(SessionDto session) {
+        Cookie fingerprintCookie = new Cookie(FINGERPRINT_COOKIE_NAME, session.getFingerprint());
+        fingerprintCookie.setHttpOnly(true);
+        return fingerprintCookie;
     }
 
     private int getRefreshTokenCookieAgeInSeconds() {

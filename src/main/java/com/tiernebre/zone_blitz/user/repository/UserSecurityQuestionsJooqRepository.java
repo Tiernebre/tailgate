@@ -5,6 +5,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.jooq.Tables.USER_SECURITY_QUESTIONS;
 import static com.tiernebre.zone_blitz.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
@@ -17,7 +18,7 @@ public class UserSecurityQuestionsJooqRepository implements UserSecurityQuestion
     private final UserPasswordResetRepositoryUtilities utilities;
 
     @Override
-    public Map<Long, String> getAnswersForEmailAndResetToken(String email, String resetToken) {
+    public Map<Long, String> getAnswersForEmailAndResetToken(String email, UUID resetToken) {
         return dslContext
                 .select(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID, USER_SECURITY_QUESTIONS.ANSWER)
                 .from(USER_SECURITY_QUESTIONS)
@@ -26,6 +27,7 @@ public class UserSecurityQuestionsJooqRepository implements UserSecurityQuestion
                 .join(PASSWORD_RESET_TOKENS)
                 .on(USERS.ID.eq(PASSWORD_RESET_TOKENS.USER_ID))
                 .where(USERS.EMAIL.eq(email))
+                .and(PASSWORD_RESET_TOKENS.TOKEN.eq(resetToken))
                 .and(utilities.passwordResetTokenIsNotExpired())
                 .fetchMap(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID, USER_SECURITY_QUESTIONS.ANSWER);
     }

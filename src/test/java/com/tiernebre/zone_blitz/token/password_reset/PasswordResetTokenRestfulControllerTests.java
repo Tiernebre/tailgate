@@ -41,7 +41,7 @@ public class PasswordResetTokenRestfulControllerTests {
         @Test
         @DisplayName("passes through the request and params properly")
         void passesThroughTheRequestAndParamsProperly() throws InvalidUpdatePasswordRequestException, InvalidPasswordResetTokenException, UserNotFoundForPasswordUpdateException, InvalidSecurityQuestionAnswerException {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             ResetTokenUpdatePasswordRequest resetTokenUpdatePasswordRequest = ResetTokenUpdatePasswordRequestFactory.generateOneDto();
             passwordResetTokenRestfulController.updatePasswordUsingResetToken(resetToken, resetTokenUpdatePasswordRequest);
             verify(userPasswordService, times(1)).updateOneUsingResetToken(eq(resetToken), eq(resetTokenUpdatePasswordRequest));
@@ -54,7 +54,7 @@ public class PasswordResetTokenRestfulControllerTests {
         @Test
         @DisplayName("returns the found security questions")
         void returnsTheFoundSecurityQuestions() {
-            String resetToken = UUID.randomUUID().toString();
+            UUID resetToken = UUID.randomUUID();
             List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
             when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
             List<SecurityQuestionDto> gottenSecurityQuestions = passwordResetTokenRestfulController.getSecurityQuestionsForPasswordResetToken(resetToken);

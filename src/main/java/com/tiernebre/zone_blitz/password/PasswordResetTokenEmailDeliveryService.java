@@ -7,6 +7,8 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 /**
  * Uses email as a channel to deliver a password reset token to a user.
  */
@@ -18,7 +20,7 @@ public class PasswordResetTokenEmailDeliveryService implements PasswordResetToke
     private final PasswordResetEmailDeliveryConfigurationProperties configurationProperties;
 
     @Override
-    public void sendOne(UserDto userDto, String passwordResetToken) {
+    public void sendOne(UserDto userDto, UUID passwordResetToken) {
         SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
         passwordResetEmail.setSubject(configurationProperties.getSubject());
         passwordResetEmail.setTo(userDto.getEmail());
@@ -27,7 +29,7 @@ public class PasswordResetTokenEmailDeliveryService implements PasswordResetToke
         mailSender.send(passwordResetEmail);
     }
 
-    private String formatMessage(String passwordResetToken) {
-        return configurationProperties.getMessage().replace(configurationProperties.getPasswordResetTokenTag(), passwordResetToken);
+    private String formatMessage(UUID passwordResetToken) {
+        return configurationProperties.getMessage().replace(configurationProperties.getPasswordResetTokenTag(), passwordResetToken.toString());
     }
 }

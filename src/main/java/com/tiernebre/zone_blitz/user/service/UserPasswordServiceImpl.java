@@ -2,8 +2,8 @@ package com.tiernebre.zone_blitz.user.service;
 
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenService;
 import com.tiernebre.zone_blitz.user.dto.ResetTokenUpdatePasswordRequest;
-import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
+import com.tiernebre.zone_blitz.user.dto.UserUpdatePasswordRequest;
 import com.tiernebre.zone_blitz.user.exception.InvalidPasswordResetTokenException;
 import com.tiernebre.zone_blitz.user.exception.InvalidSecurityQuestionAnswerException;
 import com.tiernebre.zone_blitz.user.exception.InvalidUpdatePasswordRequestException;
@@ -11,12 +11,12 @@ import com.tiernebre.zone_blitz.user.exception.UserNotFoundForPasswordUpdateExce
 import com.tiernebre.zone_blitz.user.repository.UserPasswordRepository;
 import com.tiernebre.zone_blitz.user.validator.UserPasswordValidator;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     private final UserSecurityQuestionsService userSecurityQuestionsService;
 
     @Override
-    public void updateOneUsingResetToken(String resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest) throws
+    public void updateOneUsingResetToken(UUID resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest) throws
             InvalidUpdatePasswordRequestException,
             InvalidPasswordResetTokenException,
             UserNotFoundForPasswordUpdateException,
@@ -77,8 +77,8 @@ public class UserPasswordServiceImpl implements UserPasswordService {
         }
     }
 
-    private void validateResetToken(String resetToken) throws InvalidPasswordResetTokenException {
-        if (StringUtils.isBlank(resetToken)) {
+    private void validateResetToken(UUID resetToken) throws InvalidPasswordResetTokenException {
+        if (resetToken == null) {
             throw new InvalidPasswordResetTokenException(Collections.singleton("The reset token must not be blank"));
         }
     }

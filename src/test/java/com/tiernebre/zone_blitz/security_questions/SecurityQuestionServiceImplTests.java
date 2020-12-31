@@ -77,7 +77,7 @@ public class SecurityQuestionServiceImplTests {
         @DisplayName("returns the found security questions from a given password reset token converted to DTOs")
         public void returnsTheFoundSecurityQuestionsFromAGivenPasswordResetTokenConvertedToDtos() {
             List<SecurityQuestionEntity> entities = SecurityQuestionFactory.generateManyEntities();
-            String passwordResetToken = UUID.randomUUID().toString();
+            UUID passwordResetToken = UUID.randomUUID();
             List<SecurityQuestionDto> expectedDtos = SecurityQuestionFactory.generateMultipleDtos();
             when(securityQuestionRepository.getAllForPasswordResetToken(eq(passwordResetToken))).thenReturn(entities);
             when(securityQuestionConverter.createFromEntities(eq(entities))).thenReturn(expectedDtos);

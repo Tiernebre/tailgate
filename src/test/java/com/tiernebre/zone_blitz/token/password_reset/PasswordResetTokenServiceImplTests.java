@@ -31,12 +31,12 @@ public class PasswordResetTokenServiceImplTests {
         @DisplayName("returns the created password reset token")
         public void returnsTheCreatedPasswordResetToken() {
             UserDto user = UserFactory.generateOneDto();
-            String expectedPasswordResetToken = UUID.randomUUID().toString();
+            UUID expectedPasswordResetToken = UUID.randomUUID();
             when(passwordResetTokenRepository.createOneForUser(eq(user))).thenReturn(PasswordResetTokenEntity.builder()
                     .token(expectedPasswordResetToken)
                     .build()
             );
-            String gottenConfirmationToken = passwordResetTokenService.createOneForUser(user);
+            UUID gottenConfirmationToken = passwordResetTokenService.createOneForUser(user);
             assertEquals(expectedPasswordResetToken, gottenConfirmationToken);
         }
     }
@@ -47,7 +47,7 @@ public class PasswordResetTokenServiceImplTests {
         @Test
         @DisplayName("deletes the given token")
         public void deletesTheGivenToken() {
-            String passwordTokenToDelete = UUID.randomUUID().toString();
+            UUID passwordTokenToDelete = UUID.randomUUID();
             passwordResetTokenService.deleteOneAsynchronously(passwordTokenToDelete);
             verify(passwordResetTokenRepository, times(1)).deleteOne(eq(passwordTokenToDelete));
         }

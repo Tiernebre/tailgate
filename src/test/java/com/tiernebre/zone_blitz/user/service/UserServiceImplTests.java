@@ -109,7 +109,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns an optional containing the found user if the email exists and the passwords match")
         void testReturnsAnOptionalIfEmailExistsAndPasswordsMatch() {
-            String email = UUID.randomUUID().toString() + "@test.com";
+            String email = UUID.randomUUID() + "@test.com";
             String password = "testPassword12345!";
             UserEntity foundUserEntity = UserFactory.generateOneEntity();
             UserDto expectedUser = UserFactory.generateOneDto();
@@ -124,7 +124,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns an empty optional if the email does not exist")
         void testReturnsAnEmptyOptionalIfTheEmailDoesNotExist() {
-            String email = UUID.randomUUID().toString() + "@test.com";
+            String email = UUID.randomUUID() + "@test.com";
             String password = "testPassword12345!";
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.empty());
             Optional<UserDto> gottenUser = userService.findOneByEmailAndPassword(email, password);
@@ -134,7 +134,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns an empty optional if the email exists, but the passwords do not match")
         void testReturnsAnEmptyOptionalIfTheEmailExistsButThePasswordsDoNotMatch() {
-            String email = UUID.randomUUID().toString() + "@test.com";
+            String email = UUID.randomUUID() + "@test.com";
             String password = "testPassword12345!";
             UserEntity foundUserEntity = UserFactory.generateOneEntity();
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.of(foundUserEntity));
@@ -166,7 +166,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns the optional containing a user from the repository with a given refresh token")
         void testReturnsTheOptionalContainingAUserFromTheRepositoryWithAGivenRefreshToken() {
-            String refreshToken = UUID.randomUUID().toString();
+            UUID refreshToken = UUID.randomUUID();
             UserEntity expectedUserFound = UserFactory.generateOneEntity();
             when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.of(expectedUserFound));
             UserDto expectedMappedUser = UserFactory.generateOneDto();
@@ -179,18 +179,10 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns an empty optional from the repository with a given refresh token")
         void testReturnsAnEmptyOptionalFromTheRepositoryWithAGivenRefreshToken() {
-            String refreshToken = UUID.randomUUID().toString();
+            UUID refreshToken = UUID.randomUUID();
             when(repository.findOneWithNonExpiredRefreshToken(eq(refreshToken))).thenReturn(Optional.empty());
             Optional<UserDto> foundUser = userService.findOneByNonExpiredRefreshToken(refreshToken);
             assertFalse(foundUser.isPresent());
-        }
-
-        @ParameterizedTest(name = "throws a StringIsBlankException if the refresh token is \"{0}\"")
-        @NullSource
-        @ValueSource(strings = { "", " " })
-        void throwsAStringIsBlankExceptionIfTheRefreshTokenIs(String refreshToken) {
-            StringIsBlankException thrownException = assertThrows(StringIsBlankException.class, () -> userService.findOneByNonExpiredRefreshToken(refreshToken));
-            assertEquals(REQUIRED_REFRESH_TOKEN_MESSAGE, thrownException.getMessage());
         }
     }
 
@@ -200,7 +192,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns an optional containing a mapped user if one exists")
         void returnsAnOptionalContainingAMappedUserIfOneExists() {
-            String email = UUID.randomUUID().toString() + ".com";
+            String email = UUID.randomUUID() + ".com";
             UserEntity foundUser = UserFactory.generateOneEntity();
             UserDto expectedUser = UserFactory.generateOneDto();
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.of(foundUser));
@@ -213,7 +205,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("returns an empty optional containing a mapped user if one exists")
         void returnsAnEmptyOptionalIfNoUserWasFound() {
-            String email = UUID.randomUUID().toString() + ".com";
+            String email = UUID.randomUUID() + ".com";
             when(repository.findOneByEmail(eq(email))).thenReturn(Optional.empty());
             Optional<UserDto> gottenUser = userService.findOneByEmail(email);
             assertTrue(gottenUser.isEmpty());
@@ -226,7 +218,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("throws a not found error if the user was not confirmed")
         void throwsANotFoundErrorIfTheUserWasNotConfirmed() {
-            String confirmationToken = UUID.randomUUID().toString();
+            UUID confirmationToken = UUID.randomUUID();
             when(repository.confirmOne(eq(confirmationToken))).thenReturn(false);
             assertThrows(UserNotFoundForConfirmationException.class, () -> userService.confirmOne(confirmationToken));
         }
@@ -234,7 +226,7 @@ public class UserServiceImplTests {
         @Test
         @DisplayName("does not throw an error if a user was confirmed")
         void doesNotThrowAnErrorIfAUserWasConfirmed() {
-            String confirmationToken = UUID.randomUUID().toString();
+            UUID confirmationToken = UUID.randomUUID();
             when(repository.confirmOne(eq(confirmationToken))).thenReturn(true);
             assertDoesNotThrow(() -> userService.confirmOne(confirmationToken));
         }

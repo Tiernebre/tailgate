@@ -50,13 +50,13 @@ public class PasswordResetTokenEmailDeliveryServiceTests {
         @DisplayName("sends off a properly formatted email to the user with a password reset token")
         void sendsOffAProperlyFormattedEmailToTheUserWithAPasswordResetToken() {
             UserDto user = UserFactory.generateOneDto();
-            String passwordResetToken = UUID.randomUUID().toString();
+            UUID passwordResetToken = UUID.randomUUID();
             passwordResetTokenEmailDeliveryService.sendOne(user, passwordResetToken);
             SimpleMailMessage expectedMailMessage = new SimpleMailMessage();
             expectedMailMessage.setTo(user.getEmail());
             expectedMailMessage.setFrom(zoneBlitzEmailConfigurationProperties.getFrom());
             expectedMailMessage.setSubject(passwordResetEmailDeliveryConfigurationProperties.getSubject());
-            String expectedMessage = EXPECTED_EMAIL_MESSAGE.replace(EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG, passwordResetToken);
+            String expectedMessage = EXPECTED_EMAIL_MESSAGE.replace(EXPECTED_EMAIL_PASSWORD_RESET_TOKEN_TAG, passwordResetToken.toString());
             expectedMailMessage.setText(expectedMessage);
             verify(mailSender, times(1)).send(eq(expectedMailMessage));
        }

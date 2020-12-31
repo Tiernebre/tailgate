@@ -2,7 +2,7 @@ package com.tiernebre.zone_blitz.password;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
 import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
-import com.tiernebre.zone_blitz.test.EmailIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
 import com.tiernebre.zone_blitz.test.email.TestEmailInboxService;
 import com.tiernebre.zone_blitz.test.email.TestEmailSearchOption;
@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends EmailIntegrationTestSuite {
+public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private PasswordResetTokenEmailDeliveryService passwordResetTokenEmailDeliveryService;
 
@@ -46,7 +46,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
                     .id(userToResetPasswordFor.getId())
                     .email(userToResetPasswordFor.getEmail())
                     .build();
-            String passwordResetToken = UUID.randomUUID().toString();
+            UUID passwordResetToken = UUID.randomUUID();
             passwordResetTokenEmailDeliveryService.sendOne(userToResetPasswordForAsDto, passwordResetToken);
             TestEmail foundEmail = testEmailInboxService.searchForEmail(
                     TestEmailSearchOption.TO,
@@ -56,7 +56,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Emai
             assertTrue(StringUtils.isNotBlank(foundEmail.getTo()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getSubject()));
             assertTrue(StringUtils.isNotBlank(foundEmail.getText()));
-            assertTrue(foundEmail.getText().contains(passwordResetToken));
+            assertTrue(foundEmail.getText().contains(passwordResetToken.toString()));
             assertEquals(zoneBlitzEmailConfigurationProperties.getFrom(), foundEmail.getFrom());
             assertEquals(userToResetPasswordFor.getEmail(), foundEmail.getTo());
             assertEquals(passwordResetEmailDeliveryConfigurationProperties.getSubject(), foundEmail.getSubject());

@@ -1,5 +1,6 @@
 package com.tiernebre.zone_blitz.session;
 
+import com.tiernebre.zone_blitz.token.access.AccessTokenDto;
 import com.tiernebre.zone_blitz.token.access.AccessTokenProvider;
 import com.tiernebre.zone_blitz.token.access.GenerateAccessTokenException;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenService;
@@ -7,6 +8,8 @@ import com.tiernebre.zone_blitz.user.dto.UserDto;
 import com.tiernebre.zone_blitz.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +37,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionDto refreshOne(String originalRefreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
-        validator.validateRefreshToken(originalRefreshToken);
+    public SessionDto refreshOne(UUID originalRefreshToken) throws GenerateAccessTokenException, InvalidRefreshSessionRequestException {
         UserDto userToCreateRefreshedSessionFor = userService
                 .findOneByNonExpiredRefreshToken(originalRefreshToken)
                 .orElseThrow(() -> new InvalidRefreshSessionRequestException(INVALID_REFRESH_TOKEN_ERROR));
@@ -45,9 +47,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     private SessionDto buildOutSessionForUser(UserDto user) throws GenerateAccessTokenException {
+        AccessTokenDto accessToken = accessTokenProvider.generateOne(user);
         return SessionDto.builder()
-                .accessToken(accessTokenProvider.generateOne(user))
+                .accessToken(accessToken.getToken())
                 .refreshToken(refreshTokenService.createOneForUser(user))
+                .fingerprint(accessToken.getFingerprint())
                 .build();
     }
 }

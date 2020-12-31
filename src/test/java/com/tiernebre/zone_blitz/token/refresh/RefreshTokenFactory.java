@@ -7,7 +7,7 @@ import java.util.UUID;
 public class RefreshTokenFactory {
     public static RefreshTokenEntity generateOneEntity() {
         return RefreshTokenEntity.builder()
-                .token(UUID.randomUUID().toString())
+                .token(UUID.randomUUID())
                 .userId(new Random().nextLong())
                 .createdAt(Instant.now())
                 .build();

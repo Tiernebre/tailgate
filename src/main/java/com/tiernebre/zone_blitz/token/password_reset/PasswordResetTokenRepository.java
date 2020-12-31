@@ -2,6 +2,8 @@ package com.tiernebre.zone_blitz.token.password_reset;
 
 import com.tiernebre.zone_blitz.user.dto.UserDto;
 
+import java.util.UUID;
+
 public interface PasswordResetTokenRepository {
     /**
      * Creates a password reset token for a provided user.
@@ -16,5 +18,5 @@ public interface PasswordResetTokenRepository {
      *
      * @param token The password reset token to delete.
      */
-    void deleteOne(String token);
+    void deleteOne(UUID token);
 }

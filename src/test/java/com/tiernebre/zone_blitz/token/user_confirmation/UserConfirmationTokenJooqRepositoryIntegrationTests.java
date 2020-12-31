@@ -2,10 +2,9 @@ package com.tiernebre.zone_blitz.token.user_confirmation;
 
 import com.tiernebre.zone_blitz.jooq.tables.records.UserConfirmationTokensRecord;
 import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
-import com.tiernebre.zone_blitz.test.DatabaseIntegrationTestSuite;
+import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-public class UserConfirmationTokenJooqRepositoryIntegrationTests extends DatabaseIntegrationTestSuite {
+public class UserConfirmationTokenJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
     private UserConfirmationTokenJooqRepository userConfirmationTokenJooqRepository;
 
@@ -35,7 +34,6 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Databas
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             UserConfirmationTokenEntity confirmationTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
             assertNotNull(confirmationTokenEntity.getToken());
-            assertTrue(StringUtils.isNotBlank(confirmationTokenEntity.getToken()));
             assertNotNull(confirmationTokenEntity.getCreatedAt());
             assertEquals(user.getId(), confirmationTokenEntity.getUserId());
         }

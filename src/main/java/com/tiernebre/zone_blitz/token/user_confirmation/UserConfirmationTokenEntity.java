@@ -4,11 +4,12 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Value
 @Builder
 public class UserConfirmationTokenEntity {
-    String token;
+    UUID token;
     Instant createdAt;
     Long userId;
 }
