@@ -33,3 +33,9 @@ spring:
 mailhog:
   host: 'localhost'
   port: ${MAILHOG_API_PORT}
+
+google:
+  recaptcha:
+    url:  https://www.google.com/recaptcha/api/siteverify
+    secret: some-test-secret
+    minimum-allowed-score: 0.0
