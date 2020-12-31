@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
     db:
-        image: postgres:12.3
+        image: postgres:13
         ports:
             - "5454:5432"
         restart: always
