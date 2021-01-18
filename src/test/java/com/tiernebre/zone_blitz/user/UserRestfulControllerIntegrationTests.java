@@ -20,8 +20,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -119,8 +118,8 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
     }
 
     @Nested
-    @DisplayName("POST /users/me/password")
-    public class PostMyPasswordTests {
+    @DisplayName("PUT /users/me/password")
+    public class PutMyPasswordTests {
         @Test
         @DisplayName("returns with 204 NO CONTENT status if successful")
         @WithMockCustomUser
@@ -128,7 +127,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
             UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             doNothing().when(passwordService).updateOneForUser(eq(UserFactory.CUSTOM_AUTHENTICATED_USER), eq(userUpdatePasswordRequest));
             mockMvc.perform(
-                    post("/users/me/password")
+                    put("/users/me/password")
                             .content(objectMapper.writeValueAsString(userUpdatePasswordRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isNoContent());
@@ -139,7 +138,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
         void returnsWith403ForbiddenIfThereIsNoUserProvided() throws Exception {
             UserUpdatePasswordRequest userUpdatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             mockMvc.perform(
-                    post("/users/me/password")
+                    put("/users/me/password")
                             .content(objectMapper.writeValueAsString(userUpdatePasswordRequest))
                             .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isForbidden());
