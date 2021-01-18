@@ -66,7 +66,9 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.id").value(expectedUser.getId()))
                     .andExpect(jsonPath("$.email").exists())
-                    .andExpect(jsonPath("$.email").value(expectedUser.getEmail()));
+                    .andExpect(jsonPath("$.email").value(expectedUser.getEmail()))
+                    .andExpect(jsonPath("$.isConfirmed").doesNotExist())
+                    .andExpect(jsonPath("$.isConfirmed").doesNotHaveJsonPath());
         }
     }
 
