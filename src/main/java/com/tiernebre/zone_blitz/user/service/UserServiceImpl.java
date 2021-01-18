@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     static final String REQUIRED_EMAIL_MESSAGE = "The email to find a user for is a required parameter and must not be null or blank.";
     static final String REQUIRED_PASSWORD_MESSAGE = "The password to find a user for is a required parameter and must not be null or blank.";
-    static final String REQUIRED_REFRESH_TOKEN_MESSAGE = "The refresh token to find a user for must not be null or blank.";
 
     private final UserRepository repository;
     private final UserConverter converter;

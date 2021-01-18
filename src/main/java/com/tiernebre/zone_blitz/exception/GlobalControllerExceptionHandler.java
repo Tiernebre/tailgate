@@ -2,6 +2,7 @@ package com.tiernebre.zone_blitz.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,15 +19,15 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(InvalidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidException(InvalidException invalidException) {
-        return ErrorResponse.builder()
+    public ResponseEntity<ErrorResponse> handleInvalidException(InvalidException invalidException) {
+        return new ResponseEntity<>(ErrorResponse.builder()
                 .errors(invalidException.getErrors())
-                .build();
+                .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void handleInvalidException() {
+    public void handleNotFoundException() {
     }
 
     @ExceptionHandler(AccessDeniedException.class)

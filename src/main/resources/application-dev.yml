@@ -25,6 +25,8 @@ zone-blitz:
 spring:
   flyway:
     enabled: true
+  thymeleaf:
+    enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5454/zone-blitz
     username: postgres

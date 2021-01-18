@@ -27,7 +27,7 @@ public class GlobalControllerExceptionHandlerTests {
         void returnsAnErrorResponseContainingTheInvalidExceptionErrors() {
             Set<String> errorMessages = Collections.singleton("Expected Test Error Message");
             InvalidCreateSessionRequestException invalidCreateSessionRequestException = new InvalidCreateSessionRequestException(errorMessages);
-            ErrorResponse errorResponse = globalControllerExceptionHandler.handleInvalidException(invalidCreateSessionRequestException);
+            ErrorResponse errorResponse = globalControllerExceptionHandler.handleInvalidException(invalidCreateSessionRequestException).getBody();
             assertEquals(errorMessages, errorResponse.getErrors());
         }
     }
