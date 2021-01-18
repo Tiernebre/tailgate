@@ -62,7 +62,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
         validator.validateUpdateRequest(updatePasswordRequest);
         Long userId = userDto.getId();
         validateProvidedOldPassword(userId, updatePasswordRequest.getOldPassword());
-        boolean passwordUpdated = repository.updateOneForId(userId, updatePasswordRequest.getNewPassword());
+        boolean passwordUpdated = repository.updateOneForId(userId, passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
         if (!passwordUpdated) {
             throw new UserNotFoundForPasswordUpdateException();
         }

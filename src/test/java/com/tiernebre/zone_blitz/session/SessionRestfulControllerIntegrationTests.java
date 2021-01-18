@@ -145,7 +145,9 @@ public class SessionRestfulControllerIntegrationTests extends WebControllerInteg
                     .andExpect(jsonPath("$.accessToken").exists())
                     .andExpect(jsonPath("$.accessToken").value(expectedSession.getAccessToken()))
                     .andExpect(jsonPath("$.refreshToken").doesNotExist())
-                    .andExpect(jsonPath("$.fingerprint").doesNotExist());
+                    .andExpect(jsonPath("$.refreshToken").doesNotHaveJsonPath())
+                    .andExpect(jsonPath("$.fingerprint").doesNotExist())
+                    .andExpect(jsonPath("$.fingerprint").doesNotHaveJsonPath());
         }
 
         @Test

@@ -45,7 +45,7 @@ public class UserRestfulController {
     }
 
     @IsAuthenticated
-    @PostMapping
+    @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/me/password")
     public void updatePasswordForCurrentUser(

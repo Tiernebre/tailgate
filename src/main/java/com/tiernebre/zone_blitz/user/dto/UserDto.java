@@ -2,16 +2,17 @@ package com.tiernebre.zone_blitz.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Value;
-import org.springframework.hateoas.RepresentationModel;
+import lombok.extern.jackson.Jacksonized;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
 @Builder
-public class UserDto extends RepresentationModel<UserDto> {
+@Jacksonized
+public class UserDto {
     Long id;
     String email;
     @JsonIgnore
+    @Getter(onMethod = @__(@JsonIgnore))
     boolean isConfirmed;
 }

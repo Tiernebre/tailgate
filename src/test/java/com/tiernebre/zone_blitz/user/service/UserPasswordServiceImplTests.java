@@ -187,10 +187,12 @@ public class UserPasswordServiceImplTests {
         void throwsANotFoundErrorIfAPasswordUpdateDidNotOccur() {
             UserDto user = UserFactory.generateOneDto();
             UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
-            String oldHashedPassword =  UUID.randomUUID().toString();
+            String oldHashedPassword = UUID.randomUUID().toString();
+            String newHashedPassword = UUID.randomUUID().toString();
             when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
             when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
-            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(false);
+            when(passwordEncoder.encode((eq(updatePasswordRequest.getNewPassword())))).thenReturn(newHashedPassword);
+            when(repository.updateOneForId(eq(user.getId()), eq(newHashedPassword))).thenReturn(false);
             assertThrows(
                     UserNotFoundForPasswordUpdateException.class,
                     () -> userPasswordService.updateOneForUser(user, updatePasswordRequest)
@@ -217,9 +219,11 @@ public class UserPasswordServiceImplTests {
             UserDto user = UserFactory.generateOneDto();
             UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             String oldHashedPassword =  UUID.randomUUID().toString();
+            String newHashedPassword = UUID.randomUUID().toString();
             when(repository.findOneForId(eq(user.getId()))).thenReturn(Optional.of(oldHashedPassword));
             when(passwordEncoder.matches(eq(updatePasswordRequest.getOldPassword()), eq(oldHashedPassword))).thenReturn(true);
-            when(repository.updateOneForId(eq(user.getId()), eq(updatePasswordRequest.getNewPassword()))).thenReturn(true);
+            when(passwordEncoder.encode((eq(updatePasswordRequest.getNewPassword())))).thenReturn(newHashedPassword);
+            when(repository.updateOneForId(eq(user.getId()), eq(newHashedPassword))).thenReturn(true);
             assertDoesNotThrow(() -> userPasswordService.updateOneForUser(user, updatePasswordRequest));
         }
     }

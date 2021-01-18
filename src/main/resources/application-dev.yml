@@ -25,8 +25,16 @@ zone-blitz:
 spring:
   flyway:
     enabled: true
+  thymeleaf:
+    enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5454/zone-blitz
     username: postgres
     password: password
     driverClassName: org.postgresql.Driver
+
+google:
+  recaptcha:
+    url:  https://www.google.com/recaptcha/api/siteverify
+    secret: 6LftXasZAAAAABf9hclKmv5o43swKoXwr7bqiEy5
+    minimum-allowed-score: 0.0
