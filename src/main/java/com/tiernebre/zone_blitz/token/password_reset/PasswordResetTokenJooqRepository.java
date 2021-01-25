@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-import static com.tiernebre.zone_blitz.jooq.Tables.PASSWORD_RESET_TOKENS;
+import static com.tiernebre.zone_blitz.jooq.Tables.PASSWORD_RESET_TOKEN;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,9 +17,9 @@ public class PasswordResetTokenJooqRepository implements PasswordResetTokenRepos
     @Override
     public PasswordResetTokenEntity createOneForUser(UserDto user) {
         return dslContext
-                .insertInto(PASSWORD_RESET_TOKENS, PASSWORD_RESET_TOKENS.USER_ID)
+                .insertInto(PASSWORD_RESET_TOKEN, PASSWORD_RESET_TOKEN.USER_ID)
                 .values(user.getId())
-                .returningResult(PASSWORD_RESET_TOKENS.asterisk())
+                .returningResult(PASSWORD_RESET_TOKEN.asterisk())
                 .fetchOne()
                 .into(PasswordResetTokenEntity.class);
     }
@@ -27,8 +27,8 @@ public class PasswordResetTokenJooqRepository implements PasswordResetTokenRepos
     @Override
     public void deleteOne(UUID token) {
         dslContext
-                .deleteFrom(PASSWORD_RESET_TOKENS)
-                .where(PASSWORD_RESET_TOKENS.TOKEN.eq(token))
+                .deleteFrom(PASSWORD_RESET_TOKEN)
+                .where(PASSWORD_RESET_TOKEN.TOKEN.eq(token))
                 .execute();
     }
 }

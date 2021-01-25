@@ -25,7 +25,7 @@ public class SecurityQuestionRestfulControllerTests {
     @DisplayName("getAll")
     public class GetAllTests {
         @Test
-        public void returnsTheGottenSecurityQuestions() {
+        public void returnsTheGottenSecurityQuestion() {
             List<SecurityQuestionDto> expectedQuestions = SecurityQuestionFactory.generateMultipleDtos();
             when(securityQuestionService.getAll()).thenReturn(expectedQuestions);
             List<SecurityQuestionDto> gottenQuestions = securityQuestionRestfulController.getAll();

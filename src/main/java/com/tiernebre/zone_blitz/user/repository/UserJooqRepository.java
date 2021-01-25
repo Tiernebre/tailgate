@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.user.repository;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionRecord;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenConfigurationProperties;
 import com.tiernebre.zone_blitz.user.dto.CreateUserRequest;
 import com.tiernebre.zone_blitz.user.entity.UserEntity;
@@ -30,20 +30,20 @@ public class UserJooqRepository implements UserRepository {
     public UserEntity createOne(CreateUserRequest createUserRequest) {
         return dslContext.transactionResult(configuration -> {
             DSLContext transactionContext = DSL.using(configuration);
-            UsersRecord usersRecord = transactionContext.newRecord(USERS, createUserRequest);
+            UserRecord usersRecord = transactionContext.newRecord(USER, createUserRequest);
             usersRecord.insert();
             usersRecord.refresh();
             UserEntity userEntity = usersRecord.into(UserEntity.class);
 
-            List<UserSecurityQuestionsRecord> securityQuestionsToCreate = createUserRequest
+            List<UserSecurityQuestionRecord> securityQuestionsToCreate = createUserRequest
                     .getSecurityQuestions()
                     .stream()
                     .map(securityQuestionToCreate -> {
-                        UserSecurityQuestionsRecord userSecurityQuestionsRecord = transactionContext.newRecord(USER_SECURITY_QUESTIONS);
-                        userSecurityQuestionsRecord.setUserId(userEntity.getId());
-                        userSecurityQuestionsRecord.setSecurityQuestionId(securityQuestionToCreate.getId());
-                        userSecurityQuestionsRecord.setAnswer(securityQuestionToCreate.getAnswer());
-                        return userSecurityQuestionsRecord;
+                        UserSecurityQuestionRecord userSecurityQuestionRecord = transactionContext.newRecord(USER_SECURITY_QUESTION);
+                        userSecurityQuestionRecord.setUserId(userEntity.getId());
+                        userSecurityQuestionRecord.setSecurityQuestionId(securityQuestionToCreate.getId());
+                        userSecurityQuestionRecord.setAnswer(securityQuestionToCreate.getAnswer());
+                        return userSecurityQuestionRecord;
                     })
                     .collect(Collectors.toList());
             transactionContext.batchStore(securityQuestionsToCreate).execute();
@@ -55,19 +55,19 @@ public class UserJooqRepository implements UserRepository {
     @Override
     public Optional<UserEntity> findOneById(Long id) {
         return dslContext
-                .selectFrom(USERS)
-                .where(USERS.ID.eq(id))
+                .selectFrom(USER)
+                .where(USER.ID.eq(id))
                 .fetchOptionalInto(UserEntity.class);
     }
 
     @Override
     public Optional<UserEntity> updateOne(UserEntity entity) {
         return dslContext
-                .update(USERS)
-                .set(USERS.EMAIL, entity.getEmail())
-                .set(USERS.PASSWORD, entity.getPassword())
-                .where(USERS.ID.eq(entity.getId()))
-                .returning(USERS.asterisk())
+                .update(USER)
+                .set(USER.EMAIL, entity.getEmail())
+                .set(USER.PASSWORD, entity.getPassword())
+                .where(USER.ID.eq(entity.getId()))
+                .returning(USER.asterisk())
                 .fetchOptional()
                 .map(usersRecord -> usersRecord.into(UserEntity.class));
     }
@@ -75,8 +75,8 @@ public class UserJooqRepository implements UserRepository {
     @Override
     public Boolean deleteOneById(Long id) {
         int numberOfDeletedEntities = dslContext
-                .delete(USERS)
-                .where(USERS.ID.eq(id))
+                .delete(USER)
+                .where(USER.ID.eq(id))
                 .execute();
         return numberOfDeletedEntities == 1;
     }
@@ -84,8 +84,8 @@ public class UserJooqRepository implements UserRepository {
     @Override
     public Optional<UserEntity> findOneByEmail(String email) {
         return dslContext
-                .selectFrom(USERS)
-                .where(USERS.EMAIL.eq(email))
+                .selectFrom(USER)
+                .where(USER.EMAIL.eq(email))
                 .fetchOptionalInto(UserEntity.class);
     }
 
@@ -93,21 +93,21 @@ public class UserJooqRepository implements UserRepository {
     public boolean oneExistsByEmail(String email) {
         return dslContext
                 .fetchExists(
-                        dslContext.selectFrom(USERS)
-                                .where(USERS.EMAIL.eq(email))
+                        dslContext.selectFrom(USER)
+                                .where(USER.EMAIL.eq(email))
                 );
     }
 
     @Override
     public Optional<UserEntity> findOneWithNonExpiredRefreshToken(UUID refreshToken) {
-        return dslContext.select(USERS.asterisk())
-                .from(USERS)
-                .join(REFRESH_TOKENS)
-                .on(USERS.ID.eq(REFRESH_TOKENS.USER_ID))
-                .where(REFRESH_TOKENS.TOKEN.eq(refreshToken))
+        return dslContext.select(USER.asterisk())
+                .from(USER)
+                .join(REFRESH_TOKEN)
+                .on(USER.ID.eq(REFRESH_TOKEN.USER_ID))
+                .where(REFRESH_TOKEN.TOKEN.eq(refreshToken))
                 .and(
                         localDateTimeAdd(
-                                REFRESH_TOKENS.CREATED_AT,
+                                REFRESH_TOKEN.CREATED_AT,
                                 refreshTokenConfigurationProperties.getExpirationWindowInMinutes(),
                                 DatePart.MINUTE
                         ).greaterThan(LocalDateTime.now())
@@ -117,13 +117,13 @@ public class UserJooqRepository implements UserRepository {
 
     @Override
     public boolean confirmOne(UUID confirmationToken) {
-        int numberOfConfirmedUsers = dslContext
-                .update(USERS)
-                .set(USERS.IS_CONFIRMED, true)
-                .from(USER_CONFIRMATION_TOKENS)
-                .where(USERS.ID.eq(USER_CONFIRMATION_TOKENS.USER_ID))
-                .and(USER_CONFIRMATION_TOKENS.TOKEN.eq(confirmationToken))
+        int numberOfConfirmedUser = dslContext
+                .update(USER)
+                .set(USER.IS_CONFIRMED, true)
+                .from(USER_CONFIRMATION_TOKEN)
+                .where(USER.ID.eq(USER_CONFIRMATION_TOKEN.USER_ID))
+                .and(USER_CONFIRMATION_TOKEN.TOKEN.eq(confirmationToken))
                 .execute();
-        return numberOfConfirmedUsers == 1;
+        return numberOfConfirmedUser == 1;
     }
 }

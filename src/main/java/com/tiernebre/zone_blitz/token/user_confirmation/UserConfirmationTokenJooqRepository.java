@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.tiernebre.zone_blitz.jooq.Tables.USER_CONFIRMATION_TOKENS;
+import static com.tiernebre.zone_blitz.jooq.Tables.USER_CONFIRMATION_TOKEN;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,9 +17,9 @@ public class UserConfirmationTokenJooqRepository implements UserConfirmationToke
     @Override
     public UserConfirmationTokenEntity createOneForUser(UserDto user) {
         return dslContext
-                .insertInto(USER_CONFIRMATION_TOKENS, USER_CONFIRMATION_TOKENS.USER_ID)
+                .insertInto(USER_CONFIRMATION_TOKEN, USER_CONFIRMATION_TOKEN.USER_ID)
                 .values(user.getId())
-                .returningResult(USER_CONFIRMATION_TOKENS.asterisk())
+                .returningResult(USER_CONFIRMATION_TOKEN.asterisk())
                 .fetchOne()
                 .into(UserConfirmationTokenEntity.class);
     }
@@ -27,8 +27,8 @@ public class UserConfirmationTokenJooqRepository implements UserConfirmationToke
     @Override
     public Optional<UserConfirmationTokenEntity> findOneForUser(UserDto user) {
         return dslContext
-                .selectFrom(USER_CONFIRMATION_TOKENS)
-                .where(USER_CONFIRMATION_TOKENS.USER_ID.eq(user.getId()))
+                .selectFrom(USER_CONFIRMATION_TOKEN)
+                .where(USER_CONFIRMATION_TOKEN.USER_ID.eq(user.getId()))
                 .fetchOptionalInto(UserConfirmationTokenEntity.class);
     }
 }

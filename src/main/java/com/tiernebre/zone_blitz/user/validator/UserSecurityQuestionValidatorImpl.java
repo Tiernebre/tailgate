@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tiernebre.zone_blitz.user.validator.UserValidationConstants.*;
-import static com.tiernebre.zone_blitz.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
+import static com.tiernebre.zone_blitz.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTION_ERROR_MESSAGE;
 
 @Component
 public class UserSecurityQuestionValidatorImpl extends BaseValidator implements UserSecurityQuestionValidator {
@@ -34,13 +34,13 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
         Collection<CreateUserSecurityQuestionRequest> securityQuestionsToValidate = createUserRequest.getSecurityQuestions();
         if (CollectionUtils.isEmpty(securityQuestionsToValidate)) return Collections.emptySet();
 
-        Set<String> foundErrors = validateSecurityQuestionsExist(securityQuestionsToValidate);
+        Set<String> foundErrors = validateSecurityQuestionExist(securityQuestionsToValidate);
         foundErrors.addAll(validateSecurityQuestionDtosAreValid(securityQuestionsToValidate));
-        foundErrors.addAll(validateSecurityQuestionsDoNotHaveDuplicateInformation(createUserRequest));
+        foundErrors.addAll(validateSecurityQuestionDoNotHaveDuplicateInformation(createUserRequest));
         return foundErrors;
     }
 
-    private Set<String> validateSecurityQuestionsExist(Collection<CreateUserSecurityQuestionRequest> securityQuestionRequests) {
+    private Set<String> validateSecurityQuestionExist(Collection<CreateUserSecurityQuestionRequest> securityQuestionRequests) {
         Set<Long> securityQuestionIds = securityQuestionRequests
                 .stream()
                 .filter(Objects::nonNull)
@@ -48,7 +48,7 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
                 .collect(Collectors.toSet());
         Set<String> foundErrors = new HashSet<>();
         if (securityQuestionService.someDoNotExistWithIds(securityQuestionIds)) {
-            foundErrors.add(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE);
+            foundErrors.add(NON_EXISTENT_SECURITY_QUESTION_ERROR_MESSAGE);
         }
         return foundErrors;
     }
@@ -61,7 +61,7 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
                 .collect(Collectors.toSet());
     }
 
-    private Set<String> validateSecurityQuestionsDoNotHaveDuplicateInformation(
+    private Set<String> validateSecurityQuestionDoNotHaveDuplicateInformation(
             CreateUserRequest createUserRequest
     ) {
         Set<String> foundErrors = new HashSet<>();
@@ -74,7 +74,7 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
                 .map(CreateUserSecurityQuestionRequest::getId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS) {
+        if (uniqueSecurityQuestionAnswers.size() < NUMBER_OF_ALLOWED_SECURITY_QUESTION) {
             foundErrors.add(SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE);
         }
         Set<String> userInformation = Set.of(
@@ -85,7 +85,7 @@ public class UserSecurityQuestionValidatorImpl extends BaseValidator implements 
             foundErrors.add(SECURITY_QUESTION_ANSWERS_CANNOT_DUPLICATE_SENSITIVE_INFORMATION);
         }
         if (uniqueSecurityQuestionIds.size() != createUserRequest.getSecurityQuestions().size()) {
-            foundErrors.add(SAME_SECURITY_QUESTIONS_VALIDATION_MESSAGE);
+            foundErrors.add(SAME_SECURITY_QUESTION_VALIDATION_MESSAGE);
         }
         return foundErrors;
     }

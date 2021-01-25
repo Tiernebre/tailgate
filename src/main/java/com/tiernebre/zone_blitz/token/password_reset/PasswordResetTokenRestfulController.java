@@ -32,7 +32,7 @@ public class PasswordResetTokenRestfulController {
     }
 
     @GetMapping("/{passwordResetToken}/security-questions")
-    public List<SecurityQuestionDto> getSecurityQuestionsForPasswordResetToken(
+    public List<SecurityQuestionDto> getSecurityQuestionForPasswordResetToken(
             @PathVariable UUID passwordResetToken
     ) {
         return securityQuestionService.getAllForPasswordResetToken(passwordResetToken);

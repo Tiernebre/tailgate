@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static com.tiernebre.zone_blitz.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
+import static com.tiernebre.zone_blitz.jooq.Tables.PASSWORD_RESET_TOKEN;
 import static org.jooq.impl.DSL.localDateTimeAdd;
 
 @Component
@@ -18,7 +18,7 @@ public class UserPasswordResetRepositoryUtilities {
 
     public Condition passwordResetTokenIsNotExpired() {
         return localDateTimeAdd(
-                PASSWORD_RESET_TOKENS.CREATED_AT,
+                PASSWORD_RESET_TOKEN.CREATED_AT,
                 configurationProperties.getExpirationWindowInMinutes(),
                 DatePart.MINUTE
         ).greaterThan(LocalDateTime.now());

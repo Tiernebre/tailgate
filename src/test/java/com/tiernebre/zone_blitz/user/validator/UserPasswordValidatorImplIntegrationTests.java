@@ -144,7 +144,7 @@ public class UserPasswordValidatorImplIntegrationTests extends AbstractIntegrati
         @ValueSource(strings = " ")
         void validatesThatTheSecurityQuestionAnswersCannotContainBlankEntries(String entry) {
             Map<Long, String> securityQuestionAnswers = new HashMap<>();
-            for (long i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+            for (long i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTION; i++) {
                 securityQuestionAnswers.put(i, entry);
             }
             ResetTokenUpdatePasswordRequest updatePasswordRequest = ResetTokenUpdatePasswordRequest.builder()

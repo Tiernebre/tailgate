@@ -82,13 +82,13 @@ public class UserServiceImpl implements UserService {
 
     private CreateUserRequest hashCreateUserRequest(CreateUserRequest createUserRequest) {
         String hashedPassword = passwordEncoder.encode(createUserRequest.getPassword());
-        List<CreateUserSecurityQuestionRequest> hashedSecurityQuestions = hashSecurityQuestions(createUserRequest.getSecurityQuestions());
+        List<CreateUserSecurityQuestionRequest> hashedSecurityQuestion = hashSecurityQuestion(createUserRequest.getSecurityQuestions());
         return createUserRequest
                 .withPassword(hashedPassword)
-                .withSecurityQuestions(hashedSecurityQuestions);
+                .withSecurityQuestions(hashedSecurityQuestion);
     }
 
-    private List<CreateUserSecurityQuestionRequest> hashSecurityQuestions(Collection<CreateUserSecurityQuestionRequest> securityQuestionsToHash) {
+    private List<CreateUserSecurityQuestionRequest> hashSecurityQuestion(Collection<CreateUserSecurityQuestionRequest> securityQuestionsToHash) {
         return securityQuestionsToHash.stream()
                 .map(this::hashSecurityQuestion)
                 .collect(Collectors.toList());

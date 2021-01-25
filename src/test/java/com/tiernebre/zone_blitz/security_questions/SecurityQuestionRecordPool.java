@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.security_questions;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Component;
@@ -10,44 +10,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.tiernebre.zone_blitz.jooq.Tables.USER_SECURITY_QUESTIONS;
-import static com.tiernebre.zone_blitz.jooq.tables.SecurityQuestions.SECURITY_QUESTIONS;
+import static com.tiernebre.zone_blitz.jooq.Tables.USER_SECURITY_QUESTION;
+import static com.tiernebre.zone_blitz.jooq.tables.SecurityQuestion.SECURITY_QUESTION;
 
 @Component
 @RequiredArgsConstructor
 public class SecurityQuestionRecordPool {
     private final DSLContext dslContext;
 
-    public List<SecurityQuestionsRecord> getAll() {
-        return dslContext.selectFrom(SECURITY_QUESTIONS).fetch();
+    public List<SecurityQuestionRecord> getAll() {
+        return dslContext.selectFrom(SECURITY_QUESTION).fetch();
     }
 
-    public List<SecurityQuestionsRecord> createMultiple() {
-        List<SecurityQuestionsRecord> securityQuestionsRecords = new ArrayList<>();
+    public List<SecurityQuestionRecord> createMultiple() {
+        List<SecurityQuestionRecord> securityQuestionsRecords = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             securityQuestionsRecords.add(createOne());
         }
         return securityQuestionsRecords;
     }
 
-    public SecurityQuestionsRecord createOne() {
-        SecurityQuestionsRecord securityQuestionsRecord = dslContext.newRecord(SECURITY_QUESTIONS);
+    public SecurityQuestionRecord createOne() {
+        SecurityQuestionRecord securityQuestionsRecord = dslContext.newRecord(SECURITY_QUESTION);
         securityQuestionsRecord.setQuestion(UUID.randomUUID().toString());
         securityQuestionsRecord.store();
         return securityQuestionsRecord;
     }
 
     public void deleteAll() {
-        dslContext.deleteFrom(SECURITY_QUESTIONS).execute();
+        dslContext.deleteFrom(SECURITY_QUESTION).execute();
     }
 
-    public List<SecurityQuestionsRecord> getSecurityQuestionsForUser(UsersRecord user) {
+    public List<SecurityQuestionRecord> getSecurityQuestionForUser(UserRecord user) {
         return dslContext
-                .select(SECURITY_QUESTIONS.asterisk())
-                .from(SECURITY_QUESTIONS)
-                .join(USER_SECURITY_QUESTIONS)
-                .on(SECURITY_QUESTIONS.ID.eq(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID))
-                .where(USER_SECURITY_QUESTIONS.USER_ID.eq(user.getId()))
-                .fetchInto(SecurityQuestionsRecord.class);
+                .select(SECURITY_QUESTION.asterisk())
+                .from(SECURITY_QUESTION)
+                .join(USER_SECURITY_QUESTION)
+                .on(SECURITY_QUESTION.ID.eq(USER_SECURITY_QUESTION.SECURITY_QUESTION_ID))
+                .where(USER_SECURITY_QUESTION.USER_ID.eq(user.getId()))
+                .fetchInto(SecurityQuestionRecord.class);
     }
 }

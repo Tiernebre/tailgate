@@ -29,8 +29,8 @@ public class ResetTokenUpdatePasswordRequest extends UpdatePasswordRequest {
     String email;
 
     @Size(
-            min = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
-            max = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
+            min = NUMBER_OF_ALLOWED_SECURITY_QUESTION,
+            max = NUMBER_OF_ALLOWED_SECURITY_QUESTION,
             message = NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE
     )
     @NotEmpty(message = EMPTY_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE)

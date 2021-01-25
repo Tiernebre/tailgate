@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.token.password_reset;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokensRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokenRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
@@ -28,7 +28,7 @@ public class PasswordResetTokenJooqRepositoryIntegrationTests extends AbstractIn
         @Test
         @DisplayName("returns the created password reset token for a user")
         public void returnsTheCreatedPasswordResetTokenForAUser() {
-            UsersRecord userRecord = userRecordPool.createAndSaveOne();
+            UserRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             PasswordResetTokenEntity refreshTokenEntity = passwordResetTokenJooqRepository.createOneForUser(user);
             assertNotNull(refreshTokenEntity.getToken());
@@ -43,7 +43,7 @@ public class PasswordResetTokenJooqRepositoryIntegrationTests extends AbstractIn
         @Test
         @DisplayName("deletes the given password reset token value")
         public void deletesTheGivenPasswordResetTokenValue() {
-            PasswordResetTokensRecord passwordResetTokensRecord = passwordResetTokenRecordPool.createAndSaveOne();
+            PasswordResetTokenRecord passwordResetTokensRecord = passwordResetTokenRecordPool.createAndSaveOne();
             passwordResetTokenJooqRepository.deleteOne(passwordResetTokensRecord.getToken());
             assertNull(passwordResetTokenRecordPool.getOneById(passwordResetTokensRecord.getToken()));
         }
@@ -51,10 +51,10 @@ public class PasswordResetTokenJooqRepositoryIntegrationTests extends AbstractIn
         @Test
         @DisplayName("does not delete multiple password reset tokens accidentally")
         public void doesNotDeleteMultiplePasswordResetTokensAccidentally() {
-            PasswordResetTokensRecord PasswordResetTokensRecordToDelete = passwordResetTokenRecordPool.createAndSaveOne();
-            PasswordResetTokensRecord otherPasswordResetToken = passwordResetTokenRecordPool.createAndSaveOne();
-            passwordResetTokenJooqRepository.deleteOne(PasswordResetTokensRecordToDelete.getToken());
-            assertNull(passwordResetTokenRecordPool.getOneById(PasswordResetTokensRecordToDelete.getToken()));
+            PasswordResetTokenRecord PasswordResetTokenRecordToDelete = passwordResetTokenRecordPool.createAndSaveOne();
+            PasswordResetTokenRecord otherPasswordResetToken = passwordResetTokenRecordPool.createAndSaveOne();
+            passwordResetTokenJooqRepository.deleteOne(PasswordResetTokenRecordToDelete.getToken());
+            assertNull(passwordResetTokenRecordPool.getOneById(PasswordResetTokenRecordToDelete.getToken()));
             assertNotNull(passwordResetTokenRecordPool.getOneById(otherPasswordResetToken.getToken()));
         }
     }

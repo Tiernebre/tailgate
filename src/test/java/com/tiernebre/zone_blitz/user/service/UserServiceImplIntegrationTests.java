@@ -1,9 +1,9 @@
 package com.tiernebre.zone_blitz.user.service;
 
 
-import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserFactory;
@@ -60,11 +60,11 @@ public class UserServiceImplIntegrationTests extends AbstractIntegrationTestingS
                     .map(CreateUserSecurityQuestionRequest::getAnswer)
                     .collect(Collectors.toSet());
             UserDto createdUser = userService.createOne(createUserRequest);
-            UsersRecord userFound = userRecordPool.findOneByIdAndEmail(createdUser.getId(), createdUser.getEmail());
+            UserRecord userFound = userRecordPool.findOneByIdAndEmail(createdUser.getId(), createdUser.getEmail());
             Set<String> gottenSecurityQuestionAnswers = userRecordPool
-                    .getSecurityQuestionsForUserWithId(userFound.getId())
+                    .getSecurityQuestionForUserWithId(userFound.getId())
                     .stream()
-                    .map(UserSecurityQuestionsRecord::getAnswer)
+                    .map(UserSecurityQuestionRecord::getAnswer)
                     .collect(Collectors.toSet());
             Set<String> intersectionOfSecurityQuestionAnswers = new HashSet<>(expectedSecurityQuestionAnswers);
             intersectionOfSecurityQuestionAnswers.retainAll(gottenSecurityQuestionAnswers);
@@ -103,10 +103,10 @@ public class UserServiceImplIntegrationTests extends AbstractIntegrationTestingS
     }
 
     private CreateUserRequest generateValidUserRequest() {
-        List<SecurityQuestionsRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
+        List<SecurityQuestionRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
         Set<Long> securityQuestionIds = securityQuestionsCreated
                 .stream()
-                .map(SecurityQuestionsRecord::getId)
+                .map(SecurityQuestionRecord::getId)
                 .collect(Collectors.toSet());
         return UserFactory.generateOneCreateUserRequest(securityQuestionIds);
     }

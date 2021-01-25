@@ -37,7 +37,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
 
     @DisplayName("POST /users")
     @Nested
-    public class PostUsersTest {
+    public class PostUserTest {
         @Test
         @DisplayName("returns with 201 CREATED status if successful")
         void testThatItReturnsWith201CreatedStatusIfSuccessful() throws Exception {
@@ -73,7 +73,7 @@ public class UserRestfulControllerIntegrationTests extends WebControllerIntegrat
 
     @Nested
     @DisplayName("PATCH /users/confirmation/{confirmationToken}")
-    public class PatchUsersConfirmationTests {
+    public class PatchUserConfirmationTests {
         @Test
         @DisplayName("returns with 204 NO CONTENT status if successful")
         void returnsWith204NoContentStatusIfSuccessful() throws Exception {

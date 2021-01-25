@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.tiernebre.zone_blitz.jooq.tables.PasswordResetTokens.PASSWORD_RESET_TOKENS;
-import static com.tiernebre.zone_blitz.jooq.tables.Users.USERS;
+import static com.tiernebre.zone_blitz.jooq.Tables.PASSWORD_RESET_TOKEN;
+import static com.tiernebre.zone_blitz.jooq.Tables.USER;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,11 +19,11 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     @Override
     public boolean updateOneWithEmailAndNonExpiredResetToken(String password, String email, UUID resetToken) {
         int numberOfUpdated = dslContext
-                .update(USERS)
-                .set(USERS.PASSWORD, password)
-                .from(PASSWORD_RESET_TOKENS)
-                .where(USERS.EMAIL.eq(email))
-                .and(PASSWORD_RESET_TOKENS.TOKEN.eq(resetToken))
+                .update(USER)
+                .set(USER.PASSWORD, password)
+                .from(PASSWORD_RESET_TOKEN)
+                .where(USER.EMAIL.eq(email))
+                .and(PASSWORD_RESET_TOKEN.TOKEN.eq(resetToken))
                 .and(utilities.passwordResetTokenIsNotExpired())
                 .execute();
         return numberOfUpdated == 1;
@@ -32,9 +32,9 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     @Override
     public boolean updateOneForId(Long id, String password) {
         int numberOfUpdated = dslContext
-                .update(USERS)
-                .set(USERS.PASSWORD, password)
-                .where(USERS.ID.eq(id))
+                .update(USER)
+                .set(USER.PASSWORD, password)
+                .where(USER.ID.eq(id))
                 .execute();
         return numberOfUpdated == 1;
     }
@@ -42,9 +42,9 @@ public class UserPasswordJooqRepository implements UserPasswordRepository {
     @Override
     public Optional<String> findOneForId(Long id) {
         return dslContext
-                .select(USERS.PASSWORD)
-                .from(USERS)
-                .where(USERS.ID.eq(id))
-                .fetchOptional(USERS.PASSWORD);
+                .select(USER.PASSWORD)
+                .from(USER)
+                .where(USER.ID.eq(id))
+                .fetchOptional(USER.PASSWORD);
     }
 }

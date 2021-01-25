@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.password;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
@@ -41,7 +41,7 @@ public class PasswordResetTokenEmailDeliveryServiceIntegrationTests extends Abst
         @Test
         @DisplayName("sends an email to an inbox")
         public void sendsAnEmailToAnInbox() {
-            UsersRecord userToResetPasswordFor = userRecordPool.createAndSaveOne();
+            UserRecord userToResetPasswordFor = userRecordPool.createAndSaveOne();
             UserDto userToResetPasswordForAsDto = UserDto.builder()
                     .id(userToResetPasswordFor.getId())
                     .email(userToResetPasswordFor.getEmail())

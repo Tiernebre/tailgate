@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.user.service;
 
 import com.tiernebre.zone_blitz.user.exception.InvalidSecurityQuestionAnswerException;
-import com.tiernebre.zone_blitz.user.repository.UserSecurityQuestionsRepository;
+import com.tiernebre.zone_blitz.user.repository.UserSecurityQuestionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,12 +26,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserSecurityQuestionsServiceImplTests {
+public class UserSecurityQuestionServiceImplTests {
     @InjectMocks
-    private UserSecurityQuestionsServiceImpl userSecurityQuestionsService;
+    private UserSecurityQuestionServiceImpl userSecurityQuestionService;
 
     @Mock
-    private UserSecurityQuestionsRepository repository;
+    private UserSecurityQuestionRepository repository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -54,7 +54,7 @@ public class UserSecurityQuestionsServiceImplTests {
                 when(passwordEncoder.matches(eq(providedAnswer), eq(foundAnswer))).thenReturn(true);
             }
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
-            assertDoesNotThrow(() -> userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+            assertDoesNotThrow(() -> userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                     email,
                     resetToken,
                     providedAnswers
@@ -77,7 +77,7 @@ public class UserSecurityQuestionsServiceImplTests {
             when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
             assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
-                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                    userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                             email,
                             resetToken,
                             providedAnswers
@@ -102,7 +102,7 @@ public class UserSecurityQuestionsServiceImplTests {
             }
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
             assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
-                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                    userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                             email,
                             resetToken,
                             providedAnswers
@@ -127,7 +127,7 @@ public class UserSecurityQuestionsServiceImplTests {
             providedAnswers.put(Integer.toUnsignedLong(providedAnswers.size()), UUID.randomUUID().toString());
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
             assertDoesNotThrow(() ->
-                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                    userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                             email,
                             resetToken,
                             providedAnswers
@@ -154,7 +154,7 @@ public class UserSecurityQuestionsServiceImplTests {
             }
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
             assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
-                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                    userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                             email,
                             resetToken,
                             providedAnswers
@@ -178,7 +178,7 @@ public class UserSecurityQuestionsServiceImplTests {
             }
             when(repository.getAnswersForEmailAndResetToken(eq(email), eq(resetToken))).thenReturn(foundAnswers);
             assertThrows(InvalidSecurityQuestionAnswerException.class, () ->
-                    userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+                    userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                             email,
                             resetToken,
                             providedAnswers

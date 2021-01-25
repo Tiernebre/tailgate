@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.token.refresh;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.RefreshTokensRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.RefreshTokenRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static com.tiernebre.zone_blitz.jooq.Tables.REFRESH_TOKENS;
+import static com.tiernebre.zone_blitz.jooq.Tables.REFRESH_TOKEN;
 
 /**
  * Manages data within the jooq data context that is used within the integration tests.
@@ -25,20 +25,20 @@ public class RefreshTokenRecordPool {
     private final UserRecordPool userRecordPool;
     private final DSLContext dslContext;
 
-    public RefreshTokensRecord createAndSaveOne() {
-        UsersRecord user = userRecordPool.createAndSaveOne();
+    public RefreshTokenRecord createAndSaveOne() {
+        UserRecord user = userRecordPool.createAndSaveOne();
         return createAndSaveOneForUser(user);
     }
 
-    public RefreshTokensRecord createAndSaveOneForUser(UsersRecord user) {
-        Record refreshTokensRecord = dslContext.insertInto(REFRESH_TOKENS, REFRESH_TOKENS.USER_ID)
+    public RefreshTokenRecord createAndSaveOneForUser(UserRecord user) {
+        Record refreshTokensRecord = dslContext.insertInto(REFRESH_TOKEN, REFRESH_TOKEN.USER_ID)
                 .values(user.getId())
-                .returningResult(REFRESH_TOKENS.asterisk())
+                .returningResult(REFRESH_TOKEN.asterisk())
                 .fetchOne();
-        return refreshTokensRecord.into(RefreshTokensRecord.class);
+        return refreshTokensRecord.into(RefreshTokenRecord.class);
     }
 
-    public RefreshTokensRecord getOneById(UUID id) {
-        return dslContext.selectFrom(REFRESH_TOKENS).where(REFRESH_TOKENS.TOKEN.eq(id)).fetchOne();
+    public RefreshTokenRecord getOneById(UUID id) {
+        return dslContext.selectFrom(REFRESH_TOKEN).where(REFRESH_TOKEN.TOKEN.eq(id)).fetchOne();
     }
 }

@@ -1,8 +1,8 @@
 package com.tiernebre.zone_blitz.user.repository;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokensRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.PasswordResetTokenRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenConfigurationProperties;
 import com.tiernebre.zone_blitz.token.password_reset.PasswordResetTokenRecordPool;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
-public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
+public class UserSecurityQuestionJooqRepositoryIntegrationTests extends AbstractIntegrationTestingSuite {
     @Autowired
-    private UserSecurityQuestionsJooqRepository userSecurityQuestionsJooqRepository;
+    private UserSecurityQuestionJooqRepository userSecurityQuestionJooqRepository;
 
     @Autowired
     private UserRecordPool userRecordPool;
@@ -40,14 +40,14 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Abstrac
         @Test
         @DisplayName("returns the security question answers if the email and reset token are legitimate")
         void returnsTheSecurityQuestionAnswersIfTheEmailAndResetTokenAreLegitimate() {
-            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            UserRecord user = userRecordPool.createAndSaveOneWithSecurityQuestion();
             Set<String> originalAnswers = userRecordPool
-                    .getSecurityQuestionsForUserWithId(user.getId())
+                    .getSecurityQuestionForUserWithId(user.getId())
                     .stream()
-                    .map(UserSecurityQuestionsRecord::getAnswer)
+                    .map(UserSecurityQuestionRecord::getAnswer)
                     .collect(Collectors.toSet());
             UUID resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
-            Map<Long, String> foundAnswers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), resetToken);
+            Map<Long, String> foundAnswers = userSecurityQuestionJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), resetToken);
             assertTrue(MapUtils.isNotEmpty(foundAnswers));
             assertTrue(originalAnswers.containsAll(foundAnswers.values()));
         }
@@ -55,43 +55,43 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Abstrac
         @Test
         @DisplayName("returns an empty set if the email is not legit")
         void returnsAnEmptySetIfTheEmailIsNotLegit() {
-            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            UserRecord user = userRecordPool.createAndSaveOneWithSecurityQuestion();
             UUID resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(user).getToken();
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), resetToken);
+            Map<Long, String> answers = userSecurityQuestionJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), resetToken);
             assertTrue(MapUtils.isEmpty(answers));
         }
 
         @Test
         @DisplayName("returns an empty set if the user has no password reset token tied to them")
         void returnsAnEmptySetIfTheUserHasNoPasswordResetTokenTiedToThem() {
-            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
+            UserRecord user = userRecordPool.createAndSaveOneWithSecurityQuestion();
+            Map<Long, String> answers = userSecurityQuestionJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
 
         @Test
         @DisplayName("returns an empty set if the password reset token is not legit")
         void returnsAnEmptySetIfThePasswordResetTokenIsNotLegit() {
-            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            UserRecord user = userRecordPool.createAndSaveOneWithSecurityQuestion();
             passwordResetTokenRecordPool.createAndSaveOneForUser(user);
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
+            Map<Long, String> answers = userSecurityQuestionJooqRepository.getAnswersForEmailAndResetToken(user.getEmail(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
 
         @Test
         @DisplayName("returns an empty set if the password reset token and email are not legit")
         void returnsAnEmptySetIfThePasswordResetTokenAndEmailAreNotLegit() {
-            UsersRecord user = userRecordPool.createAndSaveOneWithSecurityQuestions();
+            UserRecord user = userRecordPool.createAndSaveOneWithSecurityQuestion();
             passwordResetTokenRecordPool.createAndSaveOneForUser(user);
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), UUID.randomUUID());
+            Map<Long, String> answers = userSecurityQuestionJooqRepository.getAnswersForEmailAndResetToken(UUID.randomUUID().toString(), UUID.randomUUID());
             assertTrue(MapUtils.isEmpty(answers));
         }
 
         @Test
         @DisplayName("returns an empty set if the password reset token is expired")
         void returnsAnEmptySetIfThePasswordResetTokenIsExpired() {
-            UsersRecord originalUser = userRecordPool.createAndSaveOneWithSecurityQuestions();
-            PasswordResetTokensRecord resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(originalUser);
+            UserRecord originalUser = userRecordPool.createAndSaveOneWithSecurityQuestion();
+            PasswordResetTokenRecord resetToken = passwordResetTokenRecordPool.createAndSaveOneForUser(originalUser);
             resetToken.setCreatedAt(
                     LocalDateTime
                             .now()
@@ -99,7 +99,7 @@ public class UserSecurityQuestionsJooqRepositoryIntegrationTests extends Abstrac
                             .minusSeconds(1)
             );
             resetToken.store();
-            Map<Long, String> answers = userSecurityQuestionsJooqRepository.getAnswersForEmailAndResetToken(originalUser.getEmail(), resetToken.getToken());
+            Map<Long, String> answers = userSecurityQuestionJooqRepository.getAnswersForEmailAndResetToken(originalUser.getEmail(), resetToken.getToken());
             assertTrue(MapUtils.isEmpty(answers));
         }
     }

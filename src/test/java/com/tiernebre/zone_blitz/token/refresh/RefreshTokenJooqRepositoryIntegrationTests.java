@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.token.refresh;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
@@ -29,7 +29,7 @@ public class RefreshTokenJooqRepositoryIntegrationTests extends AbstractIntegrat
         @Test
         @DisplayName("returns the saved refresh token as an entity")
         void returnsTheSavedRefreshToken() {
-            UsersRecord userRecord = userRecordPool.createAndSaveOne();
+            UserRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.createOneForUser(user);
             assertNotNull(refreshTokenEntity.getToken());

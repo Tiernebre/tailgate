@@ -1,8 +1,8 @@
 package com.tiernebre.zone_blitz.user;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.zone_blitz.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +28,9 @@ public class UserRecordPool {
     private final DSLContext dslContext;
     private final SecurityQuestionRecordPool securityQuestionRecordPool;
 
-    public UsersRecord createAndSaveOne() {
+    public UserRecord createAndSaveOne() {
         UserEntity userEntity = UserFactory.generateOneEntity();
-        UsersRecord usersRecord = dslContext.newRecord(USERS);
+        UserRecord usersRecord = dslContext.newRecord(USER);
         usersRecord.setEmail(userEntity.getEmail());
         usersRecord.setPassword(userEntity.getPassword());
         usersRecord.setIsConfirmed(false);
@@ -38,46 +38,38 @@ public class UserRecordPool {
         return usersRecord;
     }
 
-    public UsersRecord createAndSaveOneWithSecurityQuestions() {
-        List<SecurityQuestionsRecord> securityQuestions = securityQuestionRecordPool.createMultiple();
+    public UserRecord createAndSaveOneWithSecurityQuestion() {
+        List<SecurityQuestionRecord> securityQuestions = securityQuestionRecordPool.createMultiple();
         UserEntity userEntity = UserFactory.generateOneEntity();
-        UsersRecord usersRecord = dslContext.newRecord(USERS);
+        UserRecord usersRecord = dslContext.newRecord(USER);
         usersRecord.setEmail(userEntity.getEmail());
         usersRecord.setPassword(userEntity.getPassword());
         usersRecord.store();
-        List<UserSecurityQuestionsRecord> securityQuestionAnswers = new ArrayList<>();
+        List<UserSecurityQuestionRecord> securityQuestionAnswers = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            UserSecurityQuestionsRecord userSecurityQuestionsRecord = dslContext.newRecord(USER_SECURITY_QUESTIONS);
-            userSecurityQuestionsRecord.setUserId(usersRecord.getId());
-            userSecurityQuestionsRecord.setSecurityQuestionId(securityQuestions.get(i).getId());
-            userSecurityQuestionsRecord.setAnswer(UUID.randomUUID().toString());
-            securityQuestionAnswers.add(userSecurityQuestionsRecord);
+            UserSecurityQuestionRecord userSecurityQuestionRecord = dslContext.newRecord(USER_SECURITY_QUESTION);
+            userSecurityQuestionRecord.setUserId(usersRecord.getId());
+            userSecurityQuestionRecord.setSecurityQuestionId(securityQuestions.get(i).getId());
+            userSecurityQuestionRecord.setAnswer(UUID.randomUUID().toString());
+            securityQuestionAnswers.add(userSecurityQuestionRecord);
         }
         dslContext.batchStore(securityQuestionAnswers).execute();
         return usersRecord;
     }
 
     public Boolean oneExistsWithIdAndEmail(Long id, String email) {
-        return dslContext.fetchExists(dslContext.selectFrom(USERS).where(USERS.ID.eq(id)).and(USERS.EMAIL.eq(email)));
+        return dslContext.fetchExists(dslContext.selectFrom(USER).where(USER.ID.eq(id)).and(USER.EMAIL.eq(email)));
     }
 
     public Boolean oneExistsWithEmail(String email) {
-        return dslContext.fetchExists(dslContext.selectFrom(USERS).where(USERS.EMAIL.eq(email)));
+        return dslContext.fetchExists(dslContext.selectFrom(USER).where(USER.EMAIL.eq(email)));
     }
 
-    public UsersRecord findOneByIdAndEmail(Long id, String email) {
-        return dslContext.selectFrom(USERS).where(USERS.ID.eq(id).and(USERS.EMAIL.eq(email))).fetchAny();
+    public UserRecord findOneByIdAndEmail(Long id, String email) {
+        return dslContext.selectFrom(USER).where(USER.ID.eq(id).and(USER.EMAIL.eq(email))).fetchAny();
     }
 
-    public List<UserSecurityQuestionsRecord> getSecurityQuestionsForUserWithId(Long id) {
-        return dslContext.selectFrom(USER_SECURITY_QUESTIONS).where(USER_SECURITY_QUESTIONS.USER_ID.eq(id)).fetch();
-    }
-
-    public void deleteAll() {
-        dslContext.deleteFrom(USER_CONFIRMATION_TOKENS).execute();
-        dslContext.deleteFrom(REFRESH_TOKENS).execute();
-        dslContext.deleteFrom(USER_SECURITY_QUESTIONS).execute();
-        dslContext.deleteFrom(USERS).execute();
-        securityQuestionRecordPool.deleteAll();
+    public List<UserSecurityQuestionRecord> getSecurityQuestionForUserWithId(Long id) {
+        return dslContext.selectFrom(USER_SECURITY_QUESTION).where(USER_SECURITY_QUESTION.USER_ID.eq(id)).fetch();
     }
 }

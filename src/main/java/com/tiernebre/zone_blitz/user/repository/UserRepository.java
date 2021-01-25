@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Provides operations to perform on Users data.
+ * Provides operations to perform on User data.
  */
 public interface UserRepository extends Repository<UserEntity, Long, CreateUserRequest> {
     /**

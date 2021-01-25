@@ -49,16 +49,16 @@ public class PasswordResetTokenRestfulControllerTests {
     }
 
     @Nested
-    @DisplayName("getSecurityQuestionsForPasswordResetToken")
-    class GetSecurityQuestionsForPasswordResetTokenTests {
+    @DisplayName("getSecurityQuestionForPasswordResetToken")
+    class GetSecurityQuestionForPasswordResetTokenTests {
         @Test
         @DisplayName("returns the found security questions")
-        void returnsTheFoundSecurityQuestions() {
+        void returnsTheFoundSecurityQuestion() {
             UUID resetToken = UUID.randomUUID();
-            List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
-            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
-            List<SecurityQuestionDto> gottenSecurityQuestions = passwordResetTokenRestfulController.getSecurityQuestionsForPasswordResetToken(resetToken);
-            assertEquals(expectedSecurityQuestions, gottenSecurityQuestions);
+            List<SecurityQuestionDto> expectedSecurityQuestion = SecurityQuestionFactory.generateMultipleDtos();
+            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestion);
+            List<SecurityQuestionDto> gottenSecurityQuestion = passwordResetTokenRestfulController.getSecurityQuestionForPasswordResetToken(resetToken);
+            assertEquals(expectedSecurityQuestion, gottenSecurityQuestion);
         }
     }
 }

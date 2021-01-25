@@ -112,7 +112,7 @@ public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestin
                     .email(email)
                     .password(STRONG_PASSWORD)
                     .confirmationPassword(STRONG_PASSWORD)
-                    .securityQuestions(generateSecurityQuestions())
+                    .securityQuestions(generateSecurityQuestion())
                     .build();
             assertDoesNotThrow(() -> {
                 userValidator.validate(createUserRequest);
@@ -158,7 +158,7 @@ public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestin
         @EmptySource
         @NullSource
         @ParameterizedTest(name = "validates that the security questions must not be {0}")
-        void testEmptySecurityQuestions(List<CreateUserSecurityQuestionRequest> securityQuestions) {
+        void testEmptySecurityQuestion(List<CreateUserSecurityQuestionRequest> securityQuestions) {
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestions)
                     .build();
@@ -172,8 +172,8 @@ public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestin
 
         @ValueSource(ints = { 1, 3, 4, 5, 10 })
         @ParameterizedTest(name = "does not allow {0} security questions to be created")
-        void doesNotAllowNonTwoNumberOfSecurityQuestions(int numberOfSecurityQuestions) {
-            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestions(numberOfSecurityQuestions);
+        void doesNotAllowNonTwoNumberOfSecurityQuestion(int numberOfSecurityQuestion) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestion(numberOfSecurityQuestion);
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestionRequests)
                     .build();
@@ -181,26 +181,26 @@ public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestin
                     userValidator,
                     createUserRequest,
                     InvalidUserException.class,
-                    NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE
+                    NUMBER_OF_SECURITY_QUESTION_VALIDATION_MESSAGE
             );
         }
 
         @ValueSource(ints = { 2 })
         @ParameterizedTest(name = "allows {0} security questions to be created")
-        void allowsNumberOfSecurityQuestions(int numberOfSecurityQuestions) {
-            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestions(numberOfSecurityQuestions);
+        void allowsNumberOfSecurityQuestion(int numberOfSecurityQuestion) {
+            List<CreateUserSecurityQuestionRequest> securityQuestionRequests = generateSecurityQuestion(numberOfSecurityQuestion);
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(securityQuestionRequests)
                     .build();
             InvalidException thrownException = assertThrows(InvalidException.class, () -> userValidator.validate(createUserRequest));
-            assertFalse(thrownException.getErrors().contains("securityQuestions " + NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE));
+            assertFalse(thrownException.getErrors().contains("securityQuestions " + NUMBER_OF_SECURITY_QUESTION_VALIDATION_MESSAGE));
         }
 
         @Test
         @DisplayName("does not allow null security questions")
-        void doesNotAllowNullSecurityQuestions() {
+        void doesNotAllowNullSecurityQuestion() {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
-            for (int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+            for (int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTION; i++) {
                 securityQuestionRequests.add(null);
             }
             assertTrue(securityQuestionRequests.stream().allMatch(Objects::isNull));
@@ -217,9 +217,9 @@ public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestin
 
         @Test
         @DisplayName("does not allow partial null security questions")
-        void doesNotAllowPartialNullSecurityQuestions() {
+        void doesNotAllowPartialNullSecurityQuestion() {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
-            for (int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+            for (int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTION; i++) {
                 if (i % 2 == 0) {
                     securityQuestionRequests.add(null);
                 } else {
@@ -238,11 +238,11 @@ public class UserValidatorImplIntegrationTests extends AbstractIntegrationTestin
             );
         }
 
-        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {
-            return generateSecurityQuestions(NUMBER_OF_ALLOWED_SECURITY_QUESTIONS);
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestion() {
+            return generateSecurityQuestion(NUMBER_OF_ALLOWED_SECURITY_QUESTION);
         }
 
-        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions(int size) {
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestion(int size) {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
             for(int i = 0; i < size; i++) {
                 securityQuestionRequests.add(generateValidSecurityQuestion(Integer.toUnsignedLong(i)));

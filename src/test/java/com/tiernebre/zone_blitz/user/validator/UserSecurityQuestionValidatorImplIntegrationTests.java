@@ -33,7 +33,7 @@ public class UserSecurityQuestionValidatorImplIntegrationTests extends AbstractI
     public class ValidateTests {
         @Test
         @DisplayName("does not allow security questions with null ids")
-        void doesNotAllowSecurityQuestionsWithNullIds() {
+        void doesNotAllowSecurityQuestionWithNullIds() {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(
                     CreateUserSecurityQuestionRequest.builder().id(null).build()
             );
@@ -50,7 +50,7 @@ public class UserSecurityQuestionValidatorImplIntegrationTests extends AbstractI
         @NullSource
         @EmptySource
         @ValueSource(strings = {" "})
-        void doesNotAllowSecurityQuestionsWithBlankAnswer(String answer) {
+        void doesNotAllowSecurityQuestionWithBlankAnswer(String answer) {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = ImmutableList.of(
                     CreateUserSecurityQuestionRequest.builder()
                             .id(null)

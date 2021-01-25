@@ -16,6 +16,7 @@
 
 	<properties>
 		<codegen-db.name>zone-blitz</codegen-db.name>
+		<!--suppress UnresolvedMavenProperty -->
 		<codegen-db.url>jdbc:postgresql://localhost:${codegen-db.port}/${codegen-db.name}</codegen-db.url>
 		<codegen-db.username>codegenuser</codegen-db.username>
 		<codegen-db.password>GenerateJooqCode!</codegen-db.password>
@@ -232,12 +233,12 @@
 								<!-- Really unfortunate janky custom type mapping to support CITEXT. Should be cleaned up sooner than later -->
 								<forcedType>
 									<name>CLOB</name>
-									<expression>public.users.email</expression>
+									<expression>public.user.email</expression>
 									<types>CITEXT</types>
 								</forcedType>
 								<forcedType>
 									<name>CLOB</name>
-									<expression>public.security_questions.question</expression>
+									<expression>public.security_question.question</expression>
 									<types>CITEXT</types>
 								</forcedType>
 							</forcedTypes>
