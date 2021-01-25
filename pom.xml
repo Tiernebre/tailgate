@@ -16,6 +16,7 @@
 
 	<properties>
 		<codegen-db.name>zone-blitz</codegen-db.name>
+		<!--suppress UnresolvedMavenProperty -->
 		<codegen-db.url>jdbc:postgresql://localhost:${codegen-db.port}/${codegen-db.name}</codegen-db.url>
 		<codegen-db.username>codegenuser</codegen-db.username>
 		<codegen-db.password>GenerateJooqCode!</codegen-db.password>
