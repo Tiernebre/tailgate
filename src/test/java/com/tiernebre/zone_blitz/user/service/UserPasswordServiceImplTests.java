@@ -52,7 +52,7 @@ public class UserPasswordServiceImplTests {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private UserSecurityQuestionsService userSecurityQuestionsService;
+    private UserSecurityQuestionService userSecurityQuestionService;
 
     @Nested
     @DisplayName("updateOneUsingResetToken")
@@ -88,7 +88,7 @@ public class UserPasswordServiceImplTests {
                     .build();
             doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
             doThrow(new InvalidSecurityQuestionAnswerException(Collections.emptySet()))
-                    .when(userSecurityQuestionsService)
+                    .when(userSecurityQuestionService)
                     .validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
             assertThrows(
                     InvalidSecurityQuestionAnswerException.class,
@@ -113,7 +113,7 @@ public class UserPasswordServiceImplTests {
                     .securityQuestionAnswers(securityQuestionAnswers)
                     .build();
             doNothing().when(validator).validateUpdateRequest(eq(resetTokenUpdatePasswordRequest));
-            doNothing().when(userSecurityQuestionsService).validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
+            doNothing().when(userSecurityQuestionService).validateAnswersForUserWithEmailAndResetToken(eq(email), eq(resetToken), eq(securityQuestionAnswers));
             String hashedNewPassword = UUID.randomUUID().toString();
             when(passwordEncoder.encode(eq(newPassword))).thenReturn(hashedNewPassword);
             when(repository.updateOneWithEmailAndNonExpiredResetToken(
@@ -215,7 +215,7 @@ public class UserPasswordServiceImplTests {
 
         @Test
         @DisplayName("updates a valid users password with a valid request")
-        void updatesAValidUsersPasswordWithAValidRequest() {
+        void updatesAValidUserPasswordWithAValidRequest() {
             UserDto user = UserFactory.generateOneDto();
             UserUpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequestFactory.generateOne();
             String oldHashedPassword =  UUID.randomUUID().toString();

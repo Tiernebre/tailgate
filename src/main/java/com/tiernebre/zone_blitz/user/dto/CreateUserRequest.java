@@ -25,9 +25,9 @@ public class CreateUserRequest {
 
     @NotEmpty
     @Size(
-            min = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
-            max = NUMBER_OF_ALLOWED_SECURITY_QUESTIONS,
-            message = NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE
+            min = NUMBER_OF_ALLOWED_SECURITY_QUESTION,
+            max = NUMBER_OF_ALLOWED_SECURITY_QUESTION,
+            message = NUMBER_OF_SECURITY_QUESTION_VALIDATION_MESSAGE
     )
     @With
     List<@NotNull(message = NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE) CreateUserSecurityQuestionRequest> securityQuestions;

@@ -1,9 +1,9 @@
 package com.tiernebre.zone_blitz.user.repository;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.RefreshTokensRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionsRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.RefreshTokenRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.SecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserSecurityQuestionRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.security_questions.SecurityQuestionRecordPool;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.token.refresh.RefreshTokenConfigurationProperties;
@@ -81,19 +81,19 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
 
         @Test
         @DisplayName("creates the security question answers for the user")
-        void createsTheSecurityQuestionsForTheUser() {
-            List<SecurityQuestionsRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
+        void createsTheSecurityQuestionForTheUser() {
+            List<SecurityQuestionRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
             Set<Long> securityQuestionIds = securityQuestionsCreated
                     .stream()
-                    .map(SecurityQuestionsRecord::getId)
+                    .map(SecurityQuestionRecord::getId)
                     .collect(Collectors.toSet());
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest(securityQuestionIds);
             Long userId = userJooqRepository.createOne(createUserRequest).getId();
-            List<UserSecurityQuestionsRecord> expectedSecurityQuestions = createUserRequest
+            List<UserSecurityQuestionRecord> expectedSecurityQuestion = createUserRequest
                     .getSecurityQuestions()
                     .stream()
                     .map(securityQuestion -> {
-                        UserSecurityQuestionsRecord expectedRecord = new UserSecurityQuestionsRecord();
+                        UserSecurityQuestionRecord expectedRecord = new UserSecurityQuestionRecord();
                         expectedRecord.setUserId(userId);
                         expectedRecord.setSecurityQuestionId(securityQuestion.getId());
                         expectedRecord.setAnswer(securityQuestion.getAnswer());
@@ -101,19 +101,19 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
                     })
                     .collect(Collectors.toList());
 
-            List<UserSecurityQuestionsRecord> foundSecurityQuestions = userRecordPool.getSecurityQuestionsForUserWithId(userId);
+            List<UserSecurityQuestionRecord> foundSecurityQuestion = userRecordPool.getSecurityQuestionForUserWithId(userId);
             assertAll(
-                    () -> assertTrue(CollectionUtils.isNotEmpty(expectedSecurityQuestions)),
-                    () -> assertTrue(CollectionUtils.isNotEmpty(foundSecurityQuestions))
+                    () -> assertTrue(CollectionUtils.isNotEmpty(expectedSecurityQuestion)),
+                    () -> assertTrue(CollectionUtils.isNotEmpty(foundSecurityQuestion))
             );
-            assertEquals(expectedSecurityQuestions, foundSecurityQuestions);
+            assertEquals(expectedSecurityQuestion, foundSecurityQuestion);
         }
 
         private CreateUserRequest generateValidUserRequest() {
-            List<SecurityQuestionsRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
+            List<SecurityQuestionRecord> securityQuestionsCreated = securityQuestionRecordPool.createMultiple();
             Set<Long> securityQuestionIds = securityQuestionsCreated
                     .stream()
-                    .map(SecurityQuestionsRecord::getId)
+                    .map(SecurityQuestionRecord::getId)
                     .collect(Collectors.toSet());
             return UserFactory.generateOneCreateUserRequest(securityQuestionIds);
         }
@@ -125,10 +125,10 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns a non-empty Optional with the found entity with the correct attributes if the given ID exists")
         void testThatFindOneByIdReturnsAnExistingEntity() {
-            UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
+            UserRecord savedExistingUser = userRecordPool.createAndSaveOne();
             UserEntity foundUser = userJooqRepository.findOneById(savedExistingUser.getId()).orElse(null);
             assertNotNull(foundUser);
-            assertThatUsersRecordEqualsEntity(savedExistingUser, foundUser);
+            assertThatUserRecordEqualsEntity(savedExistingUser, foundUser);
         }
 
         @Test
@@ -145,7 +145,7 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns the updated version of the entity")
         void testThatUpdateOneReturnsTheUpdatedVersion() {
-            UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
+            UserRecord savedExistingUser = userRecordPool.createAndSaveOne();
             UserEntity entityToUpdate = UserFactory.generateOneEntity(savedExistingUser.getId());
             UserEntity updatedEntity = userJooqRepository.updateOne(entityToUpdate).orElse(null);
             assertNotNull(updatedEntity);
@@ -171,7 +171,7 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns true if the user to delete existed")
         void testThatDeleteOneByIdReturnsTrueForExistingEntitySuccess() {
-            UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
+            UserRecord savedExistingUser = userRecordPool.createAndSaveOne();
             Boolean deleted = userJooqRepository.deleteOneById(savedExistingUser.getId());
             assertTrue(deleted);
         }
@@ -190,10 +190,10 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns an optional containing the found user if the email exists")
         void testThatFindOneByEmailReturnsAnExistingUser() {
-            UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
+            UserRecord savedExistingUser = userRecordPool.createAndSaveOne();
             UserEntity foundUser = userJooqRepository.findOneByEmail(savedExistingUser.getEmail()).orElse(null);
             assertNotNull(foundUser);
-            assertThatUsersRecordEqualsEntity(savedExistingUser, foundUser);
+            assertThatUserRecordEqualsEntity(savedExistingUser, foundUser);
         }
 
         @Test
@@ -211,7 +211,7 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns true if the email exists")
         void returnsTrueIfItExists() {
-            UsersRecord savedExistingUser = userRecordPool.createAndSaveOne();
+            UserRecord savedExistingUser = userRecordPool.createAndSaveOne();
             assertTrue(userJooqRepository.oneExistsByEmail(savedExistingUser.getEmail()));
         }
 
@@ -228,11 +228,11 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns a user for a valid and non expired refresh token")
         void returnsAUserForAValidAndNonExpiredRefreshToken() {
-            UsersRecord user = userRecordPool.createAndSaveOne();
-            RefreshTokensRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
+            UserRecord user = userRecordPool.createAndSaveOne();
+            RefreshTokenRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
             Optional<UserEntity> foundUser = userJooqRepository.findOneWithNonExpiredRefreshToken(refreshToken.getToken());
             assertTrue(foundUser.isPresent());
-            assertThatUsersRecordEqualsEntity(user, foundUser.get());
+            assertThatUserRecordEqualsEntity(user, foundUser.get());
         }
 
         @Test
@@ -245,8 +245,8 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns an empty optional for a refresh token that is past the expiration window")
         void returnsAnEmptyOptionalForAnExpiredRefreshToken() {
-            UsersRecord user = userRecordPool.createAndSaveOne();
-            RefreshTokensRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
+            UserRecord user = userRecordPool.createAndSaveOne();
+            RefreshTokenRecord refreshToken = refreshTokenRecordPool.createAndSaveOneForUser(user);
             refreshToken.setCreatedAt(LocalDateTime
                     .now()
                     .minusMinutes(refreshTokenConfigurationProperties.getExpirationWindowInMinutes())
@@ -264,7 +264,7 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("confirms a user")
         void setsAUserIsConfirmedToTrue() {
-            UsersRecord user = userRecordPool.createAndSaveOne();
+            UserRecord user = userRecordPool.createAndSaveOne();
             assertFalse(user.getIsConfirmed());
             UUID confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
             userJooqRepository.confirmOne(confirmationToken);
@@ -274,9 +274,9 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
 
         @Test
         @DisplayName("does not confirm multiple users on accident")
-        void doesNotConfirmMultipleUsersOnAccident() {
-            UsersRecord userToConfirm = userRecordPool.createAndSaveOne();
-            UsersRecord userToNotConfirm = userRecordPool.createAndSaveOne();
+        void doesNotConfirmMultipleUserOnAccident() {
+            UserRecord userToConfirm = userRecordPool.createAndSaveOne();
+            UserRecord userToNotConfirm = userRecordPool.createAndSaveOne();
             assertFalse(userToConfirm.getIsConfirmed());
             assertFalse(userToNotConfirm.getIsConfirmed());
             UUID confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(userToConfirm).getToken();
@@ -291,7 +291,7 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         @Test
         @DisplayName("returns true if a user was confirmed")
         void returnsTrueIfAUserWasConfirmed() {
-            UsersRecord user = userRecordPool.createAndSaveOne();
+            UserRecord user = userRecordPool.createAndSaveOne();
             assertFalse(user.getIsConfirmed());
             UUID confirmationToken = confirmationTokenRecordPool.createAndSaveOneForUser(user).getToken();
             assertTrue(userJooqRepository.confirmOne(confirmationToken));
@@ -304,7 +304,7 @@ public class UserJooqRepositoryIntegrationTests extends AbstractIntegrationTesti
         }
     }
 
-    private void assertThatUsersRecordEqualsEntity(UsersRecord usersRecord, UserEntity userEntity) {
+    private void assertThatUserRecordEqualsEntity(UserRecord usersRecord, UserEntity userEntity) {
         assertAll(() -> {
             assertEquals(usersRecord.getId(), userEntity.getId());
             assertEquals(usersRecord.getEmail(), userEntity.getEmail());

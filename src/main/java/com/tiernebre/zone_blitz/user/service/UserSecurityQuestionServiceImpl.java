@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.user.service;
 
 import com.tiernebre.zone_blitz.user.exception.InvalidSecurityQuestionAnswerException;
-import com.tiernebre.zone_blitz.user.repository.UserSecurityQuestionsRepository;
+import com.tiernebre.zone_blitz.user.repository.UserSecurityQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,8 +13,8 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserSecurityQuestionsServiceImpl implements UserSecurityQuestionsService {
-    private final UserSecurityQuestionsRepository repository;
+public class UserSecurityQuestionServiceImpl implements UserSecurityQuestionService {
+    private final UserSecurityQuestionRepository repository;
     private final PasswordEncoder passwordEncoder;
 
     @Override

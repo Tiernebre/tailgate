@@ -1,6 +1,6 @@
 package com.tiernebre.zone_blitz.user.service;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.mail.ZoneBlitzEmailConfigurationProperties;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.test.email.TestEmail;
@@ -39,7 +39,7 @@ public class UserEmailConfirmationServiceIntegrationTests extends AbstractIntegr
         @Test
         @DisplayName("sends an email to an inbox")
         public void sendsAnEmailToAnInbox() {
-            UsersRecord userToConfirm = userRecordPool.createAndSaveOne();
+            UserRecord userToConfirm = userRecordPool.createAndSaveOne();
             UserDto userToConfirmAsDto = UserDto.builder()
                     .id(userToConfirm.getId())
                     .email(userToConfirm.getEmail())

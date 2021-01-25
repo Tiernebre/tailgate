@@ -5,7 +5,7 @@ import com.tiernebre.zone_blitz.user.exception.InvalidSecurityQuestionAnswerExce
 import java.util.Map;
 import java.util.UUID;
 
-public interface UserSecurityQuestionsService {
+public interface UserSecurityQuestionService {
     void validateAnswersForUserWithEmailAndResetToken(
             String email,
             UUID resetToken,

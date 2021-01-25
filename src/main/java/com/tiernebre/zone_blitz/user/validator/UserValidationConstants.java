@@ -1,14 +1,14 @@
 package com.tiernebre.zone_blitz.user.validator;
 
 public final class UserValidationConstants {
-    public static final int NUMBER_OF_ALLOWED_SECURITY_QUESTIONS = 2;
-    public static final String NUMBER_OF_SECURITY_QUESTIONS_VALIDATION_MESSAGE =
+    public static final int NUMBER_OF_ALLOWED_SECURITY_QUESTION = 2;
+    public static final String NUMBER_OF_SECURITY_QUESTION_VALIDATION_MESSAGE =
             "security questions must have exactly " +
-                    NUMBER_OF_ALLOWED_SECURITY_QUESTIONS +
+                    NUMBER_OF_ALLOWED_SECURITY_QUESTION +
                     " entries";
     public static final String NUMBER_OF_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE =
             "security question answers must have exactly " +
-                    NUMBER_OF_ALLOWED_SECURITY_QUESTIONS +
+                    NUMBER_OF_ALLOWED_SECURITY_QUESTION +
                     " entries";
     public static final String NULL_SECURITY_QUESTION_ENTRIES_VALIDATION_MESSAGE =
             "security questions must not include null entries";
@@ -20,7 +20,7 @@ public final class UserValidationConstants {
             "security question ID must not be null";
     public static final String NULL_SECURITY_QUESTION_ANSWER_VALIDATION_MESSAGE =
             "security question answer must not be a blank string or null";
-    public static final String SAME_SECURITY_QUESTIONS_VALIDATION_MESSAGE =
+    public static final String SAME_SECURITY_QUESTION_VALIDATION_MESSAGE =
             "duplicate security questions cannot be chosen, please ensure each of your chosen security questions is unique";
     public static final String SAME_SECURITY_QUESTION_ANSWERS_VALIDATION_MESSAGE =
             "security questions must not have duplicated answers, please ensure each security question has a unique answer";

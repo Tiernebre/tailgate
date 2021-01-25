@@ -17,14 +17,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tiernebre.zone_blitz.user.validator.UserValidationConstants.*;
-import static com.tiernebre.zone_blitz.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE;
+import static com.tiernebre.zone_blitz.user.validator.UserValidatorImpl.NON_EXISTENT_SECURITY_QUESTION_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserSecurityQuestionsValidatorImplTests {
+public class UserSecurityQuestionValidatorImplTests {
     @InjectMocks
     private UserSecurityQuestionValidatorImpl userSecurityQuestionValidator;
 
@@ -45,7 +45,7 @@ public class UserSecurityQuestionsValidatorImplTests {
         @Test
         @DisplayName("validates that the security question ids provided must all exist")
         void testValidExistenceOfSecurityQuestionIds() {
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion();
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(UUID.randomUUID().toString())
@@ -54,13 +54,13 @@ public class UserSecurityQuestionsValidatorImplTests {
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(true);
             Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
-            assertTrue(errorsFound.contains(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE));
+            assertTrue(errorsFound.contains(NON_EXISTENT_SECURITY_QUESTION_ERROR_MESSAGE));
         }
 
         @Test
         @DisplayName("allows security question ids that exist")
         void allowsSecurityQuestionIdsThatExist() {
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion();
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .email(UUID.randomUUID().toString())
@@ -69,14 +69,14 @@ public class UserSecurityQuestionsValidatorImplTests {
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
             Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
-            assertFalse(errorsFound.contains(NON_EXISTENT_SECURITY_QUESTIONS_ERROR_MESSAGE));
+            assertFalse(errorsFound.contains(NON_EXISTENT_SECURITY_QUESTION_ERROR_MESSAGE));
         }
 
         @Test
         @DisplayName("does not allow security questions with duplicate answers")
-        void doesNotAllowSecurityQuestionsWithDuplicateAnswers() {
+        void doesNotAllowSecurityQuestionWithDuplicateAnswers() {
             String answer = "The same answer!";
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(answer);
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion(answer);
             Set<String> securityQuestionAnswers = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getAnswer).collect(Collectors.toSet());
             assertEquals(1, securityQuestionAnswers.size());
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
@@ -94,7 +94,7 @@ public class UserSecurityQuestionsValidatorImplTests {
         @DisplayName("does not allow security questions answers that contain the user password")
         void doesNotAllowSecurityQuestionAnswersThatContainTheUserPassword() {
             String password = UUID.randomUUID().toString();
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(password);
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion(password);
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
@@ -110,7 +110,7 @@ public class UserSecurityQuestionsValidatorImplTests {
         @DisplayName("does not allow security questions answers that contain the user password case insensitively")
         void doesNotAllowSecurityQuestionAnswersThatContainTheUserPasswordCaseInsensitively() {
             String password = UUID.randomUUID().toString();
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(password.toUpperCase());
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion(password.toUpperCase());
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
@@ -126,7 +126,7 @@ public class UserSecurityQuestionsValidatorImplTests {
         @DisplayName("does not allow security questions answers that contain the user email")
         void doesNotAllowSecurityQuestionAnswersThatContainTheUserEmail() {
             String email = UUID.randomUUID().toString() + "@test.com";
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(email);
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion(email);
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
@@ -142,7 +142,7 @@ public class UserSecurityQuestionsValidatorImplTests {
         @DisplayName("does not allow security questions answers that contain the user email case insensitively")
         void doesNotAllowSecurityQuestionAnswersThatContainTheUserEmailCaseInsensitively() {
             String email = UUID.randomUUID().toString() + "@test.com";
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(email.toLowerCase());
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion(email.toLowerCase());
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
             CreateUserRequest createUserRequest = CreateUserRequest.builder()
                     .securityQuestions(createUserSecurityQuestionRequests)
@@ -156,8 +156,8 @@ public class UserSecurityQuestionsValidatorImplTests {
 
         @Test
         @DisplayName("allows security questions with unique answers")
-        void allowsSecurityQuestionsWithUniqueAnswers() {
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions();
+        void allowsSecurityQuestionWithUniqueAnswers() {
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion();
             Set<String> securityQuestionAnswers = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getAnswer).collect(Collectors.toSet());
             assertEquals(createUserSecurityQuestionRequests.size(), securityQuestionAnswers.size());
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests.stream().map(CreateUserSecurityQuestionRequest::getId).collect(Collectors.toSet());
@@ -175,7 +175,7 @@ public class UserSecurityQuestionsValidatorImplTests {
         @DisplayName("does not allow duplicate security question ids")
         void doesNotAllowDuplicateSecurityQuestionIds() {
             Long id = 1L;
-            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestions(id);
+            List<CreateUserSecurityQuestionRequest> createUserSecurityQuestionRequests = generateSecurityQuestion(id);
             Set<Long> securityQuestionIds = createUserSecurityQuestionRequests
                     .stream()
                     .map(CreateUserSecurityQuestionRequest::getId)
@@ -188,28 +188,28 @@ public class UserSecurityQuestionsValidatorImplTests {
                     .build();
             when(securityQuestionService.someDoNotExistWithIds(eq(securityQuestionIds))).thenReturn(false);
             Set<String> errorsFound = userSecurityQuestionValidator.validate(createUserRequest);
-            assertTrue(errorsFound.contains(SAME_SECURITY_QUESTIONS_VALIDATION_MESSAGE));
+            assertTrue(errorsFound.contains(SAME_SECURITY_QUESTION_VALIDATION_MESSAGE));
         }
 
-        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions() {
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestion() {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
-            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTION; i++) {
                 securityQuestionRequests.add(generateValidSecurityQuestion(Integer.toUnsignedLong(i), UUID.randomUUID().toString()));
             }
             return securityQuestionRequests;
         }
 
-        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions(String answer) {
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestion(String answer) {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
-            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTION; i++) {
                 securityQuestionRequests.add(generateValidSecurityQuestion(Integer.toUnsignedLong(i), answer));
             }
             return securityQuestionRequests;
         }
 
-        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestions(Long id) {
+        private List<CreateUserSecurityQuestionRequest> generateSecurityQuestion(Long id) {
             List<CreateUserSecurityQuestionRequest> securityQuestionRequests = new ArrayList<>();
-            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTIONS; i++) {
+            for(int i = 0; i < NUMBER_OF_ALLOWED_SECURITY_QUESTION; i++) {
                 securityQuestionRequests.add(generateValidSecurityQuestion(id, UUID.randomUUID().toString()));
             }
             return securityQuestionRequests;

@@ -21,7 +21,7 @@ public class SecurityQuestionRestfulControllerIntegrationTests extends WebContro
 
     @Nested
     @DisplayName("GET /security-questions")
-    public class GetSecurityQuestionsTests {
+    public class GetSecurityQuestionTests {
         @Test
         @DisplayName("returns with 200 OK status")
         public void returnsWithOkStatus() throws Exception {
@@ -32,11 +32,11 @@ public class SecurityQuestionRestfulControllerIntegrationTests extends WebContro
 
         @Test
         @DisplayName("returns with the security questions formatted in the json response body")
-        public void returnsWithTheSecurityQuestionsFormattedInTheJsonResponseBody() throws Exception {
-            List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
-            SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestions.get(0);
-            SecurityQuestionDto secondSecurityQuestionDto = expectedSecurityQuestions.get(1);
-            when(securityQuestionService.getAll()).thenReturn(expectedSecurityQuestions);
+        public void returnsWithTheSecurityQuestionFormattedInTheJsonResponseBody() throws Exception {
+            List<SecurityQuestionDto> expectedSecurityQuestion = SecurityQuestionFactory.generateMultipleDtos();
+            SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestion.get(0);
+            SecurityQuestionDto secondSecurityQuestionDto = expectedSecurityQuestion.get(1);
+            when(securityQuestionService.getAll()).thenReturn(expectedSecurityQuestion);
             mockMvc.perform(get("/security-questions"))
                     .andExpect(jsonPath("$[0].id").exists())
                     .andExpect(jsonPath("$[0].id").value(firstSecurityQuestionDto.getId()))

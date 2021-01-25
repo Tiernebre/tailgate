@@ -59,13 +59,13 @@ public class UserServiceImplTests {
         void testCreateOneReturnsProperly() throws InvalidUserException, UserAlreadyExistsException {
             CreateUserRequest createUserRequest = UserFactory.generateOneCreateUserRequest();
             String hashedPassword = "abcd12345!WOW";
-            List<CreateUserSecurityQuestionRequest> hashedSecurityQuestions = new ArrayList<>();
+            List<CreateUserSecurityQuestionRequest> hashedSecurityQuestion = new ArrayList<>();
             assertTrue(CollectionUtils.isNotEmpty(createUserRequest.getSecurityQuestions()));
             for (int i = 0; i < createUserRequest.getSecurityQuestions().size(); i++) {
                 CreateUserSecurityQuestionRequest originalRequest = createUserRequest.getSecurityQuestions().get(i);
                 String expectedAnswer = UUID.randomUUID().toString();
                 when(passwordEncoder.encode(originalRequest.getAnswer().toLowerCase())).thenReturn(expectedAnswer);
-                hashedSecurityQuestions.add(CreateUserSecurityQuestionRequest.builder()
+                hashedSecurityQuestion.add(CreateUserSecurityQuestionRequest.builder()
                         .id(originalRequest.getId())
                         .answer(expectedAnswer)
                         .build());
@@ -73,7 +73,7 @@ public class UserServiceImplTests {
             when(passwordEncoder.encode(createUserRequest.getPassword())).thenReturn(hashedPassword);
             CreateUserRequest hashedUserRequest = createUserRequest
                     .withPassword(hashedPassword)
-                    .withSecurityQuestions(hashedSecurityQuestions);
+                    .withSecurityQuestions(hashedSecurityQuestion);
             UserEntity entitySaved = UserFactory.generateOneEntity();
             when(repository.createOne(eq(hashedUserRequest))).thenReturn(entitySaved);
             UserDto expectedUserCreated = UserFactory.generateOneDto();

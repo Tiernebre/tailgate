@@ -232,12 +232,12 @@
 								<!-- Really unfortunate janky custom type mapping to support CITEXT. Should be cleaned up sooner than later -->
 								<forcedType>
 									<name>CLOB</name>
-									<expression>public.users.email</expression>
+									<expression>public.user.email</expression>
 									<types>CITEXT</types>
 								</forcedType>
 								<forcedType>
 									<name>CLOB</name>
-									<expression>public.security_questions.question</expression>
+									<expression>public.security_question.question</expression>
 									<types>CITEXT</types>
 								</forcedType>
 							</forcedTypes>

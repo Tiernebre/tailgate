@@ -27,7 +27,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
     private final UserPasswordRepository repository;
     private final PasswordResetTokenService passwordResetTokenService;
     private final PasswordEncoder passwordEncoder;
-    private final UserSecurityQuestionsService userSecurityQuestionsService;
+    private final UserSecurityQuestionService userSecurityQuestionService;
 
     @Override
     public void updateOneUsingResetToken(UUID resetToken, ResetTokenUpdatePasswordRequest updatePasswordRequest) throws
@@ -39,7 +39,7 @@ public class UserPasswordServiceImpl implements UserPasswordService {
         validateResetToken(resetToken);
         validator.validateUpdateRequest(updatePasswordRequest);
         String email = updatePasswordRequest.getEmail();
-        userSecurityQuestionsService.validateAnswersForUserWithEmailAndResetToken(
+        userSecurityQuestionService.validateAnswersForUserWithEmailAndResetToken(
                 email,
                 resetToken,
                 updatePasswordRequest.getSecurityQuestionAnswers()

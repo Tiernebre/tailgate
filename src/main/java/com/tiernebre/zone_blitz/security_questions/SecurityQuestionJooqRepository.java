@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.tiernebre.zone_blitz.jooq.Tables.*;
-import static com.tiernebre.zone_blitz.jooq.tables.SecurityQuestions.SECURITY_QUESTIONS;
 
 @Repository
 @Primary
@@ -22,28 +21,28 @@ public class SecurityQuestionJooqRepository implements SecurityQuestionRepositor
     @Override
     public List<SecurityQuestionEntity> getAll() {
         return dslContext
-                .selectFrom(SECURITY_QUESTIONS)
+                .selectFrom(SECURITY_QUESTION)
                 .fetchInto(SecurityQuestionEntity.class);
     }
 
     @Override
     public boolean allExistWithIds(Set<Long> ids) {
-        int numberOfFoundSecurityQuestions = getCountForAllWithIds(ids);
-        return numberOfFoundSecurityQuestions > 0 && numberOfFoundSecurityQuestions == ids.size();
+        int numberOfFoundSecurityQuestion = getCountForAllWithIds(ids);
+        return numberOfFoundSecurityQuestion > 0 && numberOfFoundSecurityQuestion == ids.size();
     }
 
     @Override
     public List<SecurityQuestionEntity> getAllForPasswordResetToken(UUID passwordResetToken) {
         return dslContext
-                .select(SECURITY_QUESTIONS.asterisk())
-                .from(SECURITY_QUESTIONS)
-                .join(USER_SECURITY_QUESTIONS)
-                .on(SECURITY_QUESTIONS.ID.eq(USER_SECURITY_QUESTIONS.SECURITY_QUESTION_ID))
-                .join(USERS)
-                .on(USER_SECURITY_QUESTIONS.USER_ID.eq(USERS.ID))
-                .join(PASSWORD_RESET_TOKENS)
-                .on(PASSWORD_RESET_TOKENS.USER_ID.eq(USERS.ID))
-                .where(PASSWORD_RESET_TOKENS.TOKEN.eq(passwordResetToken))
+                .select(SECURITY_QUESTION.asterisk())
+                .from(SECURITY_QUESTION)
+                .join(USER_SECURITY_QUESTION)
+                .on(SECURITY_QUESTION.ID.eq(USER_SECURITY_QUESTION.SECURITY_QUESTION_ID))
+                .join(USER)
+                .on(USER_SECURITY_QUESTION.USER_ID.eq(USER.ID))
+                .join(PASSWORD_RESET_TOKEN)
+                .on(PASSWORD_RESET_TOKEN.USER_ID.eq(USER.ID))
+                .where(PASSWORD_RESET_TOKEN.TOKEN.eq(passwordResetToken))
                 .fetchInto(SecurityQuestionEntity.class);
     }
 
@@ -51,8 +50,8 @@ public class SecurityQuestionJooqRepository implements SecurityQuestionRepositor
         if (CollectionUtils.isEmpty(ids)) return 0;
 
         return dslContext.fetchCount(
-                dslContext.selectFrom(SECURITY_QUESTIONS)
-                        .where(SECURITY_QUESTIONS.ID.in(ids))
+                dslContext.selectFrom(SECURITY_QUESTION)
+                        .where(SECURITY_QUESTION.ID.in(ids))
         );
     }
 }

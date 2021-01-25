@@ -1,7 +1,7 @@
 package com.tiernebre.zone_blitz.token.user_confirmation;
 
-import com.tiernebre.zone_blitz.jooq.tables.records.UserConfirmationTokensRecord;
-import com.tiernebre.zone_blitz.jooq.tables.records.UsersRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserConfirmationTokenRecord;
+import com.tiernebre.zone_blitz.jooq.tables.records.UserRecord;
 import com.tiernebre.zone_blitz.test.AbstractIntegrationTestingSuite;
 import com.tiernebre.zone_blitz.user.UserRecordPool;
 import com.tiernebre.zone_blitz.user.dto.UserDto;
@@ -30,7 +30,7 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Abstrac
         @Test
         @DisplayName("returns the created invite token for a user")
         public void returnsTheCreatedInviteTokenForAUser() {
-            UsersRecord userRecord = userRecordPool.createAndSaveOne();
+            UserRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             UserConfirmationTokenEntity confirmationTokenEntity = userConfirmationTokenJooqRepository.createOneForUser(user);
             assertNotNull(confirmationTokenEntity.getToken());
@@ -41,7 +41,7 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Abstrac
         @Test
         @DisplayName("only allows one invite token for a user")
         public void onlyAllowsOneInviteTokenForAUser() {
-            UsersRecord userRecord = userRecordPool.createAndSaveOne();
+            UserRecord userRecord = userRecordPool.createAndSaveOne();
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             userConfirmationTokenJooqRepository.createOneForUser(user);
             assertThrows(Exception.class, () -> userConfirmationTokenJooqRepository.createOneForUser(user));
@@ -54,8 +54,8 @@ public class UserConfirmationTokenJooqRepositoryIntegrationTests extends Abstrac
         @Test
         @DisplayName("returns an optional containing the found confirmation token if it exists")
         public void returnsAnOptionalContainingTheFoundConfirmationTokenIfItExists() {
-            UsersRecord userRecord = userRecordPool.createAndSaveOne();
-            UserConfirmationTokensRecord confirmationToken = userConfirmationTokenRecordPool.createAndSaveOneForUser(userRecord);
+            UserRecord userRecord = userRecordPool.createAndSaveOne();
+            UserConfirmationTokenRecord confirmationToken = userConfirmationTokenRecordPool.createAndSaveOneForUser(userRecord);
             UserDto user = UserDto.builder().id(userRecord.getId()).build();
             Optional<UserConfirmationTokenEntity> foundConfirmationToken = userConfirmationTokenJooqRepository.findOneForUser(user);
             assertTrue(foundConfirmationToken.isPresent());

@@ -34,7 +34,7 @@ public class SecurityQuestionServiceImplTests {
     public class GetAllTests {
         @Test
         @DisplayName("returns the gotten security questions")
-        public void returnsTheGottenSecurityQuestions() {
+        public void returnsTheGottenSecurityQuestion() {
             List<SecurityQuestionEntity> entities = ImmutableList.of(
                     SecurityQuestionFactory.generateOneEntity(),
                     SecurityQuestionFactory.generateOneEntity()
@@ -45,8 +45,8 @@ public class SecurityQuestionServiceImplTests {
             );
             when(securityQuestionRepository.getAll()).thenReturn(entities);
             when(securityQuestionConverter.createFromEntities(eq(entities))).thenReturn(expectedDtos);
-            List<SecurityQuestionDto> gottenSecurityQuestions = securityQuestionService.getAll();
-            assertEquals(expectedDtos, gottenSecurityQuestions);
+            List<SecurityQuestionDto> gottenSecurityQuestion = securityQuestionService.getAll();
+            assertEquals(expectedDtos, gottenSecurityQuestion);
         }
     }
 
@@ -75,7 +75,7 @@ public class SecurityQuestionServiceImplTests {
     public class GetAllForPasswordResetToken {
         @Test
         @DisplayName("returns the found security questions from a given password reset token converted to DTOs")
-        public void returnsTheFoundSecurityQuestionsFromAGivenPasswordResetTokenConvertedToDtos() {
+        public void returnsTheFoundSecurityQuestionFromAGivenPasswordResetTokenConvertedToDtos() {
             List<SecurityQuestionEntity> entities = SecurityQuestionFactory.generateManyEntities();
             UUID passwordResetToken = UUID.randomUUID();
             List<SecurityQuestionDto> expectedDtos = SecurityQuestionFactory.generateMultipleDtos();

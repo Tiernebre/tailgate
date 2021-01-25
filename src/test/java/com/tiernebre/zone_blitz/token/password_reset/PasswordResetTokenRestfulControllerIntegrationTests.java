@@ -52,26 +52,26 @@ public class PasswordResetTokenRestfulControllerIntegrationTests extends WebCont
 
     @Nested
     @DisplayName("GET /password-reset-tokens/{passwordResetToken}/security-questions")
-    class GetPasswordResetTokenSecurityQuestions {
+    class GetPasswordResetTokenSecurityQuestion {
         @Test
         @DisplayName("returns with 200 OK status")
         void returnsWith204NoContentStatus() throws Exception {
             UUID resetToken = UUID.randomUUID();
             String uri = String.format("/password-reset-tokens/%s/security-questions", resetToken);
-            List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
-            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
+            List<SecurityQuestionDto> expectedSecurityQuestion = SecurityQuestionFactory.generateMultipleDtos();
+            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestion);
             mockMvc.perform(get(uri)).andExpect(status().isOk());
         }
 
         @Test
         @DisplayName("returns with the security questions properly formatted in JSON")
-        void returnsWithTheSecurityQuestionsProperlyFormattedInJson() throws Exception {
+        void returnsWithTheSecurityQuestionProperlyFormattedInJson() throws Exception {
             UUID resetToken = UUID.randomUUID();
             String uri = String.format("/password-reset-tokens/%s/security-questions", resetToken);
-            List<SecurityQuestionDto> expectedSecurityQuestions = SecurityQuestionFactory.generateMultipleDtos();
-            SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestions.get(0);
-            SecurityQuestionDto secondSecurityQuestionDto = expectedSecurityQuestions.get(1);
-            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestions);
+            List<SecurityQuestionDto> expectedSecurityQuestion = SecurityQuestionFactory.generateMultipleDtos();
+            SecurityQuestionDto firstSecurityQuestionDto = expectedSecurityQuestion.get(0);
+            SecurityQuestionDto secondSecurityQuestionDto = expectedSecurityQuestion.get(1);
+            when(securityQuestionService.getAllForPasswordResetToken(eq(resetToken))).thenReturn(expectedSecurityQuestion);
             mockMvc.perform(get(uri))
                     .andExpect(jsonPath("$[0].id").exists())
                     .andExpect(jsonPath("$[0].id").value(firstSecurityQuestionDto.getId()))
